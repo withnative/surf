@@ -15,17 +15,94 @@ The purpose of local Markdown is to give the person a durable account they can i
 correct, move and use with different agent harnesses. Prefer mapped meanings over fixed
 filenames. A practice can evolve its layout while keeping its roles clear.
 
-## Treat the working directory as a launch point
+## Discover the practice deterministically
 
 The current working directory is launch context, not proof that it is the person's Surf
 practice home. Being writable is not the same as being durable, private enough or likely
 to be available in a later conversation.
 
-Start with read-only inspection of the launch directory. Use what the person has already
-told you. Before looking through parents, siblings, a home folder or another root,
-describe an exact bounded search and ask for approval. State the root or roots, the depth
-or other limit and the identifying files you will look for. An exact path supplied by the
-person permits inspection of that path; it does not imply permission to search around it.
+Use this discovery order exactly:
+
+1. Inspect only the launch directory, read-only. If its `AGENTS.md` marker, `README.md`
+   semantic map and mapped working-framework record form one coherent Surf practice, use
+   it and stop discovery. **A valid launch-directory practice wins; do not read the
+   user-level locator.**
+2. Otherwise, read only the canonical locator path for the platform:
+   `$HOME/.surf/locator.json` on macOS/Linux or
+   `%USERPROFILE%\.surf\locator.json` on Windows. Resolve `$HOME` or `%USERPROFILE%`
+   from the client's current user environment only to construct that one path. Do not
+   probe alternative home variables, XDG directories, application-support directories,
+   parent folders or similarly named files.
+3. Validate the locator before following it. Then inspect only its exact `surf_home`
+   target and recognise a practice from the marker, map and working-framework record
+   together. Pointer existence never proves that the target is a practice.
+4. Only an absent locator permits the existing bounded-discovery conversation. An invalid
+   locator remains read-only and requires the person's direction before a recovery search
+   or mutation.
+
+This order applies whether Surf was activated naturally or explicitly. Filesystem clients
+and sandboxes differ: if the canonical locator or its exact target cannot be read because
+access is denied, treat it as inaccessible. Explain the exact path and limitation and ask
+for direction; do not reinterpret denial as absence or widen the search.
+
+Use what the person has already told you. Before looking through parents, siblings, a home
+folder or another root during bounded recovery, describe an exact bounded search and ask
+for approval. State the root or roots, the depth or other limit and the identifying files
+you will look for. An exact path supplied by the person permits inspection of that path;
+it does not imply permission to search around it.
+
+## Validate the user-level locator exactly
+
+The locator is a small pointer, not part of the person's learning record. It has one
+canonical location per platform and is UTF-8 JSON without a byte-order mark. Its top-level
+value is an object containing exactly these two member names, each exactly once:
+
+```json
+{
+  "schema_version": 1,
+  "surf_home": "/absolute/path/to/the/confirmed/practice"
+}
+```
+
+`schema_version` is the integer `1`. It versions only the locator structure and
+interpretation, not the Surf application, plugin, working framework or practice.
+`surf_home` is one non-empty, fully expanded, platform-absolute string. On macOS/Linux it
+is rooted at `/`. On Windows it is a drive-rooted path such as `C:\Users\Ari\Surf` or a
+complete UNC path such as `\\server\share\Surf`. A drive-relative path such as `C:Surf`
+and a root-relative path such as `\Surf` are not absolute. JSON escaping does not change
+the resulting filesystem path.
+
+Do not accept `~`, environment-variable references, globs or a list of candidates. Do not
+put learning content, participant identifiers, server-side identifiers or credentials in
+the locator. JSON whitespace and object-member order are immaterial; every other
+difference in structure is invalid. Invalid includes malformed JSON or UTF-8, a byte-order
+mark, duplicate keys, a missing or additional key, a non-integer or unsupported
+`schema_version`, and a non-string or non-absolute `surf_home`.
+
+The filesystem shape is also exact. If the immediate `$HOME/.surf` or
+`%USERPROFILE%\.surf` entry exists, it must be a real directory and must not be a
+symlink. If `locator.json` exists, it must be a regular file and must not itself be a
+symlink. Inspect these entries without following symlinks. A non-directory or symlinked
+`.surf` entry, or a non-regular or symlinked `locator.json`, has the wrong filesystem
+shape: stay read-only and ask for direction. Do not treat it as absent, follow it, search
+elsewhere or replace it.
+
+A locator is stale when its exact target is missing or no longer validates as one coherent
+practice. A locator or target that the client cannot read is inaccessible.
+
+Handle outcomes without ambiguity:
+
+| Outcome | Behaviour |
+| --- | --- |
+| Valid launch-directory practice | Use it; do not read the locator. |
+| Locator absent | Offer the existing person-approved bounded discovery or first setup. |
+| Locator valid and target valid | Use the target after read-only marker, map and framework validation. |
+| Locator malformed | Stay read-only, describe the problem and ask for direction; no search. |
+| Locator stale | Stay read-only, describe the missing or invalid target and ask for direction; no search. |
+| Locator duplicated | Stay read-only, describe the duplicate keys and ask for direction; no search. |
+| Locator unsupported | Stay read-only, describe the unknown schema version and ask for direction; no search. |
+| Locator has the wrong filesystem shape | Stay read-only, describe the non-directory or symlinked `.surf` entry or the non-regular or symlinked `locator.json` and ask for direction; no search or write. |
+| Locator inaccessible | Stay read-only, describe the denied locator or target and ask for direction; no search. |
 
 A suitable practice home is normally:
 
@@ -37,8 +114,9 @@ A suitable practice home is normally:
 - understandable enough that the person can find and inspect its records themselves.
 
 When proposing a home, offer a small number of exact choices with material uncertainties
-visible. Ask the person to confirm one exact path before changing it. Prefer an existing
-coherent practice to creating another one.
+visible. Name the exact proposed `surf_home` and canonical locator path together, and
+explain that confirming the proposal authorises both writes. Prefer an existing coherent
+practice to creating another one.
 
 If persistence is uncertain, a useful check is to create a uniquely named harmless file
 at the confirmed location, read back its exact contents, remove it and verify that it is
@@ -226,11 +304,10 @@ practice invisible. Their model provider, machine, backups, synchronisation, sou
 control and sharing settings may expose local files. Explain the relevant conditions in
 plain language rather than claiming generic privacy.
 
-Retrieving Surf guidance does not require copying the person's practice files into Surf
-tool calls. Keep local practice content out of guidance retrieval unless a product
-capability explicitly requires it and the person understands the transfer. Never claim
-that local material was stored, deleted, encrypted or unseen unless the available
-evidence supports that statement.
+Retrieving Surf guidance does not require copying the person's locator or practice files
+into Surf MCP calls. Keep the locator path and local practice content out of guidance
+retrieval. Never claim that local material was stored, deleted, encrypted or unseen unless
+the available evidence supports that statement.
 
 Store the negotiated agreement, useful current state, permitted evidence, history and
 reusable person-owned artefacts. Do not copy the public Surf catalogue into the practice
@@ -256,3 +333,45 @@ map and preserves unrelated content.
 
 After repair, re-read `README.md`, verify that its mapped roles resolve coherently and
 continue with the moment guide that fits the person's request.
+
+## Create, replace, move and remove the locator safely
+
+Create or update the locator only after the person has confirmed the exact practice home
+and that practice passes marker, map and working-framework validation. Confirmation of a
+setup proposal naming both paths covers both the practice and locator writes. A later move
+requires a new confirmation naming the validated destination and locator update.
+
+Before writing, inspect the immediate `.surf` entry and exact `locator.json` entry without
+following symlinks. If `.surf` is absent, create it as a real directory; if it exists, it
+must already be a real directory and not a symlink. If `locator.json` exists, it must be a
+regular file and not a symlink. A wrong-shape entry fails closed under the table above. If
+the locator is already valid and names the confirmed home, leave it unchanged: repeated
+setup is idempotent. If it is valid but names another practice, show the difference and
+update it only as part of a confirmed setup or move. Never silently overwrite an invalid
+locator.
+
+Use the client's safest supported replacement: create a new regular sibling temporary file
+without following or reusing an existing entry, write the complete UTF-8 JSON, verify the
+bytes and parsed value, then atomically replace `locator.json` without exposing a partial
+file. Restrict permissions where the client and platform support that, while avoiding
+stronger privacy claims than were verified. After replacement, read the canonical locator
+back, validate it again and validate its exact target. Remove a leftover temporary file if
+replacement fails. If safe replacement is not available, explain the limitation and do
+not claim that continuity was established.
+
+The locator is operational continuity state, not learning content:
+
+- **Inspect:** the person can open the canonical JSON file with ordinary tools and compare
+  `surf_home` with the practice's working-framework record.
+- **Move:** validate and confirm the new home before replacing the locator. Updating the
+  pointer does not move or delete either directory by itself.
+- **Delete:** deleting only the locator restores the no-global-discovery state and leaves
+  the practice untouched. Deleting a practice does not remove its locator; remove or
+  redirect the locator as a separate confirmed action so it does not become stale.
+- **Back up:** back up the practice according to the person's choices. The locator can be
+  recreated after restoring and validating the practice; restoring the pointer alone does
+  not restore learning state.
+
+If the locator write or read-back fails after practice setup, say exactly that the local
+practice exists but cross-directory continuity is incomplete. Do not present setup as
+fully complete and do not fall back to a broad search.

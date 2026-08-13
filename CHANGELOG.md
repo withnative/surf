@@ -7,6 +7,9 @@ lockstep policy. Working-framework changes are recorded in
 
 ## Unreleased
 
+- Add the deterministic user-home practice-locator contract to working framework `0.1.0`
+  and reinforce it in plugin package `0.1.1` without adding local runtime code.
+
 ## 0.1.0 — 2026-08-13
 
 - Align the Surf application version with the `0.1.0` working framework and `0.1.0`

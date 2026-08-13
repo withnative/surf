@@ -17,6 +17,7 @@ to the release candidate:
 - [ ] A remote framework update works with an unchanged plugin.
 - [ ] A plugin package update and client refresh work as documented.
 - [ ] Active-session cache behaviour is observed and documented for each provider.
+- [ ] Cross-directory practice resumption passes in Claude Code and ChatGPT/Codex Desktop.
 
 Do not mark a gate as passed without recording the evidence fields below. Do not claim
 public GitHub availability until every required gate passes.
@@ -145,3 +146,35 @@ For each provider:
 The expected contract is conservative: a new MCP call can receive newly deployed server
 content, but previous messages are never rewritten; packaged instructions and discovered
 tool definitions may remain loaded until refresh, reload, restart, or a new conversation.
+
+## Gate 7: cross-directory practice resumption
+
+Run this separately in Claude Code and ChatGPT/Codex Desktop. Use disposable empty launch
+directories and a disposable practice containing no personal content. Record the evidence
+fields above plus every filesystem read, write and directory listing performed by the
+client or agent.
+
+1. Start session one in an empty directory unrelated to the proposed practice.
+2. Activate Surf in natural language, confirm a setup proposal that names the exact
+   practice home and canonical locator, and complete setup.
+3. Verify the locator contains only `schema_version: 1` and the fully expanded absolute
+   `surf_home`, and that the practice validates through its marker, `README.md` map and
+   working-framework record.
+4. End the conversation. Start session two in a different empty unrelated directory and
+   ask `what's my current Surf goal?` as a natural-language request, without an explicit
+   plugin invocation or path.
+5. Confirm the plugin activates, reads only the launch directory and canonical locator
+   before the exact target, validates the target, and returns the stored goal without a
+   first-setup question or broad search.
+6. Inspect the Surf MCP trace and confirm no locator value, practice content or participant
+   content was supplied in any tool argument.
+7. Repeat the return with explicit plugin invocation and confirm identical discovery.
+8. Separately exercise absent, malformed JSON, duplicate-key, unknown-version, stale-target
+   and filesystem-denied locator states. Only absence may offer bounded discovery; every
+   invalid or inaccessible state remains read-only and asks for direction without search.
+9. Confirm a valid launch-directory practice wins without any locator read. Confirm a
+   validated, person-confirmed move safely replaces the pointer, and deleting only the
+   locator leaves the practice intact and restores the no-global-discovery state.
+
+The dated implementation record and current live-test limitations are in
+[practice-locator acceptance evidence](evidence/2026-08-13-practice-locator-acceptance.md).

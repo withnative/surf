@@ -22,6 +22,8 @@ for the GitHub flows, direct MCP fallback, updates, privacy, and troubleshooting
 Surf launches with three intentionally matching but independently versioned identities:
 the **Surf application version**, **working framework version**, and **plugin package
 version** are each `0.1.0`. Their future releases do not need to remain in lockstep.
+The locator guidance is the first independent package update: the current plugin package
+is `0.1.1`, while the application and working framework remain `0.1.0`.
 
 ## Start in one line
 

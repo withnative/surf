@@ -10,6 +10,7 @@ flowchart LR
     Agent -->|"quickstart, get_guide, get_reference, get_doc"| Surf["Public stateless Surf server"]
     Surf -->|"Working framework and product docs"| Agent
     Agent <--> Files["Person-controlled local practice files"]
+    Agent <--> Locator["User-home pointer to the confirmed practice"]
     Agent <--> Provider["Claude or OpenAI service"]
     Surf -.-> Source["Exact public source revision"]
 ```
@@ -60,6 +61,13 @@ The person confirms a durable, dedicated folder. Inside it, a readable map point
 current agreement, person understanding, plan, dated reports and reviews, any live
 experiment, and the working-framework provenance stamp. The framework uses mapped meanings
 rather than assuming that every practice has an identical optional structure.
+
+A separate locator at one documented path in the user's home contains only a schema
+version and the confirmed practice's absolute path. On a return, the agent first checks
+the launch directory. A valid practice there wins and the locator is not read. Otherwise
+the agent reads that one pointer, validates the exact target through its marker, map and
+framework record, and fails closed rather than searching broadly when the pointer is
+invalid or inaccessible.
 
 This local model provides continuity across conversations while remaining inspectable and
 editable. The agent must label provenance, preserve original reports, keep current state

@@ -16,7 +16,7 @@ ENDPOINT = "https://surf.withnative.ai/mcp"
 PLUGIN_NAME = "surf"
 MARKETPLACE_NAME = "withnative"
 PLUGIN_PATH = "./plugins/surf"
-PLUGIN_VERSION = "0.1.0"
+PLUGIN_VERSION = "0.1.1"
 
 
 class ValidationError(Exception):
@@ -69,7 +69,7 @@ def validate() -> None:
         )
         require(
             manifest["version"] == PLUGIN_VERSION,
-            f"{label} plugin package version must remain {PLUGIN_VERSION} for this release",
+            f"{label} plugin package version must be {PLUGIN_VERSION} for this release",
         )
         require(manifest.get("skills") == "./skills/", f"{label} must use canonical skills")
         require(

@@ -6,6 +6,16 @@ Role: Useful landmarks while Surf's pre-production framework remains freely revi
 
 Surf currently has one working framework, `0.1.0`. Until a real production practice depends on it, the framework may be revised in place. Git history and review records preserve the development record; entries here are landmarks, not compatibility promises.
 
+## Deterministic practice locator — 13 August 2026
+
+- Adds one user-level locator for returning to a confirmed movable practice from another
+  launch directory.
+- Gives a valid launch-directory practice precedence and otherwise permits only the exact
+  platform locator read before person-approved bounded recovery.
+- Defines the two-field locator schema, fail-closed outcomes, combined setup consent,
+  idempotent safe replacement and move, delete, backup and sandbox-denial behaviour.
+- Keeps the locator and all practice content out of Surf MCP calls.
+
 ## Quickstart and reference architecture — 13 August 2026
 
 - Recasts quickstart as a compact product spine and top-level router.

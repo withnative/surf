@@ -29,6 +29,7 @@ document choice and the content compiled into the running build.
 
 Surf's tool schemas do not accept:
 
+- the local locator path or its contents;
 - the contents of the local practice folder;
 - the person's reports, working agreement, profile, plan, or reviews;
 - a participant identity or practice identifier;
@@ -58,6 +59,21 @@ The practice persists in ordinary files at a location the person confirms. The a
 them for continuity across conversations and should keep them readable, provenance-aware,
 and correctable. A person can inspect, edit, exclude, move, back up, share, or delete those
 files using the controls available on their machine.
+
+Cross-directory continuity uses a separate two-field pointer at
+`$HOME/.surf/locator.json` on macOS/Linux or
+`%USERPROFILE%\.surf\locator.json` on Windows. It contains a schema version and the
+fully expanded absolute path of the confirmed practice, not learning content or a Surf
+account identifier. A valid practice in the launch directory takes precedence, so the
+agent does not read this user-level pointer in that case. Otherwise the agent reads only
+this exact path before asking permission for any bounded recovery search.
+
+The locator is inspectable and independently removable. Deleting it leaves the practice
+untouched and returns Surf to the no-global-discovery state. Moving or restoring a
+practice requires validating the destination and confirming the pointer update; backing
+up the locator alone does not back up the learning record. The path itself can reveal
+information such as a local account name or folder choice to the AI client and provider,
+but it is not an input to Surf's MCP tools.
 
 Those choices have consequences outside Surf. Device accounts, filesystem permissions,
 cloud sync, backups, repositories, collaboration tools, and workplace administration may
@@ -99,7 +115,8 @@ Before activating a practice:
 2. understand which AI provider and account will process the files;
 3. keep the practice scoped to information appropriate for that environment;
 4. inspect and correct the local record as it develops;
-5. use the person's explicit correction, exclusion, and deletion choices as controlling
+5. inspect, move, back up or remove the separate locator as their continuity needs change;
+6. use the person's explicit correction, exclusion, and deletion choices as controlling
    instructions.
 
 For the component roles and request flow, see
