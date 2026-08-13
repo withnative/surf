@@ -1,0 +1,110 @@
+<!doctype html>
+<!-- Copyright © 2026 AI Native Work, Inc.
+     SPDX-License-Identifier: AGPL-3.0-or-later -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Surf</title>
+<meta name="description" content="Techniques go stale. Build a way of working with agents that keeps adapting — starting from where you are. Public, no account, everything stays on your machine.">
+<link rel="stylesheet" href="/assets/landing.css">
+</head>
+<body>
+
+<header class="site"><div class="wrap"><div class="bar">
+  <span class="mark">Surf</span>
+  <span class="by"><a href="https://github.com/withnative/surf" aria-label="Surf on GitHub" title="GitHub"><svg aria-hidden="true" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.3-.4 6.8-1.6 6.8-7A5.4 5.4 0 0 0 19.4 4 5 5 0 0 0 19.3.5S18.2.1 15 1.8a13.4 13.4 0 0 0-7 0C4.8.1 3.7.5 3.7.5A5 5 0 0 0 3.6 4a5.4 5.4 0 0 0-1.4 3.7c0 5.3 3.5 6.5 6.8 7A4.8 4.8 0 0 0 8 18v4"/><path d="M8 19c-3 .9-3-1.5-4-2"/></svg></a></span>
+</div></div></header>
+
+<main class="wrap">
+
+  <div class="fold"><div class="grid">
+
+    <div class="hero">
+      <p class="desc">Free and open source</p>
+      <h1>Surf the AI frontier</h1>
+      <p class="standfirst">Techniques go stale. Build a way of working with agents that keeps adapting &mdash; starting from where you are.</p>
+    </div>
+
+    <aside class="card" aria-labelledby="quickstart-heading">
+      <h2 id="quickstart-heading">Quickstart with one line</h2>
+      <div class="fence" id="setup-prompt">Help me add <span class="nb">https://surf.withnative.ai/mcp</span> as a connector, then use its quickstart tool</div>
+      <button class="copy" type="button" data-copy="Help me add https://surf.withnative.ai/mcp as a connector, then use its quickstart tool" data-copies="setup-prompt">Copy setup prompt</button>
+      <p class="status" role="status" aria-live="polite"></p>
+      <dl>
+        <dt>Widely supported</dt><dd>Claude or ChatGPT</dd>
+        <dt>Free, forever</dt><dd>No paid tiers, no fees</dd>
+        <dt>Nothing hidden</dt><dd>Open source</dd>
+        <dt>Built around you</dt><dd>Adapts to your work context</dd>
+        <dt>Keeps evolving</dt><dd>Moves with the frontier</dd>
+      </dl>
+      <a class="repo" href="https://github.com/withnative/surf">Learn more about Surf on GitHub &rarr;</a>
+    </aside>
+
+    <div class="beats-wrap">
+      <ol class="beats">
+        <li><span><b>Set up in one line.</b> Surf is a simple, free add-on to Claude Desktop and ChatGPT Desktop.</span></li>
+        <li><span><b>Calibrate your path.</b> Surf learns how you currently work with AI and what you want to achieve.</span></li>
+        <li><span><b>Learn from real moments.</b> Surf suggests targeted next steps based on what happens in your work.</span></li>
+        <li><span><b>Adapt as AI changes.</b> Surf adjusts your path as your skills, ambitions, tools, and models evolve.</span></li>
+      </ol>
+    </div>
+
+  </div></div>
+
+</main>
+
+<footer class="site"><div class="row">
+  <span>Built by <a href="https://withnative.ai">Native</a></span>
+  <span><a href="/source">Source for this version</a></span>
+</div></footer>
+
+<script>
+document.addEventListener('click', function (event) {
+  var target = event.target;
+  var button = target && target.closest ? target.closest('.copy') : null;
+  if (!button) { return; }
+
+  var card = button.closest('.card') || document;
+  var status = card.querySelector('.status');
+  var label = button.dataset.label || button.textContent;
+  button.dataset.label = label;
+
+  function announce(message, reset) {
+    button.textContent = reset === false ? label : message;
+    if (status) { status.textContent = message; }
+    window.clearTimeout(button.resetTimer);
+    button.resetTimer = window.setTimeout(function () {
+      button.textContent = label;
+      if (status) { status.textContent = ''; }
+    }, 3000);
+  }
+
+  // Clipboard access can be absent (no secure context) or refused (permission,
+  // focus, user setting). Either way, select the prompt so it can be copied by
+  // hand and say so, rather than failing silently.
+  function fallback() {
+    var source = document.getElementById(button.dataset.copies);
+    var selected = false;
+    if (source && window.getSelection && document.createRange) {
+      var range = document.createRange();
+      range.selectNodeContents(source);
+      var selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      selected = true;
+    }
+    var shortcut = /Mac|iPhone|iPad/.test(navigator.platform || '') ? '⌘C' : 'Ctrl+C';
+    announce(selected
+      ? 'Selected — press ' + shortcut + ' to copy'
+      : 'Copy failed — select the prompt above', false);
+  }
+
+  if (!navigator.clipboard || !navigator.clipboard.writeText) { fallback(); return; }
+  navigator.clipboard.writeText(button.dataset.copy).then(function () {
+    announce('Copied');
+  }, fallback);
+});
+</script>
+</body>
+</html>

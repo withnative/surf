@@ -1,0 +1,57 @@
+name: Bug report
+description: Report reproducible incorrect behaviour in Surf
+title: "[Bug]: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Surf. Describe the fix instead of pasting a patch: material intentionally submitted here is offered under the inbound terms in CONTRIBUTING.md. Pull requests are by invitation only. Do not include secrets or security vulnerabilities here; follow SECURITY.md for private reporting.
+  - type: input
+    id: version
+    attributes:
+      label: Surf version or source commit
+      description: Use the version and source link reported by the service.
+      placeholder: "Release, full commit SHA, or source URL"
+    validations:
+      required: true
+  - type: dropdown
+    id: client
+    attributes:
+      label: Client
+      options:
+        - Claude Desktop
+        - ChatGPT Desktop
+        - Claude Code CLI
+        - Codex CLI
+        - Direct HTTP or MCP request
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour and reproduction steps
+      description: Include the smallest reproducible sequence and sanitised output.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include operating system and client version where relevant.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I removed credentials, personal data and other confidential information.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true

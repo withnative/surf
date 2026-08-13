@@ -1,0 +1,21 @@
+{
+  "name": "withnative",
+  "owner": {
+    "name": "Native"
+  },
+  "description": "Native plugins for working and learning with AI agents",
+  "plugins": [
+    {
+      "name": "surf",
+      "source": "./plugins/surf",
+      "description": "Use Surf's current learning framework through its stateless MCP server",
+      "category": "Productivity",
+      "tags": [
+        "learning",
+        "practice",
+        "agents",
+        "mcp"
+      ]
+    }
+  ]
+}

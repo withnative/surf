@@ -1,0 +1,11 @@
+# This is the only currently verified withnative organization member with write
+# access. Phase 2 must add an eligible independent owner before requiring a
+# second human approval; do not substitute a read-only member here.
+* @richardcrng
+
+/.github/CODEOWNERS @richardcrng
+/.github/publication/ @richardcrng
+/.github/scripts/ @richardcrng
+/.github/workflows/ @richardcrng
+/.githooks/ @richardcrng
+/SECURITY.md @richardcrng

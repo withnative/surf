@@ -1,0 +1,47 @@
+name: Documentation or curriculum issue
+description: Suggest a correction or improvement to Surf's public material
+title: "[Docs]: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the improvement before writing it. Material intentionally submitted here is offered under the inbound terms in CONTRIBUTING.md. Pull requests are by invitation only. Do not include secrets or security vulnerabilities here; follow SECURITY.md for private reporting.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Material
+      options:
+        - Product documentation
+        - Framework guidance
+        - Compatibility information
+        - Repository policy
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Location and version
+      description: Link to the file or identify the framework release and guide.
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: What is unclear, incorrect or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested change
+  - type: checkboxes
+    id: provenance
+    attributes:
+      label: Content check
+      options:
+        - label: I have identified any quoted or third-party material and its source.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true

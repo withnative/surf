@@ -1,0 +1,19 @@
+[licenses]
+version = 2
+include-dev = true
+include-build = true
+confidence-threshold = 0.95
+unused-allowed-license = "deny"
+allow = [
+    "AGPL-3.0-or-later",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-3-Clause",
+    "MIT",
+    "Unicode-3.0",
+    "Unlicense",
+]
+
+# Check Surf itself even while the crate is marked `publish = false`.
+[licenses.private]
+ignore = false

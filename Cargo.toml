@@ -1,0 +1,36 @@
+[package]
+name = "surf"
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.85"
+description = "Public, stateless MCP server briefing agents on the human–agent learning loop."
+repository = "https://github.com/withnative/surf"
+license = "AGPL-3.0-or-later"
+publish = false
+
+[[bin]]
+name = "surf"
+path = "src/main.rs"
+
+[dependencies]
+# The whole runtime surface. There is no database, no auth, no client, and no
+# template engine on purpose — the framework text and the landing pages are
+# compiled in, so a deployed build is a fixed artefact and a version stamp on
+# someone's experiment record means something.
+axum = { version = "0.8", default-features = false, features = [
+    "http1",
+    "json",
+    "tokio",
+] }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal"] }
+
+[dev-dependencies]
+http-body-util = "0.1"
+sha2 = "0.10"
+tower = { version = "0.5", features = ["util"] }
+
+[profile.release]
+strip = true
+lto = "thin"

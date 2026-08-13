@@ -1,0 +1,38 @@
+{
+  "name": "surf",
+  "version": "0.1.0",
+  "description": "Use Surf's current learning framework through its stateless MCP server.",
+  "author": {
+    "name": "Native",
+    "url": "https://www.withnative.ai/"
+  },
+  "homepage": "https://surf.withnative.ai/",
+  "repository": "https://github.com/withnative/surf",
+  "license": "AGPL-3.0-or-later",
+  "keywords": [
+    "learning",
+    "practice",
+    "agents",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Surf",
+    "shortDescription": "Build a grounded practice with AI agents.",
+    "longDescription": "Connect to Surf's managed, stateless MCP server and use its current guidance to establish, continue, and review a learning practice in your own local files.",
+    "developerName": "Native",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ],
+    "websiteURL": "https://surf.withnative.ai/",
+    "privacyPolicyURL": "https://surf.withnative.ai/docs/privacy-and-data",
+    "defaultPrompt": [
+      "Help me get started with Surf.",
+      "Help me capture what I learned from this work.",
+      "Review the evidence in my Surf practice."
+    ],
+    "brandColor": "#166B68"
+  },
+  "mcpServers": "./.mcp.json"
+}

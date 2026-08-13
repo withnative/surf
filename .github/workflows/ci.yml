@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@1.85
+        with:
+          components: rustfmt
+
+      - name: cargo fmt --check
+        run: cargo fmt --check
+
+      - name: cargo check --locked
+        run: cargo check --locked
+
+      - name: cargo test --locked
+        run: cargo test --locked
+
+      - name: Validate Claude and OpenAI plugin packages
+        run: python3 .github/scripts/check-plugin-packages.py
+
+      - name: Validate the explicit public-tree boundary
+        run: |
+          python3 .github/scripts/test_publication_boundary.py
+          python3 .github/scripts/test_public_push_guard.py
+          python3 .github/scripts/check_publication_boundary.py check
+
+  dependency-licenses:
+    name: dependency licences
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check locked dependency licences
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check licenses
+
+  source-provenance:
+    name: source provenance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@1.85
+
+      - name: Verify ordinary, production, invalid, and archive builds
+        run: .github/scripts/check-source-builds.sh
+
+      - name: Build a local image with visibly unavailable source metadata
+        run: docker build -t surf:local .
+
+      - name: Build an image with explicit verified public source metadata
+        env:
+          SURF_GIT_SHA: 0123456789abcdef0123456789abcdef01234567
+        run: >-
+          docker build
+          --build-arg SURF_GIT_SHA="$SURF_GIT_SHA"
+          --build-arg SURF_SOURCE_URL="https://github.com/withnative/surf/commit/$SURF_GIT_SHA"
+          -t surf:verified .
+
+      - name: Reject a Docker build with mismatched source metadata
+        run: >-
+          ! docker build
+          --build-arg SURF_GIT_SHA=0123456789abcdef0123456789abcdef01234567
+          --build-arg SURF_SOURCE_URL=https://github.com/withnative/surf/commit/ffffffffffffffffffffffffffffffffffffffff
+          -t surf:invalid .

@@ -1,0 +1,8 @@
+# Keep the build context to what the binary actually compiles from.
+# docs/, framework/, and web/ are deliberately NOT excluded — include_str! needs them.
+target/
+.git/
+.github/
+.claude/
+Dockerfile
+.dockerignore

@@ -1,0 +1,52 @@
+name: Publication guard
+
+on:
+  pull_request:
+  push:
+    branches: ['**']
+    tags: ['**']
+
+permissions:
+  contents: read
+
+jobs:
+  introduced-objects:
+    name: publication guard / introduced objects and refs
+    if: github.repository == 'withnative/surf'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout complete public history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify guard tests and scanner acquisition
+        run: |
+          .github/scripts/install-gitleaks.sh
+          python3 .github/scripts/test_publication_boundary.py
+          python3 .github/scripts/test_public_push_guard.py
+
+      - name: Scan exactly the introduced Git objects and commit trees
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.event.after }}
+          REF: ${{ github.ref }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          zero=0000000000000000000000000000000000000000
+          if test "$EVENT_NAME" = pull_request; then
+            python3 .github/scripts/guard_public_push.py ci-range "$PR_HEAD_SHA" "$BASE_SHA"
+          elif test "$AFTER" = "$zero"; then
+            : # A deletion introduces no object.
+          elif test "${REF#refs/tags/}" != "$REF"; then
+            # GitHub's push event SHA is the peeled commit for an annotated tag.
+            # Resolve and scan the actual tag object and its whole reachable graph.
+            tag_object=$(git rev-parse --verify "${REF}^{object}")
+            python3 .github/scripts/guard_public_push.py ci-range "$tag_object"
+          elif test -n "$BEFORE" && test "$BEFORE" != "$zero"; then
+            python3 .github/scripts/guard_public_push.py ci-range "$AFTER" "$BEFORE"
+          else
+            python3 .github/scripts/guard_public_push.py ci-range "$AFTER"
+          fi
