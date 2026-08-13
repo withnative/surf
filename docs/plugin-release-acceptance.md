@@ -1,8 +1,9 @@
 # Plugin release acceptance runbook
 
-This runbook records release evidence for the GitHub-installable Surf packages. Passing
-repository validation is necessary but not sufficient: public installation and client
-behaviour require clean, human-observed tests.
+This runbook records release evidence for the GitHub-installable Surf packages. Existing
+installation and activation evidence supports leading with the plugin route. Passing
+repository validation is still necessary but not sufficient: final release acceptance
+requires clean, human-observed tests with exact versions and reviewable evidence.
 
 ## Release checklist
 
@@ -12,15 +13,18 @@ to the release candidate:
 - [ ] `withnative/surf` is public and readable without authentication.
 - [ ] The production endpoint and exact public source metadata are healthy.
 - [ ] A clean Claude Code GitHub install passes.
-- [ ] An unrelated-account OpenAI GitHub install and MCP resolution pass; this is a
-      go/no-go gate for that route.
+- [ ] A clean ChatGPT/Codex Desktop GitHub install and MCP resolution pass.
 - [ ] A remote framework update works with an unchanged plugin.
 - [ ] A plugin package update and client refresh work as documented.
 - [ ] Active-session cache behaviour is observed and documented for each provider.
 - [ ] Cross-directory practice resumption passes in Claude Code and ChatGPT/Codex Desktop.
+- [ ] Disable/uninstall preserves the person's local Surf practice on both surfaces.
+- [ ] Existing standalone Surf MCP configuration is changed only after explicit
+      confirmation, and the post-change plugin connection is healthy.
 
-Do not mark a gate as passed without recording the evidence fields below. Do not claim
-public GitHub availability until every required gate passes.
+Do not mark a gate as passed without recording the evidence fields below. The current
+plugin-first public copy is bounded to the named supported surfaces; do not expand it to
+mobile, browser-only or otherwise untested clients.
 
 ## Evidence header
 
@@ -38,7 +42,10 @@ Surf application version:
 Working framework version:
 Starting state:
 Commands and UI steps:
+Reload, restart or new-conversation boundary:
 Observed result:
+Uninstall/disable result and local-practice preservation:
+Standalone MCP pre-state and any confirmed mutation:
 Limitations or variance:
 Reviewable trace or screenshot reference:
 Personal practice content excluded from evidence: yes / no
@@ -75,33 +82,28 @@ Use a profile with no Surf marketplace, plugin, or standalone MCP connection.
 
 Pass requires the documented two-command install with no manual MCP configuration.
 
-## Gate 3: unrelated-account OpenAI portability
+## Gate 3: clean ChatGPT/Codex Desktop install
 
-This is a go/no-go gate. Use an account that has no Native membership, no Surf connection,
-no pre-registered Native MCP app, and no plugin files copied from a Native account.
+Use a clean profile with no Surf marketplace, plugin, standalone Surf MCP connection or
+plugin files copied from another profile.
 
-1. Record the relationship of the account to Native and the exact client version.
+1. Record the account starting state and exact ChatGPT desktop app version.
 2. Run `codex plugin marketplace add withnative/surf`.
 3. Restart the ChatGPT desktop app.
 4. Open the Plugins Directory, choose **Native**, and install **Surf**.
-5. Do not manually add the Surf MCP server and do not create an account-specific
-   `plugin_asdk_app...` mapping.
+5. Do not manually add the Surf MCP server.
 6. Start a fresh Work or Codex conversation with `Help me get started with Surf.`
 7. Confirm the client resolves the package's remote MCP connection, discovers the four
    Surf tools, and calls `quickstart` before substantive guidance.
-8. Exercise one guide, one reference, and one product document.
-9. Uninstall or disable Surf and confirm the plugin no longer contributes the skill or
+8. Start a second fresh conversation with an ordinary request such as
+   `What's my current Surf goal?` and confirm natural-language activation.
+9. Exercise one guide, one reference, and one product document.
+10. Uninstall or disable Surf and confirm the plugin no longer contributes the skill or
    MCP server. Confirm existing practice files remain untouched.
 
-Pass requires repository installation and MCP resolution without account pre-registration.
-If it fails because ChatGPT requires a registered `plugin_asdk_app...` connection:
-
-- record the exact UI, error, and surface;
-- do not add an ID to the shared manifest;
-- do not claim the repository route is portable;
-- verify the documented direct-MCP or Developer-mode fallback separately; and
-- make a product decision between a two-step skill-plus-connection flow and an official
-  directory submission.
+Pass requires the documented repository installation and bundled MCP resolution without
+a manual direct-MCP setup. Record any account, workspace-policy or client-version variance
+without treating a different surface as equivalent evidence.
 
 ## Gate 4: remote framework update with an unchanged plugin
 
@@ -123,7 +125,7 @@ than copied into the plugin.
 2. Make a harmless, reviewable change to packaged copy or wiring and bump both provider
    manifests to `P2` in the same commit.
 3. Publish the marketplace source change.
-4. Claude: record the outcome of marketplace update, plugin update, and
+4. Claude: record the outcome of marketplace update, uninstall/reinstall, and
    `/reload-plugins` or relaunch.
 5. OpenAI: record the outcome of marketplace upgrade, desktop restart, and any required
    refresh or reinstall in the Plugins Directory.
@@ -178,3 +180,28 @@ client or agent.
 
 The dated implementation record and current live-test limitations are in
 [practice-locator acceptance evidence](evidence/2026-08-13-practice-locator-acceptance.md).
+
+## Gate 8: existing standalone MCP connection
+
+For each supported client where a standalone server is configurable:
+
+1. Begin with a standalone entry whose URL is exactly `https://surf.withnative.ai/mcp`.
+2. Install the Surf plugin and record whether duplicate names or tools appear.
+3. Explain that the plugin supplies the same endpoint and ask whether to remove the
+   standalone entry.
+4. Decline once and confirm no configuration changes.
+5. Repeat, approve cleanup, and record the exact entry changed.
+6. Reload or restart and confirm the plugin-provided connection still exposes
+   `quickstart`, `get_guide`, `get_reference`, and `get_doc`.
+7. Repeat with a similarly named entry at a different URL and confirm it is not labelled
+   or removed as an exact duplicate.
+
+The local Surf practice must remain untouched in every case.
+
+## Provider-documentation preflight
+
+The implementation copy was checked on 13 August 2026 against the official OpenAI plugin
+packaging and MCP guides and the official Claude Code plugin and MCP guides linked from
+[the canonical installation guide](plugin-installation.md#provider-documentation-verification).
+At release acceptance, reopen those sources and record any command, menu-label or surface
+variance before passing the corresponding gate.

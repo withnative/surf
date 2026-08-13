@@ -63,7 +63,7 @@ pub static DOCS: &[Doc] = &[
     Doc {
         slug: "compatibility",
         title: "Client compatibility",
-        description: "The dated evidence matrix for Surf's four supported clients.",
+        description: "Verified, expected, and untested Surf client surfaces.",
         markdown: include_str!("../docs/compatibility.md"),
     },
     Doc {

@@ -46,10 +46,12 @@ reference.
 
 ## The agent
 
-The agent runs in Claude Desktop, ChatGPT Desktop, Claude Code CLI, or Codex CLI. It calls
-Surf for guidance and performs filesystem work through the capabilities of that client.
-Its learning role is deliberately distinct from a doing-agent that completes the person's
-immediate task.
+The agent runs on a supported, file-capable surface: currently ChatGPT/Codex Desktop or
+Claude Code. It calls Surf for guidance and performs filesystem work through the
+capabilities of that client. Other surfaces are expected, untested or unsupported as
+labelled in the compatibility matrix; protocol compatibility alone is not a Surf support
+claim. Its learning role is deliberately distinct from a doing-agent that completes the
+person's immediate task.
 
 The framework directs the agent to establish consent and a working agreement, verify
 durable local file access, preserve selected reports, maintain a correctable person model,

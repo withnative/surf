@@ -4,6 +4,9 @@ This is the catalogue of Surf's public product documentation. The Markdown files
 directory are canonical: the same content is available in GitHub, over plain HTTP, as MCP
 resources, and through Surf's `get_doc` tool.
 
+To install Surf in ChatGPT/Codex Desktop or Claude Code, start with the
+[canonical plugin installation guide](plugin-installation.md).
+
 Product documentation explains Surf itself. It is separate from the working framework
 returned by `quickstart`, `get_guide`, and `get_reference`, which guides a person's Surf
 practice.
@@ -21,10 +24,10 @@ practice.
 | [About Richard](https://github.com/withnative/surf/blob/main/docs/about-richard.md) | `about-richard` | Richard Ng's creator story, biography, and relationship to Native |
 | [Working framework and source](https://github.com/withnative/surf/blob/main/docs/releases-and-source.md) | `releases-and-source` | Pre-production framework policy and exact running source |
 
-Repository-maintainer documents that are not served as product-document topics:
+Installation and release documents that are not served as product-document topics:
 
-- [Plugin installation and management](plugin-installation.md)
-- [Plugin release acceptance runbook](plugin-release-acceptance.md)
+- [Plugin installation and management](plugin-installation.md) — public user guide
+- [Plugin release acceptance runbook](plugin-release-acceptance.md) — maintainer checklist
 
 Use `get_doc(topic)` with one of the slugs above. Where a client supports MCP resources,
 the equivalent URI is `surf://docs/{slug}`. Plain Markdown is available at

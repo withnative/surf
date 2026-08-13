@@ -1,85 +1,69 @@
 # Compatibility
 
-Surf's launch support target is deliberately narrow: Claude Desktop, ChatGPT Desktop,
-Claude Code CLI, and Codex CLI. The landing page may describe this as “Claude or ChatGPT,”
-but this matrix is the precise support record. Browser-only chat surfaces are not
-supported.
+Surf's public plugin-installation claim is deliberately narrow. The verified routes are
+**ChatGPT/Codex Desktop** and **Claude Code**. Each needs the Surf remote MCP connection
+and durable access to local files so the practice does not depend on chat memory.
 
-Support requires both:
+## Current surface status
 
-1. a connection to Surf's remote Streamable HTTP MCP endpoint; and
-2. durable access to local files across conversations so the practice does not depend on
-   chat memory.
+| Status | Surface | Installation route | Evidence and boundary |
+|---|---|---|---|
+| Verified | ChatGPT/Codex Desktop on macOS | `codex plugin marketplace add withnative/surf`, then **Plugins Directory → Native → Surf → Install** | Human installation plus agent-led repository-link installation and activation on 13 August 2026. Final clean-GUI acceptance still needs the exact app version and reviewable trace recorded. |
+| Verified | Claude Code CLI on macOS | `/plugin marketplace add withnative/surf`, then `/plugin install surf@withnative` | Plugin installation and natural-language activation observed on Claude Code 2.1.222; direct-MCP baseline also observed on 2.1.231. Final clean uninstall/update acceptance remains to be recorded. |
+| Expected, not claimed | Claude Code desktop app | Product-native plugin browser | Official Claude documentation describes plugin management there, but Surf has not recorded the complete clean-install evidence required for a public support claim. |
+| Untested / unsupported | ChatGPT mobile, browser-only chats, Claude.ai, Claude mobile, other MCP clients | None promised | The repository marketplace flow and durable local-file practice have not passed Surf acceptance on these surfaces. |
 
-## Indicative verification matrix
+“Verified” here means the route has positive installation and activation evidence strong
+enough to be the public journey. It does not replace the dated human release checklist.
+Do not expand support by implication: protocol compatibility alone is not a Surf support
+claim.
 
-The four clients below are Surf's current focus. Fresh end-to-end checks provide indicative
-evidence, not a mechanical release gate. Record exact versions, operating systems, dates,
-results, and limitations so product judgement can distinguish framework defects from
-client or model variance and evaluator ambiguity.
-
-| Client | Surface | OS and client version | Verification date | Remote MCP | Durable local files | Status | Evidence / limitations |
-|---|---|---|---|---|---|---|---|
-| Claude Desktop | Desktop | Not yet recorded | Not yet recorded | Required | Required | Verification pending | Add a reviewable evidence reference |
-| ChatGPT Desktop | Desktop | Not yet recorded | Not yet recorded | Required | Required | Verification pending | Add a reviewable evidence reference |
-| Claude Code | CLI | macOS, 2.1.231 | 2026-08-13 | Candidate exercised | Native filesystem access | Positive candidate evidence | Local working framework version 0.1.0 probes; explicit MCP allow rules required in noninteractive `dontAsk` mode. See [CLI acceptance evidence](evidence/2026-08-13-cli-acceptance.md). |
-| Codex | CLI | macOS, 0.147.0 | 2026-08-13 | Candidate exercised | Native filesystem access | Positive candidate evidence | Local working framework version 0.1.0 probes; per-server tool approval required in noninteractive mode. See [CLI acceptance evidence](evidence/2026-08-13-cli-acceptance.md). |
-
-Do not expand this table by implication. A protocol-compatible client may work without
-being a supported client; record it separately until the full verification standard has
-been met.
-
-## Plugin distribution release gates
-
-The GitHub plugin packages have a stricter distribution gate than the indicative client
-matrix above. A clean Claude Code install must work from `withnative/surf`, and an
-unrelated OpenAI account with no pre-registered Native connection must install the
-repository marketplace package and resolve its MCP tools. Until both pass, Surf must not
-claim public GitHub plugin availability. The complete procedure and evidence template are
-in the [plugin release acceptance runbook](plugin-release-acceptance.md).
+See the [canonical installation guide](plugin-installation.md) for exact steps, updates,
+uninstall, recovery and the direct MCP fallback.
 
 ## End-to-end verification standard
 
-For each client, record evidence that a fresh installation can:
+For each claimed surface, clean human acceptance must record evidence that it can:
 
-1. add `https://surf.withnative.ai/mcp` without a Surf account or credential;
-2. initialize successfully and show the Surf identity;
+1. install Surf from `https://github.com/withnative/surf` through the documented plugin
+   route without a pre-existing standalone Surf MCP connection;
+2. initialize the plugin-provided `https://surf.withnative.ai/mcp` connection;
 3. discover `quickstart`, `get_guide`, `get_reference`, and `get_doc`;
-4. call `quickstart` before a user-facing learning-loop reply;
-5. choose and retrieve a primary moment guide that fits the interaction;
-6. retrieve a relevant authored reference and product documentation;
+4. activate through both the documented explicit invocation and an ordinary Surf request;
+5. call `quickstart` before a user-facing learning-loop reply;
+6. retrieve a relevant guide, reference and product document;
 7. create or resume a practice in a person-confirmed durable local folder;
 8. write the confirmed user-home locator and recover the same validated practice from an
    unrelated launch directory in a new conversation without broad filesystem search;
-9. distinguish authored references from MCP resources; and
-10. surface an honest limitation when remote MCP or durable file access is unavailable.
+9. update or refresh the plugin using the documented client boundary;
+10. uninstall or disable the plugin without deleting the local practice;
+11. recover after a missing-tool or duplicate-connection condition without silently
+    changing a standalone connection;
+12. distinguish authored references from MCP resources; and
+13. surface an honest limitation when remote MCP or durable file access is unavailable.
 
-The evidence record should include the operating system, architecture where relevant,
-client name and exact version, Surf application version, working framework version, plugin
-package version where installed, test date,
-tester, setup path, observed result, limitations, and a reviewable trace or reference that
-does not disclose personal practice content. Report positive evidence, likely framework
-defects, client/model variance, and evaluator fragility separately; avoid frozen wording
-matchers or a single aggregate pass rate.
+Record the operating system and architecture, exact client version, Surf application,
+framework and plugin versions, date and timezone, tester, exact commands and UI paths,
+reload/restart behaviour, observed result, limitations, and a reviewable trace or
+screenshot reference that contains no personal practice content. The complete template is
+in the [plugin release acceptance runbook](plugin-release-acceptance.md).
 
-## Capability notes
+## Direct MCP compatibility
 
-Desktop clients can change how connectors, local tools, projects, and filesystem access
-are configured. CLI clients can change MCP configuration formats and permission prompts.
-The matrix therefore records tested client versions instead of claiming that every past
-or future client release works.
+Direct MCP connection remains a supported fallback on the same file-capable surfaces. It
+supplies Surf's live tools but not the plugin's trigger skill, so the person must ask the
+agent to call `quickstart` at the beginning of a fresh Surf conversation.
 
-Some clients cache MCP server metadata or tool schemas. If a verification uses an existing
-connection, remove and reconnect it before treating old names or missing tools as a Surf
-failure. Record that step in the evidence rather than assuming a refresh occurred.
+A client with remote MCP but no durable local files can read Surf documentation but cannot
+run the longitudinal practice as supported. A client with files but no remote MCP cannot
+retrieve the current managed framework. Self-hosted Surf forks are not covered by the
+official endpoint's compatibility claim.
 
-## Unsupported and unverified environments
-
-- Browser-only chat cannot maintain the required local file practice.
-- A client with remote MCP but no durable local files can read Surf documentation but
-  cannot run the longitudinal practice as supported.
-- A client with files but no remote MCP cannot retrieve the current managed framework.
-- Self-hosted Surf forks are not covered by the official endpoint's compatibility claim.
+Some clients cache installed packages, MCP metadata or tool schemas. After installation or
+update, use the documented reload, restart and new-conversation boundary before reporting
+a Surf failure. Client UI and configuration formats can change, so the acceptance record
+must name the tested version rather than assuming every past or future release behaves the
+same way.
 
 For the architectural reason behind these requirements, see
 [how Surf works](https://github.com/withnative/surf/blob/main/docs/how-surf-works.md).

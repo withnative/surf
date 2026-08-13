@@ -33,6 +33,26 @@ MCP lets an agent retrieve the current framework at the moment it needs it, with
 person installing or upgrading a separate program. Local files retain the person's
 evidence and control. Read [why MCP](https://github.com/withnative/surf/blob/main/docs/why-mcp.md).
 
+## How do I install Surf?
+
+Paste `Help me install Surf from https://github.com/withnative/surf and get started.` into
+ChatGPT/Codex Desktop or Claude Code. The agent can follow the product-native plugin flow.
+For deterministic commands, updates, uninstall and recovery, use the
+[canonical installation guide](https://github.com/withnative/surf/blob/main/docs/plugin-installation.md).
+Direct MCP connection remains a supported fallback at `https://surf.withnative.ai/mcp`.
+
+## What lives in the plugin?
+
+The installed plugin supplies Surf's trigger skill and MCP connection. The managed MCP
+service supplies current Surf guidance. Your practice remains in ordinary local files you
+control; it is not stored in the plugin or the Surf application.
+
+## Will uninstalling Surf delete my practice?
+
+No. Disabling or uninstalling the plugin removes its packaged skill and connection, not
+the local practice files you chose to keep. You can inspect, move, back up or delete those
+files yourself. See [privacy and data](https://github.com/withnative/surf/blob/main/docs/privacy-and-data.md).
+
 ## Why is Surf open source?
 
 Inspectability is part of Surf's trust claim. Anyone can examine the server, framework,
@@ -47,11 +67,10 @@ infrastructure and AI-provider costs for its operator or users.
 
 ## Which Claude and ChatGPT clients work?
 
-Surf focuses on Claude Desktop, ChatGPT Desktop, Claude Code CLI, and Codex CLI. A client
-must support the remote MCP connection and durable local file access needed by the
-practice. Browser-only chat surfaces are not supported. See the dated
-[compatibility matrix](https://github.com/withnative/surf/blob/main/docs/compatibility.md);
-do not infer support for an unlisted client.
+Surf's verified plugin routes are ChatGPT/Codex Desktop and Claude Code. Other desktop,
+browser and mobile surfaces are expected, untested or unsupported as labelled in the
+[compatibility matrix](https://github.com/withnative/surf/blob/main/docs/compatibility.md).
+Do not infer support for an unlisted client.
 
 ## Does Surf read or store my files?
 

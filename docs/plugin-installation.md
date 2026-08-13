@@ -1,195 +1,187 @@
 # Install and manage the Surf plugin
 
-## Availability and acceptance
+This is the canonical guide for installing, updating, removing and recovering Surf on
+its supported plugin surfaces.
 
-The packages in this repository are distributed from `withnative/surf`. Before promoting
-an installation route as supported, maintainers must record a clean pass in
-[the plugin release runbook](plugin-release-acceptance.md). In particular, the OpenAI
-route must work from an unrelated account with no pre-existing Native connection.
+## Start with the repository link
 
-If the repository is unavailable or a client route has not passed its current acceptance
-check, use the direct MCP connection described under
-[Fallback: connect Surf without the plugin](#fallback-connect-surf-without-the-plugin).
+Paste this into **ChatGPT/Codex Desktop** or **Claude Code**:
 
-## What the plugin installs
+```text
+Help me install Surf from https://github.com/withnative/surf and get started.
+```
 
-The Claude and OpenAI catalogues both point to `plugins/surf`. The package contains:
+The agent should inspect the public repository, use the product-native plugin flow below,
+and ask before changing an existing standalone Surf MCP connection. If you are on mobile,
+in a browser-only chat, or on another unlisted surface, use a supported desktop client
+instead; the plugin flow and durable local-file practice are not verified there.
 
-- one concise, provider-neutral Surf skill;
-- a connection to `https://surf.withnative.ai/mcp`; and
-- provider manifests that identify and present the package.
+## ChatGPT/Codex Desktop
 
-It does not contain a copy of Surf's changing framework or curriculum. The client caches
-the small package locally; the MCP server returns the current framework when the agent
-calls `quickstart`, `get_guide`, or `get_reference`.
+1. In a terminal, add the public repository marketplace:
+
+   ```sh
+   codex plugin marketplace add withnative/surf
+   ```
+
+2. Restart the ChatGPT desktop app.
+3. In Work or Codex mode, open the **Plugins Directory**.
+4. Select the **Native** source, open **Surf**, and choose **Install**.
+5. Start a new conversation and say `Help me get started with Surf.`
+
+To invoke Surf explicitly, choose `@surf` and add your request. Ordinary language such as
+`What's my current Surf goal?` can activate the Surf skill without an explicit mention.
+The skill should call `quickstart` before giving substantive Surf guidance.
+
+Use `/mcp` in the composer to inspect connected servers. The official OpenAI documentation
+covers [Git-backed repository marketplaces](https://developers.openai.com/plugins/build/plugins#add-a-marketplace-from-the-cli)
+and the [ChatGPT/Codex MCP controls](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
 
 ## Claude Code
 
-These commands use Claude Code's user scope, so Surf is available across projects:
+Run these commands inside an interactive Claude Code session. The default install scope is
+your user, so Surf is available across projects:
 
 ```text
 /plugin marketplace add withnative/surf
 /plugin install surf@withnative
 ```
 
-If the install summary asks for it, run:
+If the install summary says `Run /reload-plugins to activate.`, run:
 
 ```text
 /reload-plugins
 ```
 
-Start a new conversation and say, for example, `Help me get started with Surf.` The Surf
-skill should call `quickstart` before providing substantive Surf guidance. Use `/mcp` if
-you want to confirm that the plugin-provided `surf` server is connected.
+Start a new conversation and say `Help me get started with Surf.` To invoke the skill
+explicitly, use `/surf:surf`; ordinary Surf requests can activate it naturally too. Use
+`/mcp` to confirm the plugin-provided `surf` server is connected.
 
-Claude's marketplace and install flow is documented in the
-[official Claude Code plugin guide](https://code.claude.com/docs/en/discover-plugins).
+Anthropic documents these commands, user scope, reload behaviour and marketplace safety
+in its [Claude Code plugin guide](https://code.claude.com/docs/en/discover-plugins).
 
-## ChatGPT desktop and Codex
+## What the plugin installs
 
-The candidate repository-marketplace flow is:
+Both provider catalogues point to `plugins/surf`. The installed package contains:
 
-1. Run `codex plugin marketplace add withnative/surf` in a terminal.
-2. Restart the ChatGPT desktop app.
-3. Open the Plugins Directory and select the **Native** source.
-4. Find **Surf** and choose **Install**.
-5. Start a new Work or Codex conversation and say, for example,
-   `Help me get started with Surf.`
+- a small Surf trigger skill;
+- a connection to `https://surf.withnative.ai/mcp`; and
+- the provider manifests that identify and present Surf.
 
-The package includes a standard remote HTTP entry in `.mcp.json`. However, OpenAI's
-official packaging documentation also describes ChatGPT connections registered in
-Developer mode and referenced through account-created `plugin_asdk_app...` identifiers.
-No such identifier is committed here because the documentation does not establish that
-one account's identifier is portable to unrelated accounts.
+The roles stay separate:
 
-Therefore the five-step route above remains gated by the unrelated-account acceptance
-test. Do not present it as the normal installation route unless the runbook contains a
-dated pass for the current package and client version. OpenAI also notes that repository
-marketplaces are authoring, testing, and team-distribution sources whose availability can
-vary by surface. See the [official OpenAI packaging documentation](https://developers.openai.com/plugins/build/plugins).
+- **The installed plugin** supplies the trigger skill and MCP connection.
+- **The managed MCP service** supplies the current Surf framework and product guidance.
+- **Your local practice** remains in ordinary files at a location you confirm and control.
+
+The plugin does not contain your practice or a copy of Surf's changing framework. A fresh
+`quickstart`, `get_guide`, `get_reference`, or `get_doc` call receives content from the
+running managed service.
 
 ## Updates
 
-Surf has two independent update channels:
+Surf has two independent update channels.
 
-### Framework and curriculum updates
+### Framework and guidance updates
 
-Native deploys these to the managed MCP server. A fresh tool call receives the content in
-the running server build; no plugin release or client pull is required. Begin a new Surf
-conversation and let the skill call `quickstart` to establish a clean current context.
+Native deploys framework and product-document updates to the managed MCP service. No
+plugin release is needed. Start a new Surf conversation so the installed skill calls
+`quickstart` and establishes a clean, current context.
 
-An already-running conversation is not rewritten retroactively. It can retain previous
-tool results, and a client may retain discovered tool definitions until the connection or
-session is refreshed.
+Previous messages are not rewritten. An active conversation can retain earlier tool
+results, and a client can retain discovered tool definitions until a reload, restart or
+new conversation.
 
 ### Plugin package updates
 
-Changes to the skill, manifests, connection configuration, assets, hooks, or scripts need
-a new plugin package version and a client refresh.
+Changes to the skill, manifests or connection configuration require a new plugin package.
 
-For Claude Code:
+For ChatGPT/Codex Desktop:
 
-```text
-/plugin marketplace update withnative
-/plugin update surf@withnative
-/reload-plugins
-```
-
-Third-party Claude marketplaces have auto-update disabled by default. Users can enable it
-in `/plugin` under **Marketplaces**. Even when an update downloads in the background, the
-running session continues with the version it loaded until `/reload-plugins` or the next
-launch.
-
-For ChatGPT desktop and Codex:
-
-```text
+```sh
 codex plugin marketplace upgrade withnative
 ```
 
-Then restart the ChatGPT desktop app, refresh or reinstall Surf from the Plugins
-Directory if the updated version is not shown, and use a new conversation. OpenAI's
-repository marketplace documentation describes the local client as loading a cached
-installed copy rather than reading the source in place.
+Restart the ChatGPT desktop app, open **Plugins Directory → Native → Surf**, and apply an
+offered update. If the old version remains, uninstall and reinstall Surf from that card,
+then start a new conversation. OpenAI clients install a cached copy rather than reading
+the repository in place.
 
-## Uninstall
+For Claude Code, third-party marketplaces do not auto-update by default. Either enable
+auto-update for **withnative** under `/plugin` → **Marketplaces**, or refresh and reinstall
+deterministically:
 
-In Claude Code:
+```text
+/plugin marketplace update withnative
+/plugin uninstall surf@withnative
+/plugin install surf@withnative
+/reload-plugins
+```
+
+Skip `/reload-plugins` only when the install summary says the plugin is already active.
+Removing or reinstalling the plugin does not remove your local Surf practice.
+
+## Uninstall or disable
+
+In ChatGPT/Codex Desktop, open **Plugins Directory → Native → Surf** and disable or
+uninstall Surf. To stop tracking the repository marketplace too, run:
+
+```sh
+codex plugin marketplace remove withnative
+```
+
+In Claude Code, run:
 
 ```text
 /plugin uninstall surf@withnative
 ```
 
-To remove the catalogue too, run `/plugin marketplace remove withnative`. Removing the
-marketplace also uninstalls plugins installed from it.
+To remove the catalogue too, run `/plugin marketplace remove withnative`; Claude Code also
+uninstalls plugins installed from a marketplace when that marketplace is removed.
 
-In ChatGPT desktop, uninstall or disable Surf in the Plugins Directory. Alternatively,
-remove the installed plugin from the CLI:
+Uninstalling or disabling Surf removes the packaged trigger skill and connection. It does
+not delete the local practice files you chose to keep. Those files are not plugin data and
+remain under your control.
 
-```text
-codex plugin remove surf@withnative
-```
-
-To stop tracking the repository marketplace too, run:
-
-```text
-codex plugin marketplace remove withnative
-```
-
-Uninstalling the plugin does not delete any Surf practice files you chose to keep on your
-machine. Those files are not plugin data and remain under your control.
-
-## Privacy and trust
-
-Installing a plugin gives the client instructions and an MCP connection from code in a
-GitHub repository. Review the source and install only from a repository you trust.
-
-The Surf application's tools accept a document choice, not participant content, and the
-application stores no participant state. The AI client and provider still process the
-conversation, Surf's returned guidance, and local files the agent reads. Hosting and
-network infrastructure can process operational metadata. Read the complete
-[privacy and data statement](privacy-and-data.md).
-
-## Troubleshooting
+## Recovery and troubleshooting
 
 ### Surf is absent from the catalogue
 
-- Confirm that the repository is public and reachable without authentication.
-- Claude: run `/plugin marketplace update withnative`, then inspect `/plugin`.
-- OpenAI: run `codex plugin marketplace list`, upgrade `withnative`, restart the desktop
-  app, and inspect the **Native** source again.
+- Confirm `https://github.com/withnative/surf` is reachable without authentication.
+- ChatGPT/Codex Desktop: run `codex plugin marketplace list`, then
+  `codex plugin marketplace upgrade withnative`, restart the app, and inspect the
+  **Native** source again.
+- Claude Code: run `/plugin marketplace update withnative`, then inspect `/plugin`.
 
-### The skill is present but Surf tools are missing
+### The skill is present but the Surf tools are missing
 
 - Start a new conversation after installation or update.
-- Claude: run `/reload-plugins`, then inspect `/mcp`.
-- ChatGPT desktop: open **Settings → MCP servers**, confirm `surf` is enabled, then
-  restart the app.
-- Confirm that `https://surf.withnative.ai/mcp` is reachable from the client environment.
-- Do not continue from packaged or remembered curriculum if `quickstart` cannot run.
+- ChatGPT/Codex Desktop: restart the app, open **Settings → MCP servers**, confirm the
+  plugin-provided `surf` server is enabled, and type `/mcp` in the composer.
+- Claude Code: run `/reload-plugins` if the install summary requested it, then inspect
+  `/mcp` and the `/plugin` **Errors** tab.
+- Confirm `https://surf.withnative.ai/mcp` is reachable from the client environment.
+- Do not continue from remembered or packaged guidance if `quickstart` cannot run.
 
-### OpenAI asks for a registered connection
+### A standalone Surf MCP connection already exists
 
-This is the portability gate described above. Do not reuse or publish someone else's
-`plugin_asdk_app...` value. Either use the direct desktop/Codex connection below, or in
-ChatGPT Developer mode register `https://surf.withnative.ai/mcp` for that account and use
-the account-specific connection as a local test. Record the result in the release runbook;
-do not describe the repository package as portable until a clean unrelated account passes.
+The plugin already supplies the same managed endpoint. An exact standalone connection to
+`https://surf.withnative.ai/mcp` may be redundant and can produce duplicate names or tools,
+depending on the client. Do not remove, disable or rewrite it automatically.
 
-## Fallback: connect Surf without the plugin
+Identify the exact entry and URL, explain the overlap, and ask before changing it. If the
+person declines or the endpoints cannot be matched confidently, leave both in place. If
+they approve cleanup, remove only the confirmed standalone entry, reload or restart, and
+verify the plugin-provided `surf` connection still exposes `quickstart`, `get_guide`,
+`get_reference`, and `get_doc`. A similarly named connection with a different URL is not
+an exact duplicate.
 
-The direct connection remains a supported fallback and a useful diagnostic.
+## Direct MCP fallback
 
-### Claude Code
+Direct MCP connection remains a supported fallback. It is useful when plugin installation
+is unavailable and as a connection diagnostic.
 
-```sh
-claude mcp add --transport http --scope user surf https://surf.withnative.ai/mcp
-```
-
-Start a new conversation and ask the agent to use Surf's `quickstart` tool. Claude
-documents remote HTTP as its recommended transport for cloud MCP servers in the
-[official MCP guide](https://code.claude.com/docs/en/mcp).
-
-### ChatGPT desktop and Codex
+### ChatGPT desktop and local Codex clients
 
 In the ChatGPT desktop app:
 
@@ -197,18 +189,38 @@ In the ChatGPT desktop app:
 2. Choose **Add server**.
 3. Name it `surf`, choose **Streamable HTTP**, and enter
    `https://surf.withnative.ai/mcp`.
-4. Save and restart the app.
+4. Save, then select **Restart**.
 
-For Codex CLI, add this to `~/.codex/config.toml`, then start a new session:
+The ChatGPT desktop app, Codex CLI and Codex IDE extension share MCP configuration for the
+same Codex host. For a manual Codex configuration, add this to `~/.codex/config.toml`:
 
 ```toml
 [mcp_servers.surf]
 url = "https://surf.withnative.ai/mcp"
 ```
 
-The ChatGPT desktop app, Codex CLI, and Codex IDE extension share this local MCP
-configuration for the same Codex host. See the
-[official OpenAI MCP documentation](https://developers.openai.com/codex/mcp).
+Start a new conversation and explicitly ask the agent to call `quickstart`.
 
-The fallback supplies Surf's live tools but not the packaged bootstrap skill. Explicitly
-ask the agent to call `quickstart` at the beginning of a fresh Surf conversation.
+### Claude Code
+
+```sh
+claude mcp add --transport http surf --scope user https://surf.withnative.ai/mcp
+```
+
+Start or reload Claude Code, inspect `/mcp`, then ask the agent to call `quickstart`.
+Anthropic recommends HTTP for remote MCP servers in its
+[MCP guide](https://code.claude.com/docs/en/mcp).
+
+The direct fallback supplies Surf's tools but not the packaged trigger skill. Your local
+practice has the same data boundary either way; do not send its contents as Surf tool
+arguments. Read [privacy and data](privacy-and-data.md) and the
+[compatibility matrix](compatibility.md) before adapting these steps to another surface.
+
+## Provider-documentation verification
+
+These commands and menu labels were checked on 13 August 2026 against the official
+[OpenAI plugin packaging guide](https://developers.openai.com/plugins/build/plugins),
+[OpenAI MCP guide](https://learn.chatgpt.com/docs/extend/mcp?surface=cli),
+[Claude Code plugin guide](https://code.claude.com/docs/en/discover-plugins), and
+[Claude Code MCP guide](https://code.claude.com/docs/en/mcp). Client UI and commands can
+change; record exact client versions and any variance during release acceptance.
