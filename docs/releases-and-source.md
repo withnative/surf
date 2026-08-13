@@ -15,6 +15,9 @@ The numbers match intentionally for this launch. These remain independent artifa
 independent future release triggers; matching now does not establish a permanent lockstep
 version policy.
 
+The current plugin package is `0.1.1`; the Surf application and working framework remain
+`0.1.0`. This is the first use of those independent release triggers.
+
 The stable product-document slug for this page remains `releases-and-source`.
 
 ## The working framework

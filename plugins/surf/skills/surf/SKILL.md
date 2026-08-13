@@ -17,6 +17,11 @@ Keep the person's practice in ordinary local files at a location they confirm. D
 send practice-file contents to Surf: its public tools retrieve guidance and do not store
 participant state.
 
+For cross-directory continuity, follow the retrieved framework's deterministic
+launch-directory and canonical user-home locator contract. Keep discovery read-only and
+bounded, fail closed on an invalid locator, and write or update it only with the person's
+confirmed practice home.
+
 If the Surf tools are unavailable, say that the MCP connection is unavailable and point
 the person to the direct-connection fallback in
 `https://github.com/withnative/surf/blob/main/docs/plugin-installation.md`. Do not invent

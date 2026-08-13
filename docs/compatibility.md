@@ -49,8 +49,8 @@ For each client, record evidence that a fresh installation can:
 5. choose and retrieve a primary moment guide that fits the interaction;
 6. retrieve a relevant authored reference and product documentation;
 7. create or resume a practice in a person-confirmed durable local folder;
-8. preserve unrelated agent-instruction files and recover the same practice in a new
-   conversation;
+8. write the confirmed user-home locator and recover the same validated practice from an
+   unrelated launch directory in a new conversation without broad filesystem search;
 9. distinguish authored references from MCP resources; and
 10. surface an honest limitation when remote MCP or durable file access is unavailable.
 

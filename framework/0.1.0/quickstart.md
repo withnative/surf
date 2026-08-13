@@ -157,16 +157,21 @@ or nesting:
 <!-- surf:end -->
 ```
 
-- **One valid marker pair:** Read `README.md` and follow its semantic map. If the mapped
-  practice is coherent, choose the guide that matches the person's stated moment;
-  `returning-and-capture` is the ordinary return route.
-- **No marker pair:** This shows only that no Surf practice is present in the launch
-  directory. Use `setting-up` to distinguish a first setup from bounded discovery of an
-  existing practice.
-- **Incomplete, duplicated, nested or otherwise malformed markers:** Stay read-only and
-  use `setting-up` for recovery rather than guessing which instructions govern.
-- **A valid marker with missing or inconsistent mapped files:** Stay read-only and use
-  the recovery path in `setting-up`.
+- **Valid launch-directory practice:** One valid marker pair, its `README.md` semantic map
+  and the mapped working-framework record must all be coherent. Use this practice and do
+  not read the user-level locator. Choose the guide that matches the person's stated
+  moment; `returning-and-capture` is the ordinary return route.
+- **No valid launch-directory practice:** Read only the canonical user-level Surf locator:
+  `$HOME/.surf/locator.json` on macOS/Linux or
+  `%USERPROFILE%\.surf\locator.json` on Windows. Do not search for another locator or
+  scan the home directory. If the locator is valid, validate its exact target through
+  the marker, `README.md` semantic map and working-framework record before using it.
+- **Locator absent:** Use `setting-up` to distinguish a first setup from the existing
+  person-approved bounded-discovery route.
+- **Locator malformed, wrong-shape, stale, duplicated, unsupported or inaccessible:** Stay
+  read-only, ask the person for direction and do not broaden the search. If recovery
+  concerns a malformed or inconsistent launch-directory candidate, surface it as part of
+  that visible recovery rather than guessing which local instructions govern.
 
 Consult `context-and-local-practice` whenever the complete discovery, validation,
 creation, privacy, provenance, correction or recovery contract would improve the work.

@@ -13,7 +13,12 @@ Consult `context-and-local-practice` for the complete marker, discovery, persist
 
 ## Begin with what the person already told you
 
-Use their language and avoid asking them to repeat themselves. If they have already said this is their first setup, begin there. If they named an existing practice, inspect only that exact location. Otherwise, ask one simple question that distinguishes a new setup from finding an existing practice.
+Use their language and avoid asking them to repeat themselves. If they have already said
+this is their first setup, begin there. If they named an existing practice, inspect only
+that exact location. Otherwise, first follow the deterministic launch-directory and
+user-level locator discovery in `context-and-local-practice`. Ask the
+first-setup-or-existing-practice question only when the locator is absent, or when the
+person directs recovery from an invalid locator.
 
 In the first useful turn, explain the idea in everyday language:
 
@@ -34,7 +39,14 @@ Adapt rather than copy the wording.
 
 The current working directory is only where the conversation began. Do not assume it is the person's practice home because it exists or is writable.
 
-Until the person confirms an exact location, keep inspection read-only and within the scope they have supplied or approved. Before searching a parent, sibling, home folder, or other broader location, explain a bounded search in ordinary language and ask permission. Say where you propose to look, how far, and which Surf identifiers you will use. Do not silently widen an unsuccessful search.
+Until the person confirms an exact location, keep inspection read-only and within the
+scope they have supplied or approved. Reading the one canonical user-level locator is
+part of normal deterministic discovery; it is not permission to inspect anything else in
+the home directory. Before searching a parent, sibling, home folder, or other broader
+location, explain a bounded search in ordinary language and ask permission. Say where you
+propose to look, how far, and which Surf identifiers you will use. Do not silently widen
+an unsuccessful search. If a locator is malformed, wrong-shape, stale, duplicated,
+unsupported or inaccessible, ask for direction before any recovery search or write.
 
 When an existing practice is found, present the exact location and enough evidence for the person to recognise it. Let them choose before repairing, moving, updating, or writing anything. When state is malformed or inconsistent, stay read-only and use the recovery behaviour in `context-and-local-practice`; do not guess which instructions or files govern.
 
@@ -88,15 +100,25 @@ Read the short agreement back in plain language and invite correction. Activate 
 
 Help the person choose a durable, user-controlled, dedicated location whose backup, synchronisation, sharing, and source-control implications they understand. Offer a small number of concrete options only when useful; the person may instead name their own.
 
-Before any mutation, confirm one exact location. Follow `context-and-local-practice` to:
+Before any mutation, make one explicit proposal that names both the exact practice home
+and the canonical locator file. Explain that the locator records only the practice path
+so a future Surf conversation can return from another launch directory. The person's
+confirmation of that proposal authorises both writes; do not add a second consent prompt.
+Follow `context-and-local-practice` to:
 
 - test that the location can actually preserve and remove a harmless temporary file;
 - create or resume the human-readable `README.md` map and its semantic roles;
 - preserve unrelated `AGENTS.md` content and exactly one valid Surf marker pair;
-- record the working framework provenance as `0.1.0`; and
+- record the working framework provenance as `0.1.0`;
+- safely create or replace the locator only after the practice validates; and
 - recover safely when a mapped role, marker, or write check is inconsistent.
 
-Do not claim persistence until the harmless write, read-back, removal, and disappearance checks succeed. Do not overwrite an existing practice or create a nested duplicate.
+Do not claim persistence until the harmless write, read-back, removal, and disappearance
+checks succeed. Do not overwrite an existing practice or create a nested duplicate. Do
+not present setup as fully complete until the locator has also been read back and
+validated. If that write fails, say that the practice exists but cross-directory
+continuity was not established, then let the person retry, choose another location or
+continue with that limitation.
 
 The map should make the active agreement, current person understanding, current plan, learning map, dated evidence, reviews, and earned reusable artefacts easy to find. Create only the structure the practice currently needs. Keep current state distinct from historical evidence, and keep original reports available rather than silently rewriting them.
 

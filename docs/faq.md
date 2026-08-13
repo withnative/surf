@@ -67,7 +67,10 @@ for the exact boundary.
 It lives in a dedicated local folder that you confirm and that your agent can access. A
 readable map records where the working agreement, current understanding, plan, dated
 evidence, reviews, and working-framework provenance live. The framework avoids relying on
-conversation memory when that local source exists.
+conversation memory when that local source exists. A separate user-home locator contains
+only the confirmed folder's absolute path so a new conversation can find it without
+searching your home directory. You can inspect or delete that pointer independently;
+deleting it never deletes the practice.
 
 ## What does my AI provider still see?
 
