@@ -1,41 +1,53 @@
 # Surf
 
-**Surf the AI frontier.**
+**Learn to surf the waves of AI.**
 
-Surf is a free, open-source learning framework that helps you get better at working with
-AI agents through your real work. Connect its public MCP server to a supported agent and
-the agent can establish a lightweight local practice, notice useful evidence over time,
-and help you review what is actually changing.
+Surf is a free, open-source plugin and learning framework that helps you get better at
+working with AI agents through your real work. Install it in a supported agent and the
+agent can establish a lightweight local practice, notice useful evidence over time, and
+help you review what is actually changing.
 
 Surf is managed by [Native](https://www.withnative.ai/) and licensed under
 [AGPL-3.0-or-later](LICENSE). See [licensing and notices](docs/licensing.md) for
 the copyright holder and a plain-language licence summary.
 
-## Plugin packages
+## Install Surf
 
-This repository contains thin Claude and OpenAI plugin packages. Treat an installation
-route as supported only after its clean-client checks in the
-[plugin release acceptance runbook](docs/plugin-release-acceptance.md) have dated,
-reviewable pass evidence. See [install and manage the Surf plugin](docs/plugin-installation.md)
-for the GitHub flows, direct MCP fallback, updates, privacy, and troubleshooting.
-
-Surf launches with three intentionally matching but independently versioned identities:
-the **Surf application version**, **working framework version**, and **plugin package
-version** are each `0.1.0`. Their future releases do not need to remain in lockstep.
-The locator guidance is the first independent package update: the current plugin package
-is `0.1.1`, while the application and working framework remain `0.1.0`.
-
-## Start in one line
-
-Paste this into a supported, file-capable agent:
+The simplest route is to paste this into **ChatGPT/Codex Desktop** or **Claude Code**:
 
 ```text
-Help me add https://surf.withnative.ai/mcp as an MCP server, then use its quickstart tool
+Help me install Surf from https://github.com/withnative/surf and get started.
 ```
 
-Surf focuses on Claude Desktop, ChatGPT Desktop, Claude Code CLI, and Codex CLI. See the
-[compatibility matrix](docs/compatibility.md) for the capabilities each client needs and
-the latest recorded verification evidence. Browser-only chat surfaces are not supported.
+If you prefer deterministic steps:
+
+- **ChatGPT/Codex Desktop:** run `codex plugin marketplace add withnative/surf`, restart
+  the ChatGPT desktop app, then open **Plugins Directory → Native → Surf → Install**.
+- **Claude Code:** run `/plugin marketplace add withnative/surf`, then
+  `/plugin install surf@withnative`. Run `/reload-plugins` if the install summary asks.
+
+Start a new conversation and say `Help me get started with Surf.` You can invoke the
+plugin explicitly as `@surf` in ChatGPT/Codex Desktop or `/surf:surf` in Claude Code;
+ordinary requests such as `What's my current Surf goal?` can activate it too.
+
+[Read the canonical installation guide](docs/plugin-installation.md) for exact updates,
+uninstall, recovery, compatibility and privacy details. Direct MCP connection remains a
+supported fallback at `https://surf.withnative.ai/mcp`.
+
+These plugin routes are supported only on the named, tested desktop and Claude Code
+surfaces. Browser-only and mobile chat surfaces are not part of this installation claim.
+
+## What the plugin installs
+
+This repository contains thin Claude and OpenAI plugin packages. The installed plugin
+supplies Surf's trigger skill and MCP connection. The managed MCP service supplies current
+Surf guidance. Your practice remains in ordinary local files you control.
+
+Surf launched with three intentionally matching but independently versioned identities:
+the **Surf application version**, **working framework version**, and **plugin package
+version** were each `0.1.0`. Their future releases do not need to remain in lockstep.
+The locator guidance is the first independent package update: the current plugin package
+is `0.1.1`, while the application and working framework remain `0.1.0`.
 
 ## What Surf does
 

@@ -80,6 +80,12 @@ cloud sync, backups, repositories, collaboration tools, and workplace administra
 make local files available to other people or systems. Surf cannot inspect or enforce
 those settings.
 
+The Surf plugin does not own, copy or manage the practice folder. It supplies a trigger
+skill and the managed MCP connection; the agent continues to use ordinary local files at
+the location the person confirms. Disabling, uninstalling, updating or reinstalling the
+plugin does not delete those files. Deleting the plugin cache or marketplace is therefore
+not a practice-deletion mechanism.
+
 ## The AI client and provider
 
 The AI provider processes the conversation, the request to call Surf, and Surf's returned

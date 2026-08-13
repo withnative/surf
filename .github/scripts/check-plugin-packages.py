@@ -13,6 +13,14 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 PLUGIN = ROOT / "plugins" / "surf"
 ENDPOINT = "https://surf.withnative.ai/mcp"
+REPOSITORY = "https://github.com/withnative/surf"
+PRIMARY_PROMPT = f"Help me install Surf from {REPOSITORY} and get started."
+OPENAI_MARKETPLACE_COMMAND = "codex plugin marketplace add withnative/surf"
+CLAUDE_MARKETPLACE_COMMAND = "/plugin marketplace add withnative/surf"
+CLAUDE_INSTALL_COMMAND = "/plugin install surf@withnative"
+SUPPORTED_SURFACES = ("ChatGPT/Codex Desktop", "Claude Code")
+FALLBACK_SEMANTICS = "Direct MCP connection remains a supported fallback"
+HERO = "Learn to surf the waves of AI"
 PLUGIN_NAME = "surf"
 MARKETPLACE_NAME = "withnative"
 PLUGIN_PATH = "./plugins/surf"
@@ -97,6 +105,7 @@ def validate() -> None:
 
     validate_claude_marketplace(claude_marketplace)
     validate_codex_marketplace(codex_marketplace)
+    validate_public_installation_copy()
 
     require(
         mcp == {
@@ -140,6 +149,59 @@ def validate() -> None:
         "plugin_asdk_app" not in all_plugin_text,
         "shared package must not commit an account-specific registered app ID",
     )
+
+
+def validate_public_installation_copy() -> None:
+    public_copy = {
+        "README.md": (ROOT / "README.md").read_text(encoding="utf-8"),
+        "docs/plugin-installation.md": (ROOT / "docs" / "plugin-installation.md").read_text(
+            encoding="utf-8"
+        ),
+        "web/landing/index.html": (ROOT / "web" / "landing" / "index.html").read_text(
+            encoding="utf-8"
+        ),
+    }
+    stable_fragments = (
+        REPOSITORY,
+        ENDPOINT,
+        PRIMARY_PROMPT,
+        OPENAI_MARKETPLACE_COMMAND,
+        CLAUDE_MARKETPLACE_COMMAND,
+        CLAUDE_INSTALL_COMMAND,
+        *SUPPORTED_SURFACES,
+    )
+    for path, text in public_copy.items():
+        for fragment in stable_fragments:
+            require(fragment in text, f"{path} public installation copy drifted: {fragment!r}")
+        require(
+            FALLBACK_SEMANTICS in " ".join(text.split()),
+            f"{path} direct-MCP fallback semantics drifted",
+        )
+
+    landing = public_copy["web/landing/index.html"]
+    require(f"<h1>{HERO}</h1>" in landing, "landing hero copy drifted")
+    require(
+        f'data-copy="{PRIMARY_PROMPT}"' in landing,
+        "landing copy action drifted from the canonical installation prompt",
+    )
+    for target in (
+        "https://github.com/withnative/surf/blob/main/docs/plugin-installation.md",
+        "/docs/privacy-and-data",
+        "/docs/compatibility",
+    ):
+        require(f'href="{target}"' in landing, f"landing installation link drifted: {target}")
+
+    guide = public_copy["docs/plugin-installation.md"]
+    for heading in (
+        "## ChatGPT/Codex Desktop",
+        "## Claude Code",
+        "## Updates",
+        "## Uninstall or disable",
+        "## Recovery and troubleshooting",
+        "## Direct MCP fallback",
+        "## Provider-documentation verification",
+    ):
+        require(heading in guide, f"canonical installation guide omits {heading}")
 
 
 def validate_claude_marketplace(marketplace: dict[str, Any]) -> None:
