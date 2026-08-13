@@ -1,9 +1,9 @@
 # CLI acceptance evidence — 2026-08-13
 
-This is indicative evidence for the local Surf 0.1.0 candidate, not a compatibility
-certification or mechanical release gate. The candidate server ran at a temporary local
-HTTP endpoint on macOS. Each probe began in a fresh, empty temporary directory and could
-read but not change local files.
+This is indicative evidence for a local candidate serving working framework version
+`0.1.0`, not a compatibility certification or mechanical release gate. The candidate
+server ran at a temporary local HTTP endpoint on macOS. Each probe began in a fresh,
+empty temporary directory and could read but not change local files.
 
 ## Scenarios
 

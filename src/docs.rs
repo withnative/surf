@@ -138,4 +138,26 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn public_version_policy_names_independent_artifacts_and_no_historical_catalogue() {
+        let policy = find("releases-and-source").unwrap().markdown;
+        for required in [
+            "Surf application version:** `0.1.0`",
+            "Working framework version:** `0.1.0`",
+            "Plugin package version:** `0.1.0`",
+            "does not establish a permanent lockstep",
+        ] {
+            assert!(
+                policy.contains(required),
+                "version policy omits {required:?}"
+            );
+        }
+
+        let why_mcp = find("why-mcp").unwrap().markdown;
+        let compact = why_mcp.split_whitespace().collect::<Vec<_>>().join(" ");
+        assert!(compact.contains("one freely revisable working framework"));
+        assert!(compact.contains("does not promise exact historical framework retrieval"));
+        assert!(!why_mcp.contains("exact historical releases remain available"));
+    }
 }

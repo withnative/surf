@@ -97,11 +97,11 @@ not replace operating guidance from `quickstart`, `get_guide`, and `get_referenc
 
 ## Builds and source revisions
 
-Every production build identifies the Surf application version, working framework, full
-Git commit, and canonical URL for that immutable source revision. The landing page, MCP metadata,
-`surf://source`, and `/source` make that relationship visible. A visitor can therefore
-move from the running service to the source that produced it rather than only to a moving
-repository homepage.
+Every production build identifies the Surf application version, working framework version,
+full Git commit, and canonical URL for that immutable source revision. The landing page,
+MCP metadata, `surf://source`, and `/source` make that relationship visible. A visitor can
+therefore move from the running service to the source that produced it rather than only to
+a moving repository homepage.
 
 Read [working framework and source](https://github.com/withnative/surf/blob/main/docs/releases-and-source.md)
 for the complete development and source model.

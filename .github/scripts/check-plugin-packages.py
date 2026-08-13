@@ -16,6 +16,7 @@ ENDPOINT = "https://surf.withnative.ai/mcp"
 PLUGIN_NAME = "surf"
 MARKETPLACE_NAME = "withnative"
 PLUGIN_PATH = "./plugins/surf"
+PLUGIN_VERSION = "0.1.0"
 
 
 class ValidationError(Exception):
@@ -65,6 +66,10 @@ def validate() -> None:
             isinstance(manifest.get("version"), str)
             and re.fullmatch(r"\d+\.\d+\.\d+", manifest["version"]) is not None,
             f"{label} version must be simple semantic versioning",
+        )
+        require(
+            manifest["version"] == PLUGIN_VERSION,
+            f"{label} plugin package version must remain {PLUGIN_VERSION} for this release",
         )
         require(manifest.get("skills") == "./skills/", f"{label} must use canonical skills")
         require(

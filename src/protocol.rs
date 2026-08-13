@@ -201,7 +201,9 @@ fn initialize(params: &Value) -> Value {
              Call `quickstart` once when entering a Surf conversation, then use `get_guide` \
              for the primary moment and `get_reference` whenever cross-cutting knowledge is \
              relevant. `get_doc` explains Surf itself. The application receives no local \
-             participant practice content and retains no participant state. Working framework: {}. {}",
+             participant practice content and retains no participant state. Surf application version: {}. \
+             Working framework version: {}. {}",
+            env!("CARGO_PKG_VERSION"),
             framework::WORKING_VERSION,
             source::instruction(),
         ),
@@ -263,7 +265,7 @@ fn resources() -> Value {
     resources.push(json!({
         "uri": "surf://source",
         "name": "Source for this running version",
-        "description": "Surf release, working framework, and verified public source revision, or a visible unavailable result.",
+        "description": "Surf application version, working framework version, and verified public source revision, or a visible unavailable result.",
         "mimeType": "text/markdown",
     }));
     Value::Array(resources)
@@ -328,7 +330,10 @@ mod tests {
             assert!(instructions.contains(required), "{required}");
         }
         assert!(instructions.contains("retains no participant state"));
+        assert!(instructions.contains("Surf application version: 0.1.0"));
+        assert!(instructions.contains("Working framework version: 0.1.0"));
         assert_eq!(response["result"]["serverInfo"]["name"], "surf");
+        assert_eq!(response["result"]["serverInfo"]["version"], "0.1.0");
     }
 
     #[test]

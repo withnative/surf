@@ -1,10 +1,17 @@
 # Surf changelog
 
-Surf releases and framework releases have separate version numbers. Framework changes
-are recorded in [`framework/CHANGELOG.md`](framework/CHANGELOG.md).
+The Surf application, working framework, and plugin package are independently versioned
+artifacts. Their matching `0.1.0` numbers at launch are intentional, not a permanent
+lockstep policy. Working-framework changes are recorded in
+[`framework/CHANGELOG.md`](framework/CHANGELOG.md).
 
 ## Unreleased
 
+## 0.1.0 — 2026-08-13
+
+- Align the Surf application version with the `0.1.0` working framework and `0.1.0`
+  plugin package for a clear launch identity while preserving their independent future
+  release triggers.
 - Prepare Surf's first public source tree, documentation, licensing, contribution policy,
   and continuous-integration checks.
 - Adopt `surf` consistently as the Rust package, binary, MCP server name, resource scheme,
@@ -18,5 +25,6 @@ are recorded in [`framework/CHANGELOG.md`](framework/CHANGELOG.md).
 
 ## 0.0.1 — 2026-08-12
 
-- First Surf service release, with the public stateless MCP endpoint, versioned framework
-  catalogue, generic container build, and landing page.
+- First Surf application release, with the public stateless MCP endpoint, versioned
+  framework catalogue, generic container build, and landing page. Superseded by `0.1.0`;
+  the historical `v0.0.1` release remains unchanged.

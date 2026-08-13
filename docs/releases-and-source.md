@@ -5,6 +5,16 @@ Separately, every deployed Surf build identifies the public source revision that
 it. The first policy keeps early framework development lightweight; the second makes the
 running network service inspectable.
 
+The launch identities are:
+
+- **Surf application version:** `0.1.0`
+- **Working framework version:** `0.1.0`
+- **Plugin package version:** `0.1.0`
+
+The numbers match intentionally for this launch. These remain independent artifacts with
+independent future release triggers; matching now does not establish a permanent lockstep
+version policy.
+
 The stable product-document slug for this page remains `releases-and-source`.
 
 ## The working framework
@@ -36,7 +46,7 @@ The Rust application has its own package version for build and deployment identi
 hosted build reports:
 
 - the Surf application version;
-- the working framework label;
+- the working framework version;
 - the full Git commit SHA;
 - a canonical URL for that exact public commit; and
 - the build date where it is useful and reproducible.

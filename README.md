@@ -19,6 +19,10 @@ route as supported only after its clean-client checks in the
 reviewable pass evidence. See [install and manage the Surf plugin](docs/plugin-installation.md)
 for the GitHub flows, direct MCP fallback, updates, privacy, and troubleshooting.
 
+Surf launches with three intentionally matching but independently versioned identities:
+the **Surf application version**, **working framework version**, and **plugin package
+version** are each `0.1.0`. Their future releases do not need to remain in lockstep.
+
 ## Start in one line
 
 Paste this into a supported, file-capable agent:
