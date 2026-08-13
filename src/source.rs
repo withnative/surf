@@ -19,7 +19,7 @@ pub struct VerifiedSource {
 
 include!(concat!(env!("OUT_DIR"), "/source_metadata.rs"));
 
-pub const SURF_RELEASE: &str = env!("CARGO_PKG_VERSION");
+pub const SURF_APPLICATION_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 pub fn verified() -> Option<&'static VerifiedSource> {
     VERIFIED_SOURCE.as_ref()
@@ -32,15 +32,15 @@ pub fn instruction() -> String {
 fn instruction_for(source: Option<&VerifiedSource>) -> String {
     match source {
         Some(source) => format!(
-            "Source for this running version: {} (Surf release {}; framework {}; full Git commit {}).",
+            "Source for this running version: {} (Surf application version {}; working framework version {}; full Git commit {}).",
             source.url,
-            SURF_RELEASE,
+            SURF_APPLICATION_VERSION,
             framework::LATEST,
             source.git_sha,
         ),
         None => format!(
-            "Source for this running version is unavailable: this build has no verified SURF_GIT_SHA and SURF_SOURCE_URL metadata (Surf release {}; framework {}).",
-            SURF_RELEASE,
+            "Source for this running version is unavailable: this build has no verified SURF_GIT_SHA and SURF_SOURCE_URL metadata (Surf application version {}; working framework version {}).",
+            SURF_APPLICATION_VERSION,
             framework::LATEST,
         ),
     }
@@ -81,8 +81,10 @@ mod tests {
         let text = instruction_for(Some(&source));
         assert!(text.contains(URL));
         assert!(text.contains(SHA));
-        assert!(text.contains(SURF_RELEASE));
+        assert!(text.contains(SURF_APPLICATION_VERSION));
         assert!(text.contains(framework::LATEST));
+        assert!(text.contains("Surf application version"));
+        assert!(text.contains("working framework version"));
     }
 
     #[test]

@@ -85,7 +85,7 @@ session is refreshed.
 ### Plugin package updates
 
 Changes to the skill, manifests, connection configuration, assets, hooks, or scripts need
-a new plugin version and a client refresh.
+a new plugin package version and a client refresh.
 
 For Claude Code:
 

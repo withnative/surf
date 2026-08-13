@@ -33,7 +33,7 @@ async fn main() {
         .await
         .unwrap_or_else(|err| panic!("cannot bind {addr}: {err}"));
     eprintln!(
-        "surf {} serving working framework {} on http://{addr}",
+        "Surf application version {} serving working framework version {} on http://{addr}",
         env!("CARGO_PKG_VERSION"),
         framework::WORKING_VERSION
     );
@@ -359,6 +359,21 @@ mod tests {
             assert_eq!(status, StatusCode::OK, "{}", doc.slug);
             assert_eq!(body, doc.markdown.as_bytes(), "{}", doc.slug);
         }
+    }
+
+    #[tokio::test]
+    async fn landing_names_the_application_and_working_framework_versions() {
+        let (status, body) = send(request(Method::GET, "/", Body::empty())).await;
+        assert_eq!(status, StatusCode::OK);
+        let body = String::from_utf8(body).unwrap();
+        assert!(body.contains(concat!(
+            "Surf application version ",
+            env!("CARGO_PKG_VERSION")
+        )));
+        assert!(body.contains(&format!(
+            "Working framework version {}",
+            framework::WORKING_VERSION
+        )));
     }
 
     #[tokio::test]

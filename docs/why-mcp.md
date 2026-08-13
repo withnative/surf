@@ -16,10 +16,11 @@ A cloned curriculum or standalone CLI would make each person responsible for ins
 and updating another local package. Copies would drift, leaving people to work out whether
 their guidance was still current before they could even begin learning.
 
-The managed service avoids that drift without silently forcing changes into an
-established practice. Surf's framework is versioned, and exact historical releases remain
-available. Your agent can detect a newer version, explain what changed and help you adopt
-it deliberately.
+The managed service avoids that drift without silently changing the local record of an
+established practice. During pre-production, Surf has one freely revisable working
+framework, labelled `0.1.0`; it does not promise exact historical framework retrieval or
+migrations between drafts. Git history preserves the development record, while the
+managed service returns the current framework.
 
 MCP also lets your agent retrieve the guidance it needs progressively instead of loading
 the entire framework into every conversation.

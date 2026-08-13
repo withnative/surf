@@ -22,8 +22,8 @@ client or model variance and evaluator ambiguity.
 |---|---|---|---|---|---|---|---|
 | Claude Desktop | Desktop | Not yet recorded | Not yet recorded | Required | Required | Verification pending | Add a reviewable evidence reference |
 | ChatGPT Desktop | Desktop | Not yet recorded | Not yet recorded | Required | Required | Verification pending | Add a reviewable evidence reference |
-| Claude Code | CLI | macOS, 2.1.231 | 2026-08-13 | Candidate exercised | Native filesystem access | Positive candidate evidence | Local 0.1.0 probes; explicit MCP allow rules required in noninteractive `dontAsk` mode. See [CLI acceptance evidence](evidence/2026-08-13-cli-acceptance.md). |
-| Codex | CLI | macOS, 0.147.0 | 2026-08-13 | Candidate exercised | Native filesystem access | Positive candidate evidence | Local 0.1.0 probes; per-server tool approval required in noninteractive mode. See [CLI acceptance evidence](evidence/2026-08-13-cli-acceptance.md). |
+| Claude Code | CLI | macOS, 2.1.231 | 2026-08-13 | Candidate exercised | Native filesystem access | Positive candidate evidence | Local working framework version 0.1.0 probes; explicit MCP allow rules required in noninteractive `dontAsk` mode. See [CLI acceptance evidence](evidence/2026-08-13-cli-acceptance.md). |
+| Codex | CLI | macOS, 0.147.0 | 2026-08-13 | Candidate exercised | Native filesystem access | Positive candidate evidence | Local working framework version 0.1.0 probes; per-server tool approval required in noninteractive mode. See [CLI acceptance evidence](evidence/2026-08-13-cli-acceptance.md). |
 
 Do not expand this table by implication. A protocol-compatible client may work without
 being a supported client; record it separately until the full verification standard has
@@ -55,7 +55,8 @@ For each client, record evidence that a fresh installation can:
 10. surface an honest limitation when remote MCP or durable file access is unavailable.
 
 The evidence record should include the operating system, architecture where relevant,
-client name and exact version, Surf application version, working framework, test date,
+client name and exact version, Surf application version, working framework version, plugin
+package version where installed, test date,
 tester, setup path, observed result, limitations, and a reviewable trace or reference that
 does not disclose personal practice content. Report positive evidence, likely framework
 defects, client/model variance, and evaluator fragility separately; avoid frozen wording

@@ -32,9 +32,9 @@ Tester:
 Account relationship to Native:
 Operating system and architecture:
 Client and exact version:
-Plugin version / Git commit:
+Plugin package version / Git commit:
 Surf application version:
-Surf framework version:
+Working framework version:
 Starting state:
 Commands and UI steps:
 Observed result:
@@ -104,12 +104,12 @@ If it fails because ChatGPT requires a registered `plugin_asdk_app...` connectio
 
 ## Gate 4: remote framework update with an unchanged plugin
 
-1. Install plugin version `P1` and record server framework version `F1` from a fresh
+1. Install plugin package version `P1` and record working framework version `F1` from a fresh
    `quickstart` result.
 2. Keep the plugin package and marketplace version unchanged.
 3. Deploy a reviewable server build whose framework has a small, identifiable change and
    reports version `F2`.
-4. Start a fresh conversation and call `quickstart` through plugin version `P1`.
+4. Start a fresh conversation and call `quickstart` through plugin package version `P1`.
 5. Confirm the result identifies `F2` and contains the reviewable change.
 6. Confirm no marketplace refresh, plugin reinstall, or package update was required.
 
@@ -118,7 +118,7 @@ than copied into the plugin.
 
 ## Gate 5: plugin package update
 
-1. Begin with installed plugin version `P1`.
+1. Begin with installed plugin package version `P1`.
 2. Make a harmless, reviewable change to packaged copy or wiring and bump both provider
    manifests to `P2` in the same commit.
 3. Publish the marketplace source change.
