@@ -181,6 +181,13 @@ class ReadinessTests(unittest.TestCase):
         with self.assertRaisesRegex(BoundaryError, "expected at most 1"):
             scan_publication_readiness(candidate)
 
+    def test_rejects_railway_id_outside_reviewed_operational_paths(self) -> None:
+        service_id = "f73c4cbb" + "-99a7-4716-a4a3-19bc91ca261a"
+        candidate, temporary = self.candidate_with({"README.md": service_id})
+        self.addCleanup(temporary.cleanup)
+        with self.assertRaisesRegex(BoundaryError, "account-specific identifier"):
+            scan_publication_readiness(candidate)
+
     def test_rejects_duplicate_value_in_approved_push_guard_fixture(self) -> None:
         path = ".github/scripts/test_" + "public_push_guard.py"
         blocked_path = "docs/" + "evals"
