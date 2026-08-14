@@ -18,6 +18,12 @@ enough to be the public journey. It does not replace the dated human release che
 Do not expand support by implication: protocol compatibility alone is not a Surf support
 claim.
 
+The optional local-agent-history route has contract-test and live-prototype evidence, but
+its complete post-setup journey is not part of the verified surface claim until the
+release-candidate framework passes the dedicated progressive-consent gate below in fresh
+Claude Code and ChatGPT/Codex Desktop conversations. Until then, describe the behaviour as
+available in the working framework rather than client-verified end to end.
+
 See the [canonical installation guide](plugin-installation.md) for exact steps, updates,
 uninstall, recovery and the direct MCP fallback.
 
@@ -41,6 +47,9 @@ For each claimed surface, clean human acceptance must record evidence that it ca
     changing a standalone connection;
 12. distinguish authored references from MCP resources; and
 13. surface an honest limitation when remote MCP or durable file access is unavailable.
+14. when the release includes local-agent-history guidance, keep inventory and content
+    permissions distinct, keep analysis local and bounded, and accept correction without
+    turning project content into the immediate task.
 
 Record the operating system and architecture, exact client version, Surf application,
 framework and plugin versions, date and timezone, tester, exact commands and UI paths,

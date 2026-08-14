@@ -69,6 +69,7 @@ framework/0.1.0/capabilities.md
 framework/0.1.0/context-and-local-practice.md
 framework/0.1.0/evidence-review.md
 framework/0.1.0/intensive-foundation.md
+framework/0.1.0/local-agent-history.md
 framework/0.1.0/quickstart.md
 framework/0.1.0/returning-and-capture.md
 framework/0.1.0/setting-up.md

@@ -121,6 +121,7 @@ loading or reciting the full catalogue without a reason.
 | --- | --- |
 | `setting-up` | This is a first setup, an existing practice needs to be found, or the local practice is incomplete or inconsistent. |
 | `returning-and-capture` | A practice exists and the person is returning, reporting an experience, directly correcting retained context or changing a preference, boundary or permission. |
+| `local-agent-history` | Ordinary setup is complete and the person is considering local Codex or Claude Code histories as evidence for a strong first understanding. |
 | `evidence-review` | The person wants to look across evidence, revise Surf's synthesized current account or decide what to try next. |
 | `intensive-foundation` | The person chooses a concentrated learning period or targeted deepening. |
 | `teaching-and-practice` | The person asks for explanation, mapping, guided practice or an understanding check. |

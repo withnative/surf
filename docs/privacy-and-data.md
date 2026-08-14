@@ -60,6 +60,26 @@ them for continuity across conversations and should keep them readable, provenan
 and correctable. A person can inspect, edit, exclude, move, back up, share, or delete those
 files using the controls available on their machine.
 
+Surf may also offer, after ordinary setup, to learn from recent Codex or Claude Code
+histories stored on the same machine. This uses two distinct permission stages. The first
+permits a metadata-only inventory of exact disclosed history roots; it does not permit
+conversation bodies to be opened. The second names a bounded recent or representative
+set before any content analysis. Declining either stage leaves the ordinary local practice
+available.
+
+That inspection is performed by the connected agent through the client's local file
+capabilities. History contents, extracts, titles, local paths, source pointers, and derived
+personal context are not arguments to Surf's tools and do not reach the Surf application.
+The AI client and provider may still process material the agent opens. Operating-system
+permissions, the source application's storage choices, backups, and workplace controls
+remain separate boundaries.
+
+Permission to analyse a bounded set does not by itself permit indefinite access or local
+retention. Any retained source index or corrected synthesis follows the person's explicit
+local-practice agreement and remains inspectable, correctable, and removable. Removing a
+Surf-derived local index does not delete the original histories owned by Codex or Claude
+Code.
+
 Cross-directory continuity uses a separate two-field pointer at
 `$HOME/.surf/locator.json` on macOS/Linux or
 `%USERPROFILE%\.surf\locator.json` on Windows. It contains a schema version and the

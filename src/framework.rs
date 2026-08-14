@@ -53,6 +53,13 @@ pub static GUIDES: &[Document] = &[
         text: include_str!("../framework/0.1.0/returning-and-capture.md"),
     },
     Document {
+        slug: "local-agent-history",
+        title: "Local agent history",
+        description: "Use after ordinary setup when the person is considering consented local Codex or Claude Code histories as evidence for a strong first understanding.",
+        kind: DocumentKind::MomentGuide,
+        text: include_str!("../framework/0.1.0/local-agent-history.md"),
+    },
+    Document {
         slug: "evidence-review",
         title: "Evidence review",
         description: "Use when looking across evidence, correcting the current account, reaching an experiment verdict, or choosing what to try next.",
@@ -176,7 +183,7 @@ mod tests {
     #[test]
     fn catalogue_has_one_working_version_and_distinct_kinds() {
         assert_eq!(WORKING_VERSION, "0.1.0");
-        assert_eq!(GUIDES.len(), 5);
+        assert_eq!(GUIDES.len(), 6);
         assert_eq!(REFERENCES.len(), 5);
         assert!(GUIDES
             .iter()

@@ -57,6 +57,14 @@ The framework directs the agent to establish consent and a working agreement, ve
 durable local file access, preserve selected reports, maintain a correctable person model,
 and conduct evidence-led reviews. Surf itself does none of those local operations.
 
+After ordinary setup, the framework may offer a progressive local-history route. The
+agent first asks to inventory exact disclosed Codex or Claude Code roots using filesystem
+metadata only. It then proposes a bounded recent or representative set and asks separately
+before opening conversation content. The resulting analysis is about the person's
+human-agent working system rather than an attempt to take over the projects mentioned in
+the histories. No history content or derived personal context is sent through Surf's
+public tools.
+
 ## The local practice
 
 The person confirms a durable, dedicated folder. Inside it, a readable map points to the
@@ -74,6 +82,11 @@ invalid or inaccessible.
 This local model provides continuity across conversations while remaining inspectable and
 editable. The agent must label provenance, preserve original reports, keep current state
 distinct from history, and honour corrections, exclusions, and deletion requests.
+
+When the person explicitly agrees, the local practice may also retain a small source index
+or corrected synthesis derived from an approved history set. That local record supports
+later targeted recall; it is not a server-side profile or permission to reopen unrelated
+histories.
 
 Local control is not the same as universal privacy. The agent and AI provider may process
 files they access, and the machine, backups, and sharing settings remain separate

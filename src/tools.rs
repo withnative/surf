@@ -253,6 +253,7 @@ mod tests {
             json!([
                 "setting-up",
                 "returning-and-capture",
+                "local-agent-history",
                 "evidence-review",
                 "intensive-foundation",
                 "teaching-and-practice"
