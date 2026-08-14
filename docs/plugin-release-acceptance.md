@@ -87,7 +87,7 @@ MCP connection. Record every tool call and command, not only the final installat
 1. Give the agent only this prompt:
 
    ```text
-   Open https://github.com/withnative/surf and follow the setup guide.
+   Use the setup guide at https://github.com/withnative/surf to install Surf.
    ```
 
 2. Confirm the agent opens or reads the supplied repository and setup guide before
@@ -125,7 +125,7 @@ client shell.
 1. Give the agent only this prompt:
 
    ```text
-   Open https://github.com/withnative/surf and follow the setup guide.
+   Use the setup guide at https://github.com/withnative/surf to install Surf.
    ```
 
 2. Confirm it explains that installing in its isolated environment would not install Surf

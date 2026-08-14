@@ -35,7 +35,7 @@ evidence and control. Read [why MCP](https://github.com/withnative/surf/blob/mai
 
 ## How do I install Surf?
 
-Paste `Open https://github.com/withnative/surf and follow the setup guide.` into Claude or
+Paste `Use the setup guide at https://github.com/withnative/surf to install Surf.` into Claude or
 ChatGPT/Codex, on desktop or CLI. The repository gives the agent a short setup route for
 its client. If you prefer to do it yourself, each surface installs with two shell commands
 from its own CLI, and both also offer an in-product route. For the exact commands, updates,

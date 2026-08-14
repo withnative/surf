@@ -8,7 +8,7 @@ its supported plugin surfaces.
 Paste this into Claude or ChatGPT/Codex, on desktop or CLI:
 
 ```text
-Open https://github.com/withnative/surf and follow the setup guide.
+Use the setup guide at https://github.com/withnative/surf to install Surf.
 ```
 
 ### For agents following this guide
@@ -39,7 +39,7 @@ or durable file setup, then give the user a provider-matched handoff:
 Ask the user to paste this into the receiving client:
 
 ```text
-Open https://github.com/withnative/surf and follow the setup guide.
+Use the setup guide at https://github.com/withnative/surf to install Surf.
 ```
 
 The receiving desktop or CLI agent should inspect its own client state and complete the

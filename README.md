@@ -20,7 +20,7 @@ together.
 Give this instruction to Claude or ChatGPT/Codex, on desktop or CLI:
 
 ```text
-Open https://github.com/withnative/surf and follow the setup guide.
+Use the setup guide at https://github.com/withnative/surf to install Surf.
 ```
 
 The agent should identify the client it is running in, install Surf using that client's
@@ -70,7 +70,7 @@ of commands. Explain the boundary, then give the user a provider-matched handoff
 Ask them to paste this human-readable setup prompt into that client:
 
 ```text
-Open https://github.com/withnative/surf and follow the setup guide.
+Use the setup guide at https://github.com/withnative/surf to install Surf.
 ```
 
 The receiving desktop or CLI agent should inspect its own client state and complete the
