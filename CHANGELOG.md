@@ -7,6 +7,9 @@ lockstep policy. Working-framework changes are recorded in
 
 ## Unreleased
 
+- Move Surf discovery to the canonical `withnative/plugins` catalogue while keeping the
+  setup guide and package source in `withnative/surf`. Retire this repository's conflicting
+  marketplace manifests; the public plugin identity remains `surf@withnative`.
 - Add an optional, progressive-consent local Codex and Claude Code history route to the
   working framework, with metadata-first inventory, bounded analysis, calibration, and
   correctable synthesis while keeping participant content out of Surf's server.

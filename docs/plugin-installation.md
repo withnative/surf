@@ -16,8 +16,15 @@ Use the setup guide at https://github.com/withnative/surf to install Surf.
 Inspect the local marketplace, plugin and MCP state before deciding installation is
 unavailable. If shell access is available, perform the setup yourself with the client's
 non-interactive plugin CLI below. Do not substitute a curated plugin-catalogue search for
-the repository the user supplied, and do not send the user to interactive slash commands
-when you can run the non-interactive CLI.
+the exact Native catalogue named by this guide, and do not send the user to interactive
+slash commands when you can run the non-interactive CLI.
+
+Keep the two repository roles distinct: [withnative/surf](https://github.com/withnative/surf)
+is the setup guide and source repository, while
+[withnative/plugins](https://github.com/withnative/plugins) is the canonical Native plugin
+catalogue. Register the catalogue repository even though the user arrived through the Surf
+repository. Adding the catalogue makes Surf and other Native plugins available but installs
+none of them. The subsequent install command selects only Surf.
 
 Ask before changing an existing standalone Surf MCP connection. Verify the installed
 plugin afterwards and follow any reload or restart instruction reported by the client. If
@@ -52,7 +59,7 @@ for the plugin flow and durable local-file practice.
 The Codex CLI installs Surf in two commands. The install verb is `add`, not `install`:
 
 ```sh
-codex plugin marketplace add withnative/surf
+codex plugin marketplace add withnative/plugins
 codex plugin add surf@withnative
 ```
 
@@ -67,10 +74,10 @@ check the Plugins Directory listing if you do not spot it straight away.
 
 To install in-product instead:
 
-1. In a terminal, add the public repository marketplace:
+1. In a terminal, add the public Native plugin catalogue:
 
    ```sh
-   codex plugin marketplace add withnative/surf
+   codex plugin marketplace add withnative/plugins
    ```
 
 2. Restart the ChatGPT desktop app.
@@ -100,7 +107,7 @@ The `claude` CLI installs Surf in two commands. The default install scope is `us
 Surf is available across projects:
 
 ```sh
-claude plugin marketplace add withnative/surf
+claude plugin marketplace add withnative/plugins
 claude plugin install surf@withnative
 ```
 
@@ -124,7 +131,7 @@ them in a terminal, then restart the app. A user-scope install is active there.
 Inside an interactive Claude Code terminal session, the equivalent slash commands are:
 
 ```text
-/plugin marketplace add withnative/surf
+/plugin marketplace add withnative/plugins
 /plugin install surf@withnative
 ```
 
@@ -147,7 +154,10 @@ in its [Claude Code plugin guide](https://code.claude.com/docs/en/discover-plugi
 
 ## What the plugin installs
 
-Both provider catalogues point to `plugins/surf`. The installed package contains:
+The Claude and OpenAI catalogues in `withnative/plugins` both reference
+`withnative/surf/plugins/surf` remotely. Surf remains authored and released from this
+repository; the catalogue owns only its discoverable entry. The installed package
+contains:
 
 - a small Surf trigger skill;
 - a connection to `https://surf.withnative.ai/mcp`; and
@@ -247,7 +257,10 @@ For ChatGPT/Codex Desktop, remove Surf from the CLI:
 codex plugin remove surf@withnative
 ```
 
-To stop tracking the repository marketplace too, run:
+`withnative` is the shared Native catalogue, not a Surf-only marketplace. Leave it
+registered unless you intentionally want to stop tracking every plugin it provides;
+removing it affects catalogue availability for Native and Surf together. If that is what
+you want, run:
 
 ```sh
 codex plugin marketplace remove withnative
@@ -263,12 +276,14 @@ claude plugin uninstall surf@withnative
 ```
 
 `claude plugin uninstall` takes `-s|--scope` to match the scope you installed at, and
-`claude plugin disable surf@withnative` keeps the plugin installed but inactive. To remove
-the catalogue too, run `claude plugin marketplace remove withnative`; Claude Code also
-uninstalls plugins installed from a marketplace when that marketplace is removed.
+`claude plugin disable surf@withnative` keeps the plugin installed but inactive. Removing
+the shared catalogue with `claude plugin marketplace remove withnative` can also uninstall
+Native or any other plugins installed from it. Do that only if you intend to remove the
+whole Native catalogue, not merely Surf.
 
-The equivalent slash commands inside a terminal session are
-`/plugin uninstall surf@withnative` and `/plugin marketplace remove withnative`.
+The equivalent Surf-only slash command inside a terminal session is
+`/plugin uninstall surf@withnative`. `/plugin marketplace remove withnative` removes the
+whole shared Native catalogue and is not part of the ordinary Surf uninstall path.
 
 Uninstalling or disabling Surf removes the packaged trigger skill and connection. It does
 not delete the local practice files you chose to keep. Those files are not plugin data and
@@ -278,14 +293,16 @@ remain under your control.
 
 ### Surf is absent from the catalogue
 
-- Confirm `https://github.com/withnative/surf` is reachable without authentication.
-- ChatGPT/Codex Desktop: run `codex plugin marketplace list`, then
-  `codex plugin marketplace upgrade withnative`, and confirm Surf appears in
-  `codex plugin list`. For the in-app route, restart the app and inspect the **Native**
-  source again.
-- Claude Code: run `claude plugin marketplace update withnative`, then confirm Surf appears
-  in `claude plugin list`. Inside a terminal session, `/plugin marketplace update
-  withnative` and the `/plugin` browser do the same.
+- Confirm both the catalogue at `https://github.com/withnative/plugins` and Surf source at
+  `https://github.com/withnative/surf` are reachable without authentication.
+- ChatGPT/Codex Desktop: run `codex plugin marketplace list` and confirm `withnative`
+  points to `withnative/plugins`, then run `codex plugin marketplace upgrade withnative`.
+  Retry `codex plugin add surf@withnative`; for the in-app route, restart the app and
+  inspect the **Native** source again.
+- Claude Code: run `claude plugin marketplace list` and confirm `withnative` points to
+  `withnative/plugins`, then run `claude plugin marketplace update withnative` and retry
+  `claude plugin install surf@withnative`. Inside a terminal session, `/plugin marketplace
+  update withnative` followed by the `/plugin` browser exposes the same refreshed catalogue.
 - `claude plugin validate <path>` checks a plugin or marketplace manifest if you are
   working from a local checkout or a fork.
 

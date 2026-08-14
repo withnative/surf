@@ -1,7 +1,12 @@
 # Claude Code CLI install acceptance evidence — 2026-08-14
 
+> Historical route: this run used the former Surf-owned `withnative` marketplace. Surf no
+> longer publishes that marketplace; current clean installs register the canonical
+> `withnative/plugins` catalogue. The client and package-behaviour observations below
+> remain useful, but they do not verify the new catalogue route.
+
 This records an observed `claude plugin` install, uninstall and update cycle against the
-public `withnative/surf` marketplace on macOS. It is indicative operational evidence, not
+former public `withnative/surf` marketplace on macOS. It is indicative operational evidence, not
 a clean-profile certification and not a mechanical release gate.
 
 **This was not a clean profile.** The `withnative` marketplace was already configured and
