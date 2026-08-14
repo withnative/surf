@@ -28,6 +28,8 @@ Installation and release documents that are not served as product-document topic
 
 - [Plugin installation and management](plugin-installation.md) — public user guide
 - [Plugin release acceptance runbook](plugin-release-acceptance.md) — maintainer checklist
+- [Production deployment and rollback](production-deployment.md) — canonical Railway
+  continuous-deployment and recovery runbook
 
 Use `get_doc(topic)` with one of the slugs above. Where a client supports MCP resources,
 the equivalent URI is `surf://docs/{slug}`. Plain Markdown is available at

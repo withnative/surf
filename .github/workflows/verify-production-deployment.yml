@@ -1,0 +1,65 @@
+name: Verify production deployment
+
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: surf-production-deployment-verification
+  cancel-in-progress: false
+
+jobs:
+  verify-production:
+    name: production deployment verification
+    if: >-
+      github.repository == 'withnative/surf' &&
+      github.event.deployment_status.state == 'success' &&
+      github.event.deployment.environment == 'production' &&
+      github.event.deployment.ref == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the trusted verifier from main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+          path: verifier
+
+      - name: Validate the deployment event before using its values
+        id: deployment
+        run: >-
+          python3 verifier/.github/scripts/validate_deployment_event.py
+          --event "$GITHUB_EVENT_PATH"
+          --repository withnative/surf
+          --environment production
+          --ref main
+          --github-output "$GITHUB_OUTPUT"
+          --github-summary "$GITHUB_STEP_SUMMARY"
+
+      - name: Require the deployed commit to belong to main
+        env:
+          DEPLOYED_SHA: ${{ steps.deployment.outputs.sha }}
+        run: git -C verifier merge-base --is-ancestor "$DEPLOYED_SHA" origin/main
+
+      - name: Check out the exact deployed commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.deployment.outputs.sha }}
+          persist-credentials: false
+          path: deployed-source
+
+      - name: Verify public production surfaces
+        env:
+          DEPLOYED_SHA: ${{ steps.deployment.outputs.sha }}
+        run: >-
+          python3 verifier/.github/scripts/verify_production_deployment.py
+          --base-url https://surf.withnative.ai
+          --expected-sha "$DEPLOYED_SHA"
+          --repo-root deployed-source
+          --legacy-url https://learn.withnative.ai
+          --legacy-url https://agility.withnative.ai
+          --github-summary "$GITHUB_STEP_SUMMARY"
