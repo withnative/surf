@@ -1,0 +1,4 @@
+interface:
+  display_name: "Find your next step with AI"
+  short_description: "Find your next worthwhile step with AI agents."
+  default_prompt: "Use $next-step to find a worthwhile next step from my experience working with AI agents."

@@ -7,6 +7,9 @@ lockstep policy. Working-framework changes are recorded in
 
 ## Unreleased
 
+- Rename the single shared Surf skill to `next-step`, broaden its stable activation
+  boundary for plausible AI-agent learning and reflection, and keep precise routing in
+  remotely served guidance for plugin package `0.1.2`.
 - Add the deterministic user-home practice-locator contract to working framework `0.1.0`
   and reinforce it in plugin package `0.1.1` without adding local runtime code.
 
