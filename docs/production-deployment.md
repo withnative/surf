@@ -25,12 +25,31 @@ operator must maintain in GitHub and Railway. It contains no credentials.
    must receive HTTP 200 before making the new deployment active; a failed health check
    leaves the prior healthy deployment active.
 6. Railway publishes a successful GitHub deployment status for environment `production`
-   and ref `main`.
+   and ref `main` (or an empty ref for a SHA-addressed deployment).
 7. [Verify production deployment](../.github/workflows/verify-production-deployment.yml)
    validates the event before using its values, proves the full SHA belongs to `main`,
    and verifies the exact source, MCP catalogue, compiled landing bytes, and legacy-host
    health. A deep-check failure is visible as a failed GitHub Actions run even though the
    platform health gate has completed.
+
+The event gate accepts only GitHub App installation `122756225`, the installation of the
+Railway app (`railway-app`, app ID `73253`) on `withnative`. It also requires Railway
+service `f73c4cbb-99a7-4716-a4a3-19bc91ca261a` and project
+`f4d995a4-2c51-4860-8817-60f141b75b0c`. The validator requires the documented
+`performed_via_github_app` ID and slug on both the deployment and status, the expected
+top-level installation ID, and production/non-transient flags. It deliberately does not
+infer app identity from an unrelated sender user ID. Confirm that GitHub Actions exposes
+the installation object in Railway's first real event; if it does not, retain the failed
+evidence and replace that assumption only with an equally strong documented identity.
+
+Railway examples expose `deployment.payload.serviceId`; the validator requires it.
+`payload.projectId` is accepted when present. If it is absent, the validator requires a
+Railway HTTPS status URL whose `/project/{id}/service/{id}` path carries both exact IDs.
+Any supplied target URL must be a safe `railway.com` or legacy `railway.app` HTTPS URL
+with those IDs, and any supplied environment URL must be exactly
+`https://surf.withnative.ai`. This is an explicit, tested assumption to confirm against
+Railway's first real event. If Railway emits a different documented shape, keep the first
+run failed, retain its event evidence, and review the validator before changing it.
 
 The verification summary records the Git commit, GitHub deployment ID, and Railway
 status URL. Use that status URL or Railway's deployment details to collect the Railway
@@ -50,6 +69,8 @@ and after any integration or ownership change.
   workflow declares no write permission and consumes no deployment secret.
 - Install or retain the Railway GitHub app for `withnative/surf` with only the repository,
   checks, and deployment access required for the integration.
+- Confirm the installation remains ID `122756225`; a reinstall normally changes that ID
+  and must trigger a reviewed workflow update rather than silently broadening trust.
 
 ### Railway
 
@@ -73,7 +94,8 @@ runtime variables remain Railway-managed.
 
 ## Verification and recovery
 
-The automatic verifier checks:
+The automatic verifier checks the contract in the deployed commit's
+`.github/deployment-contract.json`:
 
 - `surf.withnative.ai/health` returns HTTP 200 and `ok`;
 - `/source`, `surf://source`, and MCP initialization name the deployed full SHA and exact
@@ -82,6 +104,13 @@ The automatic verifier checks:
 - `resources/list` contains the complete working-framework and source catalogue;
 - landing HTML and CSS are byte-for-byte identical to the deployed commit; and
 - the two legacy hostnames still return a healthy response.
+
+The mutable production hostname can briefly serve the previous healthy deployment after
+GitHub receives Railway's success status. The verifier therefore retries the complete
+contract with bounded exponential backoff (six attempts over at most 60 seconds of
+backoff). A newer successful deployment cancels an older in-progress verification run.
+Transient network errors and temporarily stale source or landing bytes can settle; a
+real mismatch still fails after the final attempt.
 
 If the GitHub verification fails but Railway is healthy, inspect the failing assertion
 before deciding whether to fix forward or roll back. Do not treat Railway's one-time
@@ -97,8 +126,10 @@ health gate as ongoing application monitoring.
    deployment's image and configuration. Never use **Deploy Latest Commit** or an
    ambiguous “redeploy latest” operation as rollback.
 4. Wait for `/health` to pass, then re-run the same deep verification against the restored
-   SHA. From a current checkout of `main`, with the rollback commit checked out separately
-   at `ROLLBACK_SOURCE`, the operator may run:
+   SHA. The current verifier loads tool, resource, protocol, and landing expectations
+   from the rollback commit's `.github/deployment-contract.json`, rather than comparing
+   an older deployment to the current `main` catalogue. From a current checkout of
+   `main`, with the rollback commit checked out separately at `ROLLBACK_SOURCE`, run:
 
    ```sh
    python3 .github/scripts/verify_production_deployment.py \
@@ -111,6 +142,14 @@ health gate as ongoing application monitoring.
 
 5. Preserve the Railway deployment result and verification output with the incident or
    release evidence.
+
+Commit `f1f914857d99594ce8590a25fb495481b778aa4e` predates the contract manifest and the
+post-deployment verifier, but it is the specifically reviewed known-good production
+promotion. The current verifier contains an exact-SHA compatibility contract for that
+commit so it can be assessed without borrowing today's catalogue. Any other pre-manifest
+commit must be checked with its own reviewed verifier/acceptance evidence or gain an
+explicit reviewed compatibility contract; do not silently fall back to current-main
+expectations.
 
 Dry-run this procedure by selecting (but not confirming) a known-good deployment,
 recording its ID and SHA, preparing the exact verifier command, and confirming the image

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": "2025-06-18",
+  "serverName": "surf",
+  "tools": [
+    "quickstart",
+    "get_guide",
+    "get_reference",
+    "get_doc"
+  ],
+  "requiredResources": [
+    "surf://framework/quickstart",
+    "surf://framework/manifest",
+    "surf://guide/setting-up",
+    "surf://guide/returning-and-capture",
+    "surf://guide/evidence-review",
+    "surf://guide/intensive-foundation",
+    "surf://guide/teaching-and-practice",
+    "surf://reference/shared-map-of-development",
+    "surf://reference/context-and-local-practice",
+    "surf://reference/capabilities",
+    "surf://reference/supporting-literacies",
+    "surf://reference/builds",
+    "surf://changelog",
+    "surf://source"
+  ],
+  "landing": {
+    "html": "web/landing/index.html",
+    "css": "web/landing/_landing.css",
+    "sourceLink": "href=\"/source\""
+  }
+}

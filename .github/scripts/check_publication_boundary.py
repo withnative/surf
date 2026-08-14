@@ -62,10 +62,20 @@ SECRET_PATTERNS = (
 NATIVE_RECORD_MENTION = re.compile(r"\[\[[0-9a-f]{7,8}\]\]")
 
 # The push-guard test suite needs two adversarial values in its source so it can
-# prove that they are rejected before a public receiver changes. Keep these
-# exceptions exact, path-scoped, and cardinality-checked: moving, duplicating,
-# or introducing either value anywhere else remains a readiness failure.
+# prove that they are rejected before a public receiver changes. Production
+# verification also needs two non-secret Railway routing identifiers in its
+# trusted workflow, tests, and operator runbook. Keep every exception exact and
+# path-scoped. The operational identifiers are optional so historical commits
+# from before deployment verification still scan, but duplication or use in any
+# other path remains a readiness failure.
 PUSH_GUARD_TEST = ".github/scripts/test_" + "public_push_guard.py"
+RAILWAY_PROJECT_ID = "f4d995a4" + "-2c51-4860-8817-60f141b75b0c"
+RAILWAY_SERVICE_ID = "f73c4cbb" + "-99a7-4716-a4a3-19bc91ca261a"
+RAILWAY_ID_PATHS = (
+    ".github/scripts/test_deployment_verification.py",
+    ".github/workflows/verify-production-deployment.yml",
+    "docs/production-deployment.md",
+)
 APPROVED_READINESS_FIXTURES = (
     (PUSH_GUARD_TEST, "internal literal", "docs/" + "evals", 1),
     (
@@ -74,6 +84,11 @@ APPROVED_READINESS_FIXTURES = (
         "123e4567" + "-e89b-12d3-a456-426614174000",
         1,
     ),
+)
+APPROVED_OPTIONAL_READINESS_VALUES = tuple(
+    (path, "account-specific identifier", identifier, 1)
+    for path in RAILWAY_ID_PATHS
+    for identifier in (RAILWAY_PROJECT_ID, RAILWAY_SERVICE_ID)
 )
 
 
@@ -330,6 +345,17 @@ def scan_publication_readiness(candidate: Candidate) -> None:
                     f"{path}: approved {label} fixture {value!r} occurs {actual_count} times; "
                     f"expected exactly {expected_count}"
                 )
+        for fixture_path, label, value, maximum_count in APPROVED_OPTIONAL_READINESS_VALUES:
+            if path != fixture_path:
+                continue
+            actual_count = text.count(value)
+            if actual_count > maximum_count:
+                findings.append(
+                    f"{path}: approved {label} value {value!r} occurs {actual_count} times; "
+                    f"expected at most {maximum_count}"
+                )
+            elif actual_count:
+                fixture_counts[(label, value)] = actual_count
         for marker in PUBLICATION_MARKERS:
             if marker.casefold() in text.casefold():
                 findings.append(f"{path}: unresolved publication marker {marker!r}")
