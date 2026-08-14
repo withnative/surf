@@ -54,8 +54,9 @@ Pick one route per surface. Installing from both the CLI and the Plugins Directo
 two copies of Surf on the same host and can produce duplicate tools.
 
 Start a new conversation and say `Help me get started with Surf.` You can invoke the
-plugin explicitly as `@surf` in ChatGPT/Codex Desktop or `/surf:surf` in Claude Code;
-ordinary requests such as `What's my current Surf goal?` can activate it too.
+plugin explicitly as `@surf` in ChatGPT/Codex Desktop, select the skill as `$next-step`
+where an OpenAI client exposes skill selectors, or use `/surf:next-step` in Claude Code.
+Ordinary requests such as `What's my current Surf goal?` can activate it too.
 
 [Read the canonical installation guide](docs/plugin-installation.md) for exact updates,
 uninstall, recovery, compatibility and privacy details. Direct MCP connection remains a
@@ -73,8 +74,9 @@ Surf guidance. Your practice remains in ordinary local files you control.
 Surf launched with three intentionally matching but independently versioned identities:
 the **Surf application version**, **working framework version**, and **plugin package
 version** were each `0.1.0`. Their future releases do not need to remain in lockstep.
-The locator guidance is the first independent package update: the current plugin package
-is `0.1.1`, while the application and working framework remain `0.1.0`.
+The locator guidance and `next-step` activation are independent package updates: the
+current plugin package is `0.1.2`, while the application and working framework remain
+`0.1.0`.
 
 ## What Surf does
 

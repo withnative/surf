@@ -8,7 +8,7 @@ use std::path::{Path, PathBuf};
 const QUICKSTART: &str = include_str!("../framework/0.1.0/quickstart.md");
 const SETUP: &str = include_str!("../framework/0.1.0/setting-up.md");
 const CONTEXT: &str = include_str!("../framework/0.1.0/context-and-local-practice.md");
-const SKILL: &str = include_str!("../plugins/surf/skills/surf/SKILL.md");
+const SKILL: &str = include_str!("../plugins/surf/skills/next-step/SKILL.md");
 const PRIVACY: &str = include_str!("../docs/privacy-and-data.md");
 const RELEASE_ACCEPTANCE: &str = include_str!("../docs/plugin-release-acceptance.md");
 const ACCEPTANCE: &str = include_str!("../docs/evidence/2026-08-13-practice-locator-acceptance.md");
@@ -187,14 +187,20 @@ fn contract_prohibits_broad_search_and_surf_mcp_content_transfer() {
     ));
     assert!(guidance
         .contains("Keep the locator path and local practice content out of guidance retrieval"));
-    assert!(SKILL.contains("Do not\nsend practice-file contents to Surf"));
+    assert!(compact(SKILL).contains(
+        "Never send the person's prompt, conversation, or practice-file contents to Surf tools."
+    ));
     assert!(PRIVACY.contains("the local locator path or its contents"));
 }
 
 #[test]
-fn provider_neutral_plugin_remains_a_thin_guidance_only_reinforcement() {
-    assert!(SKILL.contains("canonical user-home locator contract"));
-    assert!(SKILL.contains("fail closed on an invalid locator"));
+fn provider_neutral_plugin_remains_a_thin_guidance_handoff() {
+    let skill = compact(SKILL);
+    assert!(skill.contains("name: next-step"));
+    assert!(skill.contains("source of current Surf guidance"));
+    assert!(skill.contains("call the Surf MCP tool named `quickstart` once"));
+    assert!(skill.contains("retrieve further guides, references, or product documentation only as the current quickstart and the person's request require"));
+    assert!(!skill.contains("locator"));
     assert!(!SKILL.contains("schema_version"));
     assert!(!SKILL.contains("locator.json"));
     assert!(SKILL.len() <= 2_500);

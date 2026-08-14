@@ -21,13 +21,33 @@ CLAUDE_MARKETPLACE_COMMAND = "claude plugin marketplace add withnative/surf"
 CLAUDE_INSTALL_COMMAND = "claude plugin install surf@withnative"
 CLAUDE_SLASH_MARKETPLACE_COMMAND = "/plugin marketplace add withnative/surf"
 CLAUDE_SLASH_INSTALL_COMMAND = "/plugin install surf@withnative"
+OPENAI_SKILL_INVOCATION = "$next-step"
+CLAUDE_SKILL_INVOCATION = "/surf:next-step"
 SUPPORTED_SURFACES = ("ChatGPT/Codex Desktop", "Claude Code")
 FALLBACK_SEMANTICS = "Direct MCP connection remains a supported fallback"
 HERO = "Learn to surf the waves of AI"
 PLUGIN_NAME = "surf"
 MARKETPLACE_NAME = "withnative"
 PLUGIN_PATH = "./plugins/surf"
-PLUGIN_VERSION = "0.1.1"
+PLUGIN_VERSION = "0.1.2"
+SKILL_NAME = "next-step"
+SKILL_PATH = "skills/next-step/SKILL.md"
+SKILL_DESCRIPTION = (
+    "Use for plausible learning or reflection about working with AI agents, including "
+    "explicitly invoking Surf; starting or resuming a Surf practice; Surf guidance or "
+    "documentation; a current goal, aim, experiment, or plan; capturing or reflecting on "
+    "good, bad, or surprising AI-agent experiences; reviewing evidence; changing an "
+    "experiment; or deliberate improvement in how someone works with AI agents, even when "
+    "Surf is not named. Prefer activation for bounded AI-agent-practice intent. Do not use "
+    "for web surfing, unrelated products named Surf, ordinary task execution, or generic "
+    "subject learning without intent to learn from, reflect on, or improve the human-agent "
+    "working system."
+)
+SKILL_DISPLAY_NAME = "Find your next step with AI"
+SKILL_SHORT_DESCRIPTION = "Find your next worthwhile step with AI agents."
+SKILL_DEFAULT_PROMPT = (
+    "Use $next-step to find a worthwhile next step from my experience working with AI agents."
+)
 
 # Public installation copy is deliberately duplicated across surfaces rather than
 # generated from one source, so these per-surface expectations are the authoritative
@@ -48,6 +68,8 @@ DOCUMENTED_INSTALLATION_COPY = (
     CLAUDE_INSTALL_COMMAND,
     CLAUDE_SLASH_MARKETPLACE_COMMAND,
     CLAUDE_SLASH_INSTALL_COMMAND,
+    OPENAI_SKILL_INVOCATION,
+    CLAUDE_SKILL_INVOCATION,
     *SUPPORTED_SURFACES,
 )
 
@@ -184,13 +206,35 @@ def validate() -> None:
 
     skill_files = sorted(PLUGIN.glob("skills/*/SKILL.md"))
     require(len(skill_files) == 1, "plugin must contain exactly one canonical skill")
-    require(skill_files[0].relative_to(PLUGIN).as_posix() == "skills/surf/SKILL.md", "skill path drifted")
+    require(skill_files[0].relative_to(PLUGIN).as_posix() == SKILL_PATH, "skill path drifted")
     skill = skill_files[0].read_text(encoding="utf-8")
     require(skill.startswith("---\n"), "Surf skill must start with frontmatter")
-    require("name: surf" in skill, "Surf skill name is missing")
+    require(f"name: {SKILL_NAME}\n" in skill, "Surf skill name is missing")
+    require(
+        f"description: {SKILL_DESCRIPTION}\n" in skill,
+        "Surf skill activation description drifted",
+    )
     require("quickstart" in skill, "Surf skill must require quickstart")
     require(ENDPOINT in skill, "Surf skill must identify the stable endpoint")
     require(len(skill.encode("utf-8")) <= 2500, "Surf skill is no longer a thin bootstrap")
+
+    openai_metadata_path = skill_files[0].parent / "agents" / "openai.yaml"
+    try:
+        openai_metadata = openai_metadata_path.read_text(encoding="utf-8")
+    except FileNotFoundError as error:
+        raise ValidationError(
+            f"missing {openai_metadata_path.relative_to(ROOT)}"
+        ) from error
+    expected_openai_metadata = (
+        "interface:\n"
+        f'  display_name: "{SKILL_DISPLAY_NAME}"\n'
+        f'  short_description: "{SKILL_SHORT_DESCRIPTION}"\n'
+        f'  default_prompt: "{SKILL_DEFAULT_PROMPT}"\n'
+    )
+    require(
+        openai_metadata == expected_openai_metadata,
+        "OpenAI skill display metadata drifted",
+    )
 
     forbidden = [
         path.relative_to(PLUGIN).as_posix()

@@ -52,9 +52,11 @@ installing from the Plugins Directory.
 
 Either way, start a new conversation and say `Help me get started with Surf.`
 
-To invoke Surf explicitly, choose `@surf` and add your request. Ordinary language such as
-`What's my current Surf goal?` can activate the Surf skill without an explicit mention.
-The skill should call `quickstart` before giving substantive Surf guidance.
+To invoke Surf explicitly, choose `@surf` and add your request. Where the client exposes
+individual skill selectors, choose **Find your next step with AI** (`$next-step`). Ordinary
+language such as `What's my current Surf goal?` can activate the Surf skill without an
+explicit mention. The skill should call `quickstart` before giving substantive Surf
+guidance.
 
 Use `/mcp` in the composer to inspect connected servers. The official OpenAI documentation
 covers [Git-backed repository marketplaces](https://developers.openai.com/plugins/build/plugins#add-a-marketplace-from-the-cli)
@@ -104,8 +106,8 @@ If the install summary says `Run /reload-plugins to activate.`, run:
 ```
 
 Start a new conversation and say `Help me get started with Surf.` To invoke the skill
-explicitly, use `/surf:surf`; ordinary Surf requests can activate it naturally too. Use
-`/mcp` to confirm the plugin-provided `surf` server is connected.
+explicitly, use `/surf:next-step`; ordinary Surf requests can activate it naturally too.
+Use `/mcp` to confirm the plugin-provided `surf` server is connected.
 
 Anthropic documents these commands, user scope, reload behaviour and marketplace safety
 in its [Claude Code plugin guide](https://code.claude.com/docs/en/discover-plugins).

@@ -72,7 +72,8 @@ framework/CHANGELOG.md
 plugins/surf/.claude-plugin/plugin.json
 plugins/surf/.codex-plugin/plugin.json
 plugins/surf/.mcp.json
-plugins/surf/skills/surf/SKILL.md
+plugins/surf/skills/next-step/SKILL.md
+plugins/surf/skills/next-step/agents/openai.yaml
 src/docs.rs
 src/framework.rs
 src/landing.rs

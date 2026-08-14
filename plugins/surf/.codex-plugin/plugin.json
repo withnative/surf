@@ -1,6 +1,6 @@
 {
   "name": "surf",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Use Surf's current learning framework through its stateless MCP server.",
   "author": {
     "name": "Native",
