@@ -15,15 +15,14 @@ SCRIPTS = Path(__file__).resolve().parent
 SHA = "0123456789abcdef0123456789abcdef01234567"
 SOURCE_URL = f"https://github.com/withnative/surf/commit/{SHA}"
 OLD_SHA = "ffffffffffffffffffffffffffffffffffffffff"
-INSTALLATION_ID = 122756225
-APP_ID = 73253
-APP_SLUG = "railway-app"
-SERVICE_ID = "f73c4cbb-99a7-4716-a4a3-19bc91ca261a"
+BOT_ID = 68434857
+BOT_LOGIN = "railway-app[bot]"
+BOT_NODE_ID = "MDM6Qm90Njg0MzQ4NTc="
+SERVICE_NAME = "native-learn"
 PROJECT_ID = "f4d995a4-2c51-4860-8817-60f141b75b0c"
-TARGET_URL = (
-    f"https://railway.com/project/{PROJECT_ID}/service/{SERVICE_ID}"
-    "?environmentId=production"
-)
+ENVIRONMENT_ID = "2255334a-771c-4024-a5b8-f7760f8d0144"
+ENVIRONMENT_LABEL = "native-learn / production"
+TARGET_URL = f"https://railway.com/project/{PROJECT_ID}?environmentId={ENVIRONMENT_ID}"
 TOOLS = ["quickstart", "get_guide", "get_reference", "get_doc"]
 RESOURCES = [
     "surf://framework/quickstart",
@@ -58,26 +57,50 @@ deployment_verification = load_module("verify_production_deployment")
 
 
 def valid_event() -> dict:
+    bot = {
+        "id": BOT_ID,
+        "login": BOT_LOGIN,
+        "node_id": BOT_NODE_ID,
+        "type": "Bot",
+    }
+    repository_url = "https://api.github.com/repos/withnative/surf"
+    deployment_url = f"{repository_url}/deployments/42"
     return {
         "action": "created",
-        "installation": {"id": INSTALLATION_ID},
-        "repository": {"full_name": "withnative/surf"},
+        "sender": bot.copy(),
+        "repository": {
+            "id": 1333433853,
+            "full_name": "withnative/surf",
+            "default_branch": "main",
+        },
         "deployment": {
             "id": 42,
+            "url": deployment_url,
+            "statuses_url": f"{deployment_url}/statuses",
+            "repository_url": repository_url,
             "sha": SHA,
-            "ref": "main",
-            "environment": "production",
-            "production_environment": True,
+            "ref": SHA,
+            "environment": ENVIRONMENT_LABEL,
+            "original_environment": ENVIRONMENT_LABEL,
+            "task": "deploy",
+            "production_environment": False,
             "transient_environment": False,
-            "performed_via_github_app": {"id": APP_ID, "slug": APP_SLUG},
-            "payload": {"serviceId": SERVICE_ID, "projectId": PROJECT_ID},
+            "creator": bot.copy(),
+            "performed_via_github_app": None,
+            "payload": {"environmentId": ENVIRONMENT_ID},
         },
         "deployment_status": {
+            "id": 84,
+            "url": f"{deployment_url}/statuses/84",
+            "deployment_url": deployment_url,
+            "repository_url": repository_url,
             "state": "success",
-            "environment": "production",
-            "performed_via_github_app": {"id": APP_ID, "slug": APP_SLUG},
+            "environment": ENVIRONMENT_LABEL,
+            "creator": bot.copy(),
+            "performed_via_github_app": None,
             "target_url": TARGET_URL,
-            "environment_url": "https://surf.withnative.ai",
+            "log_url": TARGET_URL,
+            "environment_url": TARGET_URL,
         },
     }
 
@@ -86,14 +109,14 @@ def validate(event: dict) -> dict[str, str]:
     return event_validation.validate_event(
         event,
         repository="withnative/surf",
-        environment="production",
-        ref="main",
-        installation_id=INSTALLATION_ID,
-        app_id=APP_ID,
-        app_slug=APP_SLUG,
-        service_id=SERVICE_ID,
+        repository_id=1333433853,
+        environment_label=ENVIRONMENT_LABEL,
+        environment_id=ENVIRONMENT_ID,
+        bot_id=BOT_ID,
+        bot_login=BOT_LOGIN,
+        bot_node_id=BOT_NODE_ID,
+        service_name=SERVICE_NAME,
         project_id=PROJECT_ID,
-        allow_empty_ref=True,
     )
 
 
@@ -106,22 +129,28 @@ class EventValidationTests(unittest.TestCase):
     def test_rejects_untrusted_routing_and_sha_fields(self):
         mutations = [
             (None, "action", "edited"),
-            ("installation", "id", 1),
+            ("sender", "id", 1),
+            ("repository", "id", 1),
             ("repository", "full_name", "attacker/fork"),
+            ("repository", "default_branch", "trunk"),
             ("deployment", "environment", "preview"),
-            ("deployment", "ref", "feature/unreviewed"),
+            ("deployment", "original_environment", "preview"),
+            ("deployment", "task", "other"),
+            ("deployment", "ref", OLD_SHA),
             ("deployment", "sha", "$(touch /tmp/not-safe)"),
             ("deployment_status", "state", "failure"),
             ("deployment_status", "environment", "preview"),
             ("deployment_status", "environment_url", "https://attacker.example"),
-            ("deployment", "production_environment", False),
+            ("deployment", "production_environment", True),
             ("deployment", "transient_environment", True),
             ("deployment", "id", True),
-            ("deployment", "performed_via_github_app", None),
-            ("deployment", "performed_via_github_app", {"id": 1, "slug": APP_SLUG}),
-            ("deployment_status", "performed_via_github_app", {"id": APP_ID, "slug": "wrong"}),
-            ("deployment", "payload", {"serviceId": "wrong", "projectId": PROJECT_ID}),
-            ("deployment", "payload", {"serviceId": SERVICE_ID, "projectId": "wrong"}),
+            ("deployment_status", "id", True),
+            ("deployment", "creator", {"id": 1, "login": BOT_LOGIN, "node_id": BOT_NODE_ID, "type": "Bot"}),
+            ("deployment_status", "creator", {"id": BOT_ID, "login": "wrong", "node_id": BOT_NODE_ID, "type": "Bot"}),
+            ("deployment", "performed_via_github_app", {"id": 73253, "slug": "railway-app"}),
+            ("deployment_status", "performed_via_github_app", {}),
+            ("deployment", "payload", {"environmentId": "wrong"}),
+            ("deployment", "payload", {"environmentId": ENVIRONMENT_ID, "extra": "wrong"}),
         ]
         for section, key, value in mutations:
             with self.subTest(section=section, key=key):
@@ -135,10 +164,11 @@ class EventValidationTests(unittest.TestCase):
 
     def test_rejects_unsafe_or_wrong_correlation_urls(self):
         for target_url in [
-            "http://railway.com/project/x/service/y",
-            f"https://attacker.example/project/{PROJECT_ID}/service/{SERVICE_ID}",
-            f"https://railway.com/project/wrong/service/{SERVICE_ID}",
-            f"https://railway.com/project/{PROJECT_ID}/service/wrong",
+            f"http://railway.com/project/{PROJECT_ID}?environmentId={ENVIRONMENT_ID}",
+            f"https://attacker.example/project/{PROJECT_ID}?environmentId={ENVIRONMENT_ID}",
+            TARGET_URL.replace(PROJECT_ID, "wrong"),
+            TARGET_URL.replace(ENVIRONMENT_ID, "wrong"),
+            TARGET_URL + "&serviceId=unexpected",
             TARGET_URL + "`\n## forged heading",
         ]:
             with self.subTest(target_url=target_url):
@@ -147,38 +177,52 @@ class EventValidationTests(unittest.TestCase):
                 with self.assertRaises(event_validation.EventValidationError):
                     validate(event)
 
-    def test_project_identity_can_come_from_payload_or_correlation_url(self):
-        event = valid_event()
-        del event["deployment"]["payload"]["projectId"]
-        self.assertEqual(validate(event)["status_target_url"], TARGET_URL)
+    def test_github_deployment_and_status_links_must_be_self_consistent(self):
+        mutations = [
+            ("deployment", "repository_url", "https://api.github.com/repos/attacker/fork"),
+            ("deployment", "url", "https://api.github.com/repos/withnative/surf/deployments/1"),
+            ("deployment", "statuses_url", "https://api.github.com/repos/withnative/surf/deployments/1/statuses"),
+            ("deployment_status", "repository_url", "https://api.github.com/repos/attacker/fork"),
+            ("deployment_status", "deployment_url", "https://api.github.com/repos/withnative/surf/deployments/1"),
+            ("deployment_status", "url", "https://api.github.com/repos/withnative/surf/deployments/42/statuses/1"),
+        ]
+        for section, key, value in mutations:
+            with self.subTest(section=section, key=key):
+                event = valid_event()
+                event[section][key] = value
+                with self.assertRaises(event_validation.EventValidationError):
+                    validate(event)
+
+    def test_requires_the_captured_explicit_null_app_metadata(self):
+        for section in ("deployment", "deployment_status"):
+            with self.subTest(section=section):
+                event = valid_event()
+                del event[section]["performed_via_github_app"]
+                with self.assertRaises(event_validation.EventValidationError):
+                    validate(event)
+
+    def test_all_three_railway_correlation_urls_are_required_and_must_agree(self):
+        self.assertEqual(validate(valid_event())["status_target_url"], TARGET_URL)
+
+        for key in ("target_url", "log_url", "environment_url"):
+            with self.subTest(key=key):
+                event = valid_event()
+                event["deployment_status"][key] = None
+                with self.assertRaises(event_validation.EventValidationError):
+                    validate(event)
 
         event = valid_event()
-        event["deployment_status"]["target_url"] = None
-        self.assertEqual(validate(event)["status_target_url"], "unavailable")
-
-        event = valid_event()
-        del event["deployment"]["payload"]["projectId"]
-        event["deployment_status"]["target_url"] = None
-        with self.assertRaises(event_validation.EventValidationError):
-            validate(event)
-
-        event = valid_event()
-        event["deployment_status"]["target_url"] = ""
-        event["deployment_status"]["log_url"] = TARGET_URL
-        self.assertEqual(validate(event)["status_target_url"], TARGET_URL)
-
-        event["deployment_status"]["target_url"] = TARGET_URL.replace(
-            SERVICE_ID, "wrong"
+        event["deployment_status"]["log_url"] = TARGET_URL.replace(
+            ENVIRONMENT_ID, "wrong"
         )
         with self.assertRaises(event_validation.EventValidationError):
             validate(event)
 
-    def test_empty_sha_ref_is_allowed_but_other_branches_are_not(self):
+    def test_deployment_ref_must_equal_the_validated_sha(self):
         event = valid_event()
-        event["deployment"]["ref"] = ""
-        self.assertEqual(validate(event)["deployment_ref"], "(empty SHA ref)")
+        self.assertEqual(validate(event)["deployment_ref"], SHA)
 
-        event["deployment"]["ref"] = "feature/unreviewed"
+        event["deployment"]["ref"] = "main"
         with self.assertRaises(event_validation.EventValidationError):
             validate(event)
 
