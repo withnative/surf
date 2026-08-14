@@ -67,6 +67,12 @@ and source-archive builds therefore expose a visible unavailable result instead 
 potentially false source offer. `/source` redirects with HTTP 307 only when the pair has
 been verified; otherwise it returns HTTP 503 with the unavailable explanation.
 
+For the canonical hosted deployment, Railway supplies `RAILWAY_GIT_COMMIT_SHA` from the
+GitHub trigger and the Docker build derives the canonical URL from it. This removes a
+mutable operator-supplied pair from the normal path while retaining the explicit
+`SURF_GIT_SHA` and `SURF_SOURCE_URL` path for tests and deliberate exact-source builds.
+See the [production deployment and rollback runbook](production-deployment.md).
+
 The exact commit is immutable as a source revision even while the pre-production
 framework evolves in later commits. Source identity therefore does not imply historical
 framework support.

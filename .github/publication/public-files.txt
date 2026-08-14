@@ -12,6 +12,7 @@
 .github/ISSUE_TEMPLATE/bug.yml
 .github/ISSUE_TEMPLATE/config.yml
 .github/ISSUE_TEMPLATE/documentation.yml
+.github/deployment-contract.json
 .github/publication/README.md
 .github/publication/github-ruleset-plan.md
 .github/publication/public-files.txt
@@ -23,10 +24,14 @@
 .github/scripts/guard_public_push.py
 .github/scripts/install-gitleaks.sh
 .github/scripts/install-publication-hooks.sh
+.github/scripts/test_deployment_verification.py
 .github/scripts/test_public_push_guard.py
 .github/scripts/test_publication_boundary.py
+.github/scripts/validate_deployment_event.py
+.github/scripts/verify_production_deployment.py
 .github/workflows/ci.yml
 .github/workflows/publication-guard.yml
+.github/workflows/verify-production-deployment.yml
 .gitignore
 CHANGELOG.md
 CONTRIBUTING.md
@@ -52,6 +57,7 @@ docs/licensing.md
 docs/plugin-installation.md
 docs/plugin-release-acceptance.md
 docs/privacy-and-data.md
+docs/production-deployment.md
 docs/releases-and-source.md
 docs/security-incident-response.md
 docs/why-mcp.md
@@ -74,6 +80,7 @@ plugins/surf/.codex-plugin/plugin.json
 plugins/surf/.mcp.json
 plugins/surf/skills/next-step/SKILL.md
 plugins/surf/skills/next-step/agents/openai.yaml
+railway.toml
 src/docs.rs
 src/framework.rs
 src/landing.rs

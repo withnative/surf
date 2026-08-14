@@ -128,6 +128,7 @@ infrastructure have their own data boundaries. Read the precise
 - [Plugin installation and management](docs/plugin-installation.md)
 - [Plugin release acceptance runbook](docs/plugin-release-acceptance.md)
 - [Working framework and source](docs/releases-and-source.md)
+- [Production deployment and rollback](docs/production-deployment.md)
 
 Product documentation and framework guidance are separate. Product documentation
 explains Surf and is returned by `get_doc`, `/docs/{slug}`, and `surf://docs/{slug}` from
@@ -176,6 +177,11 @@ docker build \
 The build stops if either value is missing, the SHA is not full lowercase hexadecimal,
 or the URL does not identify that exact commit in `withnative/surf`. Deployment must
 still verify that the commit is public and is the source actually being built.
+
+The hosted service follows the repository's documented
+[merge-to-`main` production and rollback flow](docs/production-deployment.md). Railway's
+GitHub build supplies the exact triggering SHA and derives the matching URL during the
+same container build; operators do not maintain those two values separately.
 
 The official hosted endpoint is the supported product. The source is intentionally
 inspectable, runnable, and forkable, but Native does not promise operational support or

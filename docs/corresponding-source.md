@@ -36,6 +36,8 @@ scope of Corresponding Source under the AGPL.
 - [ ] A check against the deployed service confirms its reported full SHA equals
       the commit used for the deployment.
 - [ ] The source remains available for as long as the licence requires.
+- [ ] The successful production deployment has a passing GitHub deep-verification run
+      correlated to the same full SHA and Railway deployment.
 
 ## Changes after deployment
 
@@ -47,3 +49,6 @@ scope of Corresponding Source under the AGPL.
       [the dependency audit](dependency-licenses.md) is refreshed.
 - [ ] Legal counsel reviews any disputed source-boundary judgement before a
       deployment relies on excluding that material.
+
+The canonical operational procedure is the
+[production deployment and rollback runbook](production-deployment.md).
