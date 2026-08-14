@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 FULL_SHA = re.compile(r"[0-9a-f]{40}")
-RAILWAY_HOSTS = {"railway.com", "railway.app"}
+RAILWAY_HOST = "railway.com"
 
 
 class EventValidationError(ValueError):
@@ -29,61 +29,87 @@ def validate_event(
     event: dict[str, Any],
     *,
     repository: str,
-    environment: str,
-    ref: str,
-    installation_id: int,
-    app_id: int,
-    app_slug: str,
-    service_id: str,
+    repository_id: int,
+    environment_label: str,
+    environment_id: str,
+    bot_id: int,
+    bot_login: str,
+    bot_node_id: str,
+    service_name: str,
     project_id: str,
-    allow_empty_ref: bool = False,
 ) -> dict[str, str]:
     if _require(event, "action", str) != "created":
         raise EventValidationError("deployment status action is not created")
     event_repository = _require(event, "repository", dict)
     if _require(event_repository, "full_name", str) != repository:
         raise EventValidationError("deployment event is for an unexpected repository")
-
-    installation = _require(event, "installation", dict)
-    if _require(installation, "id", int) != installation_id:
-        raise EventValidationError("deployment event is from an unexpected GitHub App installation")
+    if _require(event_repository, "id", int) != repository_id:
+        raise EventValidationError("deployment event has an unexpected repository id")
+    if _require(event_repository, "default_branch", str) != "main":
+        raise EventValidationError("deployment repository default branch is not main")
+    _validate_bot(
+        event.get("sender"),
+        bot_id=bot_id,
+        bot_login=bot_login,
+        bot_node_id=bot_node_id,
+    )
 
     deployment = _require(event, "deployment", dict)
     status = _require(event, "deployment_status", dict)
-    _validate_app(
-        deployment.get("performed_via_github_app"), app_id=app_id, app_slug=app_slug
+    _validate_bot(
+        deployment.get("creator"),
+        bot_id=bot_id,
+        bot_login=bot_login,
+        bot_node_id=bot_node_id,
     )
-    _validate_app(
-        status.get("performed_via_github_app"), app_id=app_id, app_slug=app_slug
+    _validate_bot(
+        status.get("creator"),
+        bot_id=bot_id,
+        bot_login=bot_login,
+        bot_node_id=bot_node_id,
     )
+    if (
+        "performed_via_github_app" not in deployment
+        or deployment["performed_via_github_app"] is not None
+    ):
+        raise EventValidationError("Railway deployment App metadata changed from the reviewed shape")
+    if (
+        "performed_via_github_app" not in status
+        or status["performed_via_github_app"] is not None
+    ):
+        raise EventValidationError("Railway status App metadata changed from the reviewed shape")
     if _require(status, "state", str) != "success":
         raise EventValidationError("deployment status is not success")
-    if _require(deployment, "environment", str) != environment:
-        raise EventValidationError("deployment environment is not production")
-    if _require(status, "environment", str) != environment:
-        raise EventValidationError("deployment status environment is not production")
-    if _require(deployment, "production_environment", bool) is not True:
-        raise EventValidationError("deployment is not marked as a production environment")
+    if _require(deployment, "environment", str) != environment_label:
+        raise EventValidationError("deployment environment label is not Surf production")
+    if _require(status, "environment", str) != environment_label:
+        raise EventValidationError("deployment status environment label is not Surf production")
+    if _require(deployment, "original_environment", str) != environment_label:
+        raise EventValidationError("deployment original environment label is not Surf production")
+    if _require(deployment, "task", str) != "deploy":
+        raise EventValidationError("deployment task is not deploy")
+    # Railway's captured production event reports this flag as false even though
+    # the exact service/environment label and UUID identify production. Treat
+    # any shape change as review-required instead of silently changing trust.
+    if _require(deployment, "production_environment", bool) is not False:
+        raise EventValidationError("Railway production_environment metadata changed")
     if _require(deployment, "transient_environment", bool) is not False:
         raise EventValidationError("production deployment is marked transient")
-    deployment_ref = _require(deployment, "ref", str)
-    accepted_refs = {ref, ""} if allow_empty_ref else {ref}
-    if deployment_ref not in accepted_refs:
-        raise EventValidationError("production deployment ref is neither main nor an allowed empty SHA ref")
-
-    payload = _require(deployment, "payload", dict)
-    if _require(payload, "serviceId", str) != service_id:
-        raise EventValidationError("deployment payload is for an unexpected Railway service")
-
-    payload_project_id = payload.get("projectId")
-    if payload_project_id is not None and payload_project_id != project_id:
-        raise EventValidationError("deployment payload is for an unexpected Railway project")
 
     sha = _require(deployment, "sha", str)
     if FULL_SHA.fullmatch(sha) is None:
         raise EventValidationError(
             "deployment SHA must be 40 lowercase hexadecimal characters"
         )
+    deployment_ref = _require(deployment, "ref", str)
+    if deployment_ref != sha:
+        raise EventValidationError("Railway deployment ref is not the exact deployed SHA")
+
+    payload = _require(deployment, "payload", dict)
+    if set(payload) != {"environmentId"}:
+        raise EventValidationError("deployment payload fields changed from the reviewed shape")
+    if _require(payload, "environmentId", str) != environment_id:
+        raise EventValidationError("deployment payload is for an unexpected Railway environment")
 
     deployment_id = deployment.get("id")
     if (
@@ -93,53 +119,67 @@ def validate_event(
     ):
         raise EventValidationError("deployment id must be a positive integer")
 
-    target_url = _validate_correlation_url(
-        status.get("target_url"), project_id=project_id, service_id=service_id
+    status_id = status.get("id")
+    if isinstance(status_id, bool) or not isinstance(status_id, int) or status_id < 1:
+        raise EventValidationError("deployment status id must be a positive integer")
+
+    repository_url = f"https://api.github.com/repos/{repository}"
+    deployment_url = f"{repository_url}/deployments/{deployment_id}"
+    status_url = f"{deployment_url}/statuses/{status_id}"
+    expected_links = (
+        (deployment, "repository_url", repository_url),
+        (deployment, "url", deployment_url),
+        (deployment, "statuses_url", f"{deployment_url}/statuses"),
+        (status, "repository_url", repository_url),
+        (status, "deployment_url", deployment_url),
+        (status, "url", status_url),
     )
-    log_url = _validate_correlation_url(
-        status.get("log_url"), project_id=project_id, service_id=service_id
-    )
-    if target_url and log_url and target_url != log_url:
-        raise EventValidationError("deployment target and log URLs disagree")
-    correlation_url = log_url or target_url
-    # Railway examples consistently expose payload.serviceId. projectId is less
-    # clearly documented, so accept either an exact payload value or an exact
-    # project/service dashboard URL. The first live event confirms which shape
-    # this installation emits without weakening the service boundary.
-    if payload_project_id is None and correlation_url is None:
-        raise EventValidationError(
-            "Railway project identity is absent from both payload and correlation URL"
+    for mapping, key, expected in expected_links:
+        if _require(mapping, key, str) != expected:
+            raise EventValidationError(f"deployment API link {key!r} is inconsistent")
+
+    correlation_urls = [
+        _validate_correlation_url(
+            status.get(key), project_id=project_id, environment_id=environment_id
         )
-    environment_url = _validate_environment_url(status.get("environment_url"))
+        for key in ("target_url", "log_url", "environment_url")
+    ]
+    if len(set(correlation_urls)) != 1:
+        raise EventValidationError("Railway target, log, and environment URLs disagree")
+    correlation_url = correlation_urls[0]
 
     return {
         "sha": sha,
         "deployment_id": str(deployment_id),
-        "environment": environment,
-        "deployment_ref": deployment_ref or "(empty SHA ref)",
-        "installation_id": str(installation_id),
-        "app_identity": f"{app_slug} ({app_id})",
-        "service_id": service_id,
+        "environment": environment_label,
+        "deployment_ref": deployment_ref,
+        "app_identity": f"{bot_login} (bot {bot_id})",
+        "service_name": service_name,
         "project_id": project_id,
-        "status_target_url": correlation_url or "unavailable",
-        "environment_url": environment_url or "unavailable",
+        "environment_id": environment_id,
+        "status_target_url": correlation_url,
     }
 
 
-def _validate_app(value: Any, *, app_id: int, app_slug: str) -> None:
+def _validate_bot(
+    value: Any, *, bot_id: int, bot_login: str, bot_node_id: str
+) -> None:
     if not isinstance(value, dict):
-        raise EventValidationError("deployment metadata omits the performing GitHub App")
-    if value.get("id") != app_id or value.get("slug") != app_slug:
-        raise EventValidationError("deployment metadata names an unexpected GitHub App")
+        raise EventValidationError("deployment metadata omits the Railway bot identity")
+    if (
+        value.get("id") != bot_id
+        or value.get("login") != bot_login
+        or value.get("node_id") != bot_node_id
+        or value.get("type") != "Bot"
+    ):
+        raise EventValidationError("deployment metadata names an unexpected Railway bot")
 
 
 def _validate_correlation_url(
-    value: Any, *, project_id: str, service_id: str
-) -> str | None:
-    if value in (None, ""):
-        return None
+    value: Any, *, project_id: str, environment_id: str
+) -> str:
     if not isinstance(value, str):
-        raise EventValidationError("deployment target URL must be a string or null")
+        raise EventValidationError("Railway correlation URL must be present")
     if len(value) > 1000 or "`" in value or any(ord(char) < 0x20 for char in value):
         raise EventValidationError("deployment target URL contains unsafe summary text")
     parsed = urllib.parse.urlsplit(value)
@@ -149,55 +189,20 @@ def _validate_correlation_url(
         raise EventValidationError("deployment target URL has an invalid port") from error
     if (
         parsed.scheme != "https"
-        or parsed.hostname not in RAILWAY_HOSTS
+        or parsed.hostname != RAILWAY_HOST
         or parsed.username
         or parsed.password
         or port is not None
         or parsed.fragment
     ):
         raise EventValidationError("deployment target URL is not a safe Railway HTTPS URL")
-    segments = [urllib.parse.unquote(segment) for segment in parsed.path.split("/") if segment]
-    try:
-        project_index = segments.index("project")
-        service_index = segments.index("service")
-    except ValueError as error:
+    if parsed.path != f"/project/{project_id}" or urllib.parse.parse_qsl(
+        parsed.query, keep_blank_values=True
+    ) != [("environmentId", environment_id)]:
         raise EventValidationError(
-            "deployment target URL does not identify a Railway project and service"
-        ) from error
-    if (
-        project_index + 1 >= len(segments)
-        or service_index + 1 >= len(segments)
-        or segments[project_index + 1] != project_id
-        or segments[service_index + 1] != service_id
-    ):
-        raise EventValidationError(
-            "deployment target URL identifies an unexpected Railway project or service"
+            "Railway correlation URL identifies an unexpected project or environment"
         )
     return value
-
-
-def _validate_environment_url(value: Any) -> str | None:
-    if value in (None, ""):
-        return None
-    if not isinstance(value, str):
-        raise EventValidationError("deployment environment URL must be a string or null")
-    parsed = urllib.parse.urlsplit(value)
-    try:
-        port = parsed.port
-    except ValueError as error:
-        raise EventValidationError("deployment environment URL has an invalid port") from error
-    if (
-        parsed.scheme != "https"
-        or parsed.hostname != "surf.withnative.ai"
-        or parsed.username
-        or parsed.password
-        or port is not None
-        or parsed.path not in ("", "/")
-        or parsed.query
-        or parsed.fragment
-    ):
-        raise EventValidationError("deployment environment URL is not Surf production")
-    return "https://surf.withnative.ai"
 
 
 def write_github_output(path: Path, values: dict[str, str]) -> None:
@@ -213,12 +218,12 @@ def write_summary(path: Path, values: dict[str, str]) -> None:
         summary.write(f"- GitHub deployment ID: `{values['deployment_id']}`\n")
         summary.write(f"- Environment: `{values['environment']}`\n")
         summary.write(f"- Deployment ref: `{values['deployment_ref']}`\n")
-        summary.write(f"- GitHub App installation: `{values['installation_id']}`\n")
         summary.write(f"- GitHub App: `{values['app_identity']}`\n")
         summary.write(f"- Railway project: `{values['project_id']}`\n")
-        summary.write(f"- Railway service: `{values['service_id']}`\n")
+        summary.write(f"- Railway service name: `{values['service_name']}`\n")
+        summary.write(f"- Railway environment ID: `{values['environment_id']}`\n")
         summary.write(f"- Deployment status URL: `{values['status_target_url']}`\n")
-        summary.write(f"- Environment URL: `{values['environment_url']}`\n\n")
+        summary.write("\n")
         summary.write(
             "Use the status URL or the Railway dashboard to retrieve the Railway "
             "deployment ID, image digest, and runtime logs.\n"
@@ -229,14 +234,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--event", type=Path, required=True)
     parser.add_argument("--repository", required=True)
-    parser.add_argument("--environment", required=True)
-    parser.add_argument("--ref", required=True)
-    parser.add_argument("--installation-id", type=int, required=True)
-    parser.add_argument("--app-id", type=int, required=True)
-    parser.add_argument("--app-slug", required=True)
-    parser.add_argument("--service-id", required=True)
+    parser.add_argument("--repository-id", type=int, required=True)
+    parser.add_argument("--environment-label", required=True)
+    parser.add_argument("--environment-id", required=True)
+    parser.add_argument("--bot-id", type=int, required=True)
+    parser.add_argument("--bot-login", required=True)
+    parser.add_argument("--bot-node-id", required=True)
+    parser.add_argument("--service-name", required=True)
     parser.add_argument("--project-id", required=True)
-    parser.add_argument("--allow-empty-ref", action="store_true")
     parser.add_argument("--github-output", type=Path, required=True)
     parser.add_argument("--github-summary", type=Path, required=True)
     args = parser.parse_args()
@@ -247,14 +252,14 @@ def main() -> int:
     values = validate_event(
         event,
         repository=args.repository,
-        environment=args.environment,
-        ref=args.ref,
-        installation_id=args.installation_id,
-        app_id=args.app_id,
-        app_slug=args.app_slug,
-        service_id=args.service_id,
+        repository_id=args.repository_id,
+        environment_label=args.environment_label,
+        environment_id=args.environment_id,
+        bot_id=args.bot_id,
+        bot_login=args.bot_login,
+        bot_node_id=args.bot_node_id,
+        service_name=args.service_name,
         project_id=args.project_id,
-        allow_empty_ref=args.allow_empty_ref,
     )
     write_github_output(args.github_output, values)
     write_summary(args.github_summary, values)

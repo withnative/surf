@@ -181,6 +181,45 @@ class ReadinessTests(unittest.TestCase):
         with self.assertRaisesRegex(BoundaryError, "expected at most 1"):
             scan_publication_readiness(candidate)
 
+    def test_accepts_captured_railway_event_values_only_at_reviewed_cardinality(self) -> None:
+        environment_id = "2255334a" + "-771c-4024-a5b8-f7760f8d0144"
+        service_name = "native-" + "learn"
+        candidate, temporary = self.candidate_with(
+            {
+                ".github/scripts/test_deployment_verification.py": (
+                    f"{environment_id}\n{service_name}\n{service_name}\n"
+                ),
+                ".github/workflows/verify-production-deployment.yml": (
+                    f"{environment_id}\n{environment_id}\n"
+                    f"{service_name}\n{service_name}\n"
+                ),
+                "docs/production-deployment.md": (
+                    f"{environment_id}\n"
+                    f"{service_name}\n{service_name}\n{service_name}\n{service_name}\n"
+                ),
+            }
+        )
+        self.addCleanup(temporary.cleanup)
+        scan_publication_readiness(candidate)
+
+        duplicated, duplicated_temporary = self.candidate_with(
+            {
+                ".github/workflows/verify-production-deployment.yml": (
+                    f"{environment_id}\n{environment_id}\n{environment_id}\n"
+                )
+            }
+        )
+        self.addCleanup(duplicated_temporary.cleanup)
+        with self.assertRaisesRegex(BoundaryError, "expected at most 2"):
+            scan_publication_readiness(duplicated)
+
+        misplaced, misplaced_temporary = self.candidate_with(
+            {"README.md": service_name}
+        )
+        self.addCleanup(misplaced_temporary.cleanup)
+        with self.assertRaisesRegex(BoundaryError, "internal literal"):
+            scan_publication_readiness(misplaced)
+
     def test_rejects_railway_id_outside_reviewed_operational_paths(self) -> None:
         service_id = "f73c4cbb" + "-99a7-4716-a4a3-19bc91ca261a"
         candidate, temporary = self.candidate_with({"README.md": service_id})

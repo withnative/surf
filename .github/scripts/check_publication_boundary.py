@@ -63,7 +63,7 @@ NATIVE_RECORD_MENTION = re.compile(r"\[\[[0-9a-f]{7,8}\]\]")
 
 # The push-guard test suite needs two adversarial values in its source so it can
 # prove that they are rejected before a public receiver changes. Production
-# verification also needs two non-secret Railway routing identifiers in its
+# verification also needs four non-secret Railway routing values in its
 # trusted workflow, tests, and operator runbook. Keep every exception exact and
 # path-scoped. The operational identifiers are optional so historical commits
 # from before deployment verification still scan, but duplication or use in any
@@ -71,6 +71,8 @@ NATIVE_RECORD_MENTION = re.compile(r"\[\[[0-9a-f]{7,8}\]\]")
 PUSH_GUARD_TEST = ".github/scripts/test_" + "public_push_guard.py"
 RAILWAY_PROJECT_ID = "f4d995a4" + "-2c51-4860-8817-60f141b75b0c"
 RAILWAY_SERVICE_ID = "f73c4cbb" + "-99a7-4716-a4a3-19bc91ca261a"
+RAILWAY_ENVIRONMENT_ID = "2255334a" + "-771c-4024-a5b8-f7760f8d0144"
+RAILWAY_SERVICE_NAME = "native-" + "learn"
 RAILWAY_ID_PATHS = (
     ".github/scripts/test_deployment_verification.py",
     ".github/workflows/verify-production-deployment.yml",
@@ -89,6 +91,17 @@ APPROVED_OPTIONAL_READINESS_VALUES = tuple(
     (path, "account-specific identifier", identifier, 1)
     for path in RAILWAY_ID_PATHS
     for identifier in (RAILWAY_PROJECT_ID, RAILWAY_SERVICE_ID)
+) + tuple(
+    (path, label, value, maximum_count)
+    for path, environment_count, service_name_count in (
+        (RAILWAY_ID_PATHS[0], 1, 2),
+        (RAILWAY_ID_PATHS[1], 2, 2),
+        (RAILWAY_ID_PATHS[2], 1, 4),
+    )
+    for label, value, maximum_count in (
+        ("account-specific identifier", RAILWAY_ENVIRONMENT_ID, environment_count),
+        ("internal literal", RAILWAY_SERVICE_NAME, service_name_count),
+    )
 )
 
 

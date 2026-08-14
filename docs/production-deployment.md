@@ -24,32 +24,42 @@ operator must maintain in GitHub and Railway. It contains no credentials.
    builder, Dockerfile path, `/health` path, and 60-second health-check timeout. Railway
    must receive HTTP 200 before making the new deployment active; a failed health check
    leaves the prior healthy deployment active.
-6. Railway publishes a successful GitHub deployment status for environment `production`
-   and ref `main` (or an empty ref for a SHA-addressed deployment).
+6. Railway publishes a successful GitHub deployment status with environment label
+   `native-learn / production` and the full deployed SHA in both `sha` and `ref`.
 7. [Verify production deployment](../.github/workflows/verify-production-deployment.yml)
    validates the event before using its values, proves the full SHA belongs to `main`,
    and verifies the exact source, MCP catalogue, compiled landing bytes, and legacy-host
    health. A deep-check failure is visible as a failed GitHub Actions run even though the
    platform health gate has completed.
 
-The event gate accepts only GitHub App installation `122756225`, the installation of the
-Railway app (`railway-app`, app ID `73253`) on `withnative`. It also requires Railway
-service `f73c4cbb-99a7-4716-a4a3-19bc91ca261a` and project
-`f4d995a4-2c51-4860-8817-60f141b75b0c`. The validator requires the documented
-`performed_via_github_app` ID and slug on both the deployment and status, the expected
-top-level installation ID, and production/non-transient flags. It deliberately does not
-infer app identity from an unrelated sender user ID. Confirm that GitHub Actions exposes
-the installation object in Railway's first real event; if it does not, retain the failed
-evidence and replace that assumption only with an equally strong documented identity.
+The event gate is based on the first captured production event, rather than Railway's
+generic example payload. GitHub did not expose usable installation metadata in that
+event, so the validator uses the exact Railway identity that was present: repository ID
+`1333433853` and `railway-app[bot]` (bot ID `68434857`, including its immutable node ID)
+as sender, deployment creator, and status creator. Railway emitted
+`performed_via_github_app: null`; the validator requires that reviewed value, the exact
+`native-learn / production` label, a non-transient `deploy` task, and the full deployed
+SHA as its ref. Railway also emitted
+`production_environment: false`; that counterintuitive but observed value is pinned so
+any platform shape change fails closed for review.
 
-Railway examples expose `deployment.payload.serviceId`; the validator requires it.
-`payload.projectId` is accepted when present. If it is absent, the validator requires a
-Railway HTTPS status URL whose `/project/{id}/service/{id}` path carries both exact IDs.
-Any supplied target URL must be a safe `railway.com` or legacy `railway.app` HTTPS URL
-with those IDs, and any supplied environment URL must be exactly
-`https://surf.withnative.ai`. This is an explicit, tested assumption to confirm against
-Railway's first real event. If Railway emits a different documented shape, keep the first
-run failed, retain its event evidence, and review the validator before changing it.
+The captured event does not expose Railway service ID
+`f73c4cbb-99a7-4716-a4a3-19bc91ca261a`. Its strongest available service boundary is the
+exact `native-learn` service name embedded in the environment label, inside project
+`f4d995a4-2c51-4860-8817-60f141b75b0c` and production environment
+`2255334a-771c-4024-a5b8-f7760f8d0144`. The payload must contain that environment UUID,
+and `target_url`, `log_url`, and `environment_url` must all be present, identical, and
+equal the exact Railway HTTPS project/environment URL. The later ancestry, live `/source`,
+landing-byte, and MCP checks still prove that this production hostname serves the same
+protected-main SHA. If Railway changes any event field, retain the failed run as evidence
+and review the new shape rather than weakening the gate speculatively.
+
+The GitHub event cannot prove the Railway service UUID, Railway deployment UUID, image
+digest, Wait-for-CI setting, or health-gate behavior by itself. Those remain deployment
+configuration/evidence checks in Railway. The automatic claim is deliberately narrower:
+the authenticated Railway bot reported success for this exact protected-main SHA in the
+expected project/environment, and the public Surf endpoint served that exact commit and
+contract.
 
 The verification summary records the Git commit, GitHub deployment ID, and Railway
 status URL. Use that status URL or Railway's deployment details to collect the Railway
@@ -69,16 +79,18 @@ and after any integration or ownership change.
   workflow declares no write permission and consumes no deployment secret.
 - Install or retain the Railway GitHub app for `withnative/surf` with only the repository,
   checks, and deployment access required for the integration.
-- Confirm the installation remains ID `122756225`; a reinstall normally changes that ID
-  and must trigger a reviewed workflow update rather than silently broadening trust.
+- Confirm the Railway App remains installed only for the intended repositories. A
+  reinstall or permission change must trigger an integration review; the event gate
+  authenticates the captured Railway bot identity because the event does not expose a
+  usable installation ID.
 
 ### Railway
 
 - Connect the existing production service to `withnative/surf`, branch `main`, and use
   `/railway.toml` as its config-as-code file.
 - Enable automatic deployment and **Wait for CI**.
-- Keep the Railway environment name exactly `production`; the GitHub verification event
-  gate deliberately rejects other names and refs.
+- Keep the Railway service and environment names exactly `native-learn` and `production`;
+  the event gate deliberately rejects any other combined label or non-SHA ref.
 - Keep `surf.withnative.ai`, `learn.withnative.ai`, and `agility.withnative.ai` attached
   while they share this service.
 - Do not define `SURF_GIT_SHA` or `SURF_SOURCE_URL` for normal GitHub builds. Railway's
