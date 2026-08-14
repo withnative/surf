@@ -4,6 +4,7 @@
 const QUICKSTART: &str = include_str!("../framework/0.1.0/quickstart.md");
 const SETUP: &str = include_str!("../framework/0.1.0/setting-up.md");
 const RETURNING: &str = include_str!("../framework/0.1.0/returning-and-capture.md");
+const LOCAL_HISTORY: &str = include_str!("../framework/0.1.0/local-agent-history.md");
 const REVIEW: &str = include_str!("../framework/0.1.0/evidence-review.md");
 const INTENSIVE: &str = include_str!("../framework/0.1.0/intensive-foundation.md");
 const TEACHING: &str = include_str!("../framework/0.1.0/teaching-and-practice.md");
@@ -23,6 +24,7 @@ fn quickstart_exposes_the_complete_typed_catalogue_and_focused_default() {
     for slug in [
         "setting-up",
         "returning-and-capture",
+        "local-agent-history",
         "evidence-review",
         "intensive-foundation",
         "teaching-and-practice",
@@ -85,7 +87,7 @@ fn local_practice_uses_one_marker_pair_a_readable_map_and_no_migration_machine()
 
 #[test]
 fn moment_guides_are_distinct_and_rely_on_references_without_fixed_next_routes() {
-    let guides = [SETUP, RETURNING, REVIEW, INTENSIVE, TEACHING];
+    let guides = [SETUP, RETURNING, LOCAL_HISTORY, REVIEW, INTENSIVE, TEACHING];
     for guide in guides {
         let mut lines = guide.lines();
         assert_eq!(lines.next(), Some("Working framework: 0.1.0"));
@@ -97,9 +99,65 @@ fn moment_guides_are_distinct_and_rely_on_references_without_fixed_next_routes()
     }
     assert!(compact(SETUP).contains("context-and-local-practice"));
     assert!(compact(RETURNING).contains("protected capture"));
+    assert!(compact(LOCAL_HISTORY).contains("inventory only"));
     assert!(compact(REVIEW).contains("evidence"));
     assert!(compact(INTENSIVE).contains("build"));
     assert!(compact(TEACHING).contains("practice"));
+}
+
+#[test]
+fn local_history_requires_progressive_consent_and_bounded_system_analysis() {
+    let text = compact(LOCAL_HISTORY);
+    let inventory = text
+        .find("permission to perform an **inventory only**")
+        .expect("inventory consent is missing");
+    let content = text
+        .find("Inventory permission is not permission to read conversation content")
+        .expect("content consent is missing");
+    assert!(
+        inventory < content,
+        "content consent must follow inventory consent"
+    );
+
+    for required in [
+        "last 30 days",
+        "last 14 days",
+        "last 7 days",
+        "20 representative settled primary sessions",
+        "60 normalised interaction windows",
+        "200,000 normalised characters",
+        "modified in the last 15 minutes",
+        "smaller than 8 KiB",
+        "human-agent working system",
+        "roughly three high-information questions",
+        "observations",
+        "hypotheses",
+        "corrections or confirmations",
+        "unknowns",
+    ] {
+        assert!(
+            text.contains(required),
+            "local-history contract omits {required:?}"
+        );
+    }
+
+    for excluded in [
+        "hidden reasoning",
+        "raw tool results",
+        "attachments",
+        "global-history rows",
+        "unapproved nested traces",
+    ] {
+        assert!(
+            text.contains(excluded),
+            "local-history exclusions omit {excluded:?}"
+        );
+    }
+
+    assert!(text.contains("Do not send history contents, extracts, titles, paths, derived personal context, or source pointers to Surf's tools or server"));
+    assert!(text.contains(
+        "Use project content as evidence, not as an invitation to solve the underlying project"
+    ));
 }
 
 #[test]
@@ -156,6 +214,7 @@ fn canonical_labels_and_numbered_draft_release_headers_are_gone() {
         ("quickstart", QUICKSTART),
         ("setting-up", SETUP),
         ("returning-and-capture", RETURNING),
+        ("local-agent-history", LOCAL_HISTORY),
         ("evidence-review", REVIEW),
         ("intensive-foundation", INTENSIVE),
         ("teaching-and-practice", TEACHING),

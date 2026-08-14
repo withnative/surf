@@ -6,6 +6,19 @@ Role: Useful landmarks while Surf's pre-production framework remains freely revi
 
 Surf currently has one working framework, `0.1.0`. Until a real production practice depends on it, the framework may be revised in place. Git history and review records preserve the development record; entries here are landmarks, not compatibility promises.
 
+## Consented local agent history — 14 August 2026
+
+- Adds an optional post-setup route for learning from recent local Codex and Claude Code
+  histories without sending participant content to Surf's tools or server.
+- Separates metadata-only inventory permission from bounded content-analysis permission.
+- Defines adaptive 30-, 14-, and 7-day scopes plus a representative high-volume path,
+  hard extraction limits, primary-session checks, and explicit exclusions.
+- Keeps synthesis focused on the human-agent working system, uses conversational
+  calibration to reject plausible false leads, and preserves confidence, correction,
+  exclusion, retention, and deletion controls.
+- Supports later targeted recall through an explicitly retained local source index while
+  deferring server upload, periodic review, and proactive monitoring.
+
 ## Visible practice-home defaults — 14 August 2026
 
 - Recommends practice homes that people can find in an ordinary file browser without

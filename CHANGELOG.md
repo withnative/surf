@@ -7,6 +7,10 @@ lockstep policy. Working-framework changes are recorded in
 
 ## Unreleased
 
+- Add an optional, progressive-consent local Codex and Claude Code history route to the
+  working framework, with metadata-first inventory, bounded analysis, calibration, and
+  correctable synthesis while keeping participant content out of Surf's server.
+
 - Fix future Surf revisions at `AGPL-3.0-only`, so Native can review any future
   licence version before adopting it, and publish the change as plugin package
   `0.1.3`. Revisions published before this change retain their existing

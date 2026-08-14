@@ -144,6 +144,13 @@ The map should make the active agreement, current person understanding, current 
 
 Once the practice is valid, show the person the short agreement and initial plan. Confirm the learning gear, evidence and review rhythm, retained unknowns, transition permissions, and where their files live. Be accurate about what has and has not been stored or verified.
 
+At this post-setup boundary, offer one optional way to make the first understanding less
+generic: a metadata-only inventory of locally stored Codex or Claude Code histories. Do
+not inspect those roots before asking, and do not imply that useful Surf help depends on
+agreement. If the person accepts, retrieve `local-agent-history` and follow its separate
+inventory and content-consent stages. If they decline, continue normally without trying
+to reopen the choice in the same setup.
+
 Then take the route they chose:
 
 - for a personalised loop, invite a first good, bad, or surprising experience and use `returning-and-capture`;

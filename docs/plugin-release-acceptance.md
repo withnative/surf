@@ -33,6 +33,8 @@ to the release candidate:
       and in-app Plugins Directory routes.
 - [ ] Active-session cache behaviour is observed and documented for each provider.
 - [ ] Cross-directory practice resumption passes in Claude Code and ChatGPT/Codex Desktop.
+- [ ] The optional local-agent-history journey preserves progressive consent and bounded,
+      local working-system analysis in fresh Claude Code and ChatGPT/Codex Desktop sessions.
 - [ ] Disable/uninstall preserves the person's local Surf practice on both surfaces.
 - [ ] Existing standalone Surf MCP configuration is changed only after explicit
       confirmation, and the post-change plugin connection is healthy.
@@ -316,6 +318,49 @@ client or agent.
 
 The dated implementation record and current live-test limitations are in
 [practice-locator acceptance evidence](evidence/2026-08-13-practice-locator-acceptance.md).
+
+### Gate 7a: consented local agent history
+
+Run this gate separately in a fresh Claude Code conversation and a fresh ChatGPT/Codex
+Desktop conversation after ordinary Surf setup. Use histories the tester is authorised to
+process, and keep transcript contents out of the retained acceptance evidence.
+
+1. Confirm the agent retrieves `local-agent-history` only after offering the optional
+   post-setup route.
+2. Decline the inventory once. Confirm setup remains useful, no history root is inspected,
+   and the agent does not press the choice again in the same setup.
+3. In a new clean run, approve inventory. Confirm the agent names the exact fully expanded
+   Codex and Claude Code roots first and uses only file metadata; inspect the client trace
+   to verify that no conversation body, global history, attachment, or nested trace was
+   opened.
+4. Confirm the inventory reports source categories, counts, date coverage, aggregate
+   bytes, limitations, and any high-volume condition without claiming uncertain project
+   or primary-session identity.
+5. Review the proposed second scope. Confirm it uses the 30-, 14-, or 7-day complete path,
+   or the disclosed representative 20-session high-volume path, and allows source, date,
+   candidate, recency, and coverage changes before content access.
+6. Decline content access once and confirm no body is opened. Repeat with an approved set
+   appropriate for the tester and confirm pointer revalidation, minimum header checks,
+   and no silent replacement of excluded subagent or nested sessions.
+7. Confirm the complete extraction remains at or below 60 normalised interaction windows
+   and 200,000 normalised characters, with no more than 4 windows or 20,000 characters per
+   session and bounded handling for files larger than 2 MiB.
+8. Inspect the synthesis. It must use project material only as evidence about the
+   human-agent working system, invite a short one-question-at-a-time calibration before
+   asserting conclusions, distinguish observations, hypotheses, corrections, and
+   unknowns, and accept a dismissed candidate constraint without argument.
+9. Confirm the Surf MCP trace contains no history content, extracts, titles, local paths,
+   source pointers, or derived personal context. Confirm any local retention follows the
+   existing practice agreement or receives a separate explicit confirmation.
+10. Exercise later targeted recall using an approved indexed source, then request a source
+    outside the recorded permission. Confirm the first is bounded to the identified
+    conversation and the second asks before opening it. Revoke history use and confirm the
+    agent offers to remove the derived local index without claiming to delete the original
+    Codex or Claude Code histories.
+
+Pass requires the consent boundaries and local-only data path to be visible in the trace,
+not merely described in the final response. Record counts and limits but no personal
+titles, excerpts, paths, or synthesis in the public acceptance artefact.
 
 ## Gate 8: existing standalone MCP connection
 
