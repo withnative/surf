@@ -16,15 +16,35 @@ the copyright holder and a plain-language licence summary.
 The simplest route is to paste this into **ChatGPT/Codex Desktop** or **Claude Code**:
 
 ```text
-Help me install Surf from https://github.com/withnative/surf and get started.
+Install the plugin https://github.com/withnative/surf and use the quickstart tool
 ```
 
-If you prefer deterministic steps:
+If you prefer deterministic steps, each surface installs with two shell commands.
 
-- **ChatGPT/Codex Desktop:** run `codex plugin marketplace add withnative/surf`, restart
-  the ChatGPT desktop app, then open **Plugins Directory → Native → Surf → Install**.
-- **Claude Code:** run `/plugin marketplace add withnative/surf`, then
-  `/plugin install surf@withnative`. Run `/reload-plugins` if the install summary asks.
+**ChatGPT/Codex Desktop** (the install verb is `add`):
+
+```sh
+codex plugin marketplace add withnative/surf
+codex plugin add surf@withnative
+```
+
+**Claude Code** (the install verb is `install`; the default scope is `user`):
+
+```sh
+claude plugin marketplace add withnative/surf
+claude plugin install surf@withnative
+```
+
+These commands write to your local Codex and Claude configuration (`~/.codex` and
+`~/.claude`). Surf has not verified whether a CLI install then appears in the ChatGPT or
+Claude Code desktop applications, so use each product's own route there if it does not:
+
+- **ChatGPT/Codex Desktop:** restart the app, then open
+  **Plugins Directory → Native → Surf → Install**.
+- **Claude Code:** in an interactive terminal session, run
+  `/plugin marketplace add withnative/surf`, then `/plugin install surf@withnative`, and
+  `/reload-plugins` if the install summary asks. The `/plugin` slash command exists only in
+  the terminal build; it is not available in the Claude Code desktop application.
 
 Start a new conversation and say `Help me get started with Surf.` You can invoke the
 plugin explicitly as `@surf` in ChatGPT/Codex Desktop or `/surf:surf` in Claude Code;
