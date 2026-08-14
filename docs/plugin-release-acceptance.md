@@ -12,10 +12,17 @@ to the release candidate:
 
 - [ ] `withnative/surf` is public and readable without authentication.
 - [ ] The production endpoint and exact public source metadata are healthy.
-- [ ] A clean Claude Code GitHub install passes.
-- [ ] A clean ChatGPT/Codex Desktop GitHub install and MCP resolution pass.
+- [ ] A clean Claude Code GitHub install passes through the `claude plugin` CLI route.
+- [ ] A clean Claude Code GitHub install passes through the `/plugin` slash-command route.
+- [ ] A clean ChatGPT/Codex Desktop GitHub install and MCP resolution pass through the
+      `codex plugin` CLI route.
+- [ ] A clean ChatGPT/Codex Desktop GitHub install and MCP resolution pass through the
+      in-app Plugins Directory route.
 - [ ] A remote framework update works with an unchanged plugin.
-- [ ] A plugin package update and client refresh work as documented.
+- [ ] A plugin package update and client refresh work as documented through the Claude
+      CLI and slash-command routes.
+- [ ] A plugin package update and client refresh work as documented through the OpenAI CLI
+      and in-app Plugins Directory routes.
 - [ ] Active-session cache behaviour is observed and documented for each provider.
 - [ ] Cross-directory practice resumption passes in Claude Code and ChatGPT/Codex Desktop.
 - [ ] Disable/uninstall preserves the person's local Surf practice on both surfaces.
@@ -68,42 +75,73 @@ Result: pass / fail / blocked
 Use a profile with no Surf marketplace, plugin, or standalone MCP connection.
 
 1. Record `claude --version` and the operating system.
-2. Run `/plugin marketplace add withnative/surf`.
-3. Run `/plugin install surf@withnative` at user scope.
-4. Run `/reload-plugins` if prompted.
-5. Confirm `/mcp` shows the plugin-provided `surf` server at the exact production URL.
-6. Start a new conversation with `Help me get started with Surf.`
-7. Confirm the agent calls `quickstart` before substantive Surf guidance and follows the
+2. Run `claude plugin marketplace add withnative/surf`.
+3. Run `claude plugin install surf@withnative` at the default `user` scope.
+4. Confirm `claude plugin list` shows Surf, then start a Claude Code session.
+5. Run `/reload-plugins` if prompted.
+6. Confirm `/mcp` shows the plugin-provided `surf` server at the exact production URL.
+7. Start a new conversation with `Help me get started with Surf.`
+8. Confirm the agent calls `quickstart` before substantive Surf guidance and follows the
    returned current framework.
-8. Confirm a user-chosen local practice can be created without sending practice content
+9. Confirm a user-chosen local practice can be created without sending practice content
    as a Surf tool argument.
-9. Uninstall Surf and confirm a new conversation no longer has the packaged skill or
-   plugin-provided server. Confirm existing practice files remain untouched.
+10. Run `claude plugin uninstall surf@withnative` and confirm a new conversation no longer
+    has the packaged skill or plugin-provided server. Confirm existing practice files
+    remain untouched.
 
 Pass requires the documented two-command install with no manual MCP configuration.
+
+### Gate 2a: Claude Code slash-command route
+
+Repeat gate 2 on a fresh profile from inside a terminal session, using the slash commands
+instead of the CLI. Start the session first, then run
+`/plugin marketplace add withnative/surf` and `/plugin install surf@withnative`, then
+`/reload-plugins` if prompted. Confirm the install from the `/plugin` browser rather than
+from `claude plugin list`, and continue with steps 6 to 9 of gate 2. Remove with
+`/plugin uninstall surf@withnative`. This
+route remains supported and is the documented path for anyone who does not run the CLI
+directly. Record it separately from the CLI route; neither is evidence for the other.
+
+Separately record whether a user-scope `claude plugin install` becomes visible in the
+Claude Code desktop application after a restart. A user-scope install was observed active
+there on 14 August 2026, but not on a clean profile and not with the restart taken
+specifically after a CLI reinstall, so this gate must still record its own result.
 
 ## Gate 3: clean ChatGPT/Codex Desktop install
 
 Use a clean profile with no Surf marketplace, plugin, standalone Surf MCP connection or
 plugin files copied from another profile.
 
-1. Record the account starting state and exact ChatGPT desktop app version.
+1. Record the account starting state, exact ChatGPT desktop app version, and
+   `codex --version`.
 2. Run `codex plugin marketplace add withnative/surf`.
-3. Restart the ChatGPT desktop app.
-4. Open the Plugins Directory, choose **Native**, and install **Surf**.
-5. Do not manually add the Surf MCP server.
-6. Start a fresh Work or Codex conversation with `Help me get started with Surf.`
-7. Confirm the client resolves the package's remote MCP connection, discovers the four
+3. Run `codex plugin add surf@withnative` and confirm `codex plugin list` shows Surf.
+4. Do not manually add the Surf MCP server.
+5. Start a fresh Work or Codex conversation with `Help me get started with Surf.`
+6. Confirm the client resolves the package's remote MCP connection, discovers the four
    Surf tools, and calls `quickstart` before substantive guidance.
-8. Start a second fresh conversation with an ordinary request such as
+7. Start a second fresh conversation with an ordinary request such as
    `What's my current Surf goal?` and confirm natural-language activation.
-9. Exercise one guide, one reference, and one product document.
-10. Uninstall or disable Surf and confirm the plugin no longer contributes the skill or
-   MCP server. Confirm existing practice files remain untouched.
+8. Exercise one guide, one reference, and one product document.
+9. Run `codex plugin remove surf@withnative` and confirm the plugin no longer contributes
+   the skill or MCP server. Confirm existing practice files remain untouched.
 
-Pass requires the documented repository installation and bundled MCP resolution without
-a manual direct-MCP setup. Record any account, workspace-policy or client-version variance
+Pass requires the documented two-command install and bundled MCP resolution without a
+manual direct-MCP setup. Record any account, workspace-policy or client-version variance
 without treating a different surface as equivalent evidence.
+
+### Gate 3a: ChatGPT/Codex Desktop in-app route
+
+Repeat gate 3 on a clean profile using the in-product route instead: run
+`codex plugin marketplace add withnative/surf`, restart the ChatGPT desktop app, open the
+Plugins Directory, choose **Native**, and install **Surf**. Then run steps 4 to 8 above and
+uninstall or disable Surf from that card. This route remains supported and is the only one
+available to someone who never opens a terminal beyond the marketplace step.
+
+Separately record where a `codex plugin add` install appears in the ChatGPT desktop
+application after a restart. The maintainer reports that it appears in a less prominent
+area of the interface than an in-app install; capture the exact location and app version
+so the installation guide can name it.
 
 ## Gate 4: remote framework update with an unchanged plugin
 
@@ -125,13 +163,28 @@ than copied into the plugin.
 2. Make a harmless, reviewable change to packaged copy or wiring and bump both provider
    manifests to `P2` in the same commit.
 3. Publish the marketplace source change.
-4. Claude: record the outcome of marketplace update, uninstall/reinstall, and
-   `/reload-plugins` or relaunch.
-5. OpenAI: record the outcome of marketplace upgrade, desktop restart, and any required
-   refresh or reinstall in the Plugins Directory.
-6. Start a fresh conversation and confirm the `P2` package change is active.
+4. Claude, CLI route: run `claude plugin marketplace update withnative`, then either
+   `claude plugin uninstall surf@withnative` and `claude plugin install surf@withnative`,
+   or `claude plugin update surf@withnative`. Record each command's exact output, the
+   version reported by `claude plugin list` after the marketplace update but before the
+   plugin update, and the restart actually taken. Confirm the bare-name `claude plugin
+   update surf` failure is still present or has been fixed.
+5. Claude, slash-command route: repeat step 4 inside a terminal session using
+   `/plugin marketplace update withnative`, `/plugin uninstall surf@withnative` and
+   `/plugin install surf@withnative`, then `/reload-plugins` or relaunch. Record it
+   separately; neither route is evidence for the other.
+6. OpenAI, CLI route: run `codex plugin marketplace upgrade withnative`,
+   `codex plugin remove surf@withnative` and `codex plugin add surf@withnative`, and
+   record each command's exact output.
+7. OpenAI, in-app route: run `codex plugin marketplace upgrade withnative`, restart the
+   ChatGPT desktop app, open **Plugins Directory → Native → Surf**, and record whether an
+   update is offered, whether it applies, and whether an uninstall and reinstall from that
+   card was required instead.
+8. Start a fresh conversation after each route and confirm the `P2` package change is
+   active.
 
-Pass requires exact, repeatable client steps. Do not assume third-party auto-update.
+Pass requires exact, repeatable client steps. Do not assume third-party auto-update, and
+do not treat a marketplace refresh as having moved an installed plugin.
 
 ## Gate 6: active-session behaviour
 

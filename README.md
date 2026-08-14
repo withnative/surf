@@ -16,15 +16,42 @@ the copyright holder and a plain-language licence summary.
 The simplest route is to paste this into **ChatGPT/Codex Desktop** or **Claude Code**:
 
 ```text
-Help me install Surf from https://github.com/withnative/surf and get started.
+Install the plugin https://github.com/withnative/surf and use the quickstart tool
 ```
 
-If you prefer deterministic steps:
+If you prefer deterministic steps, each surface installs with two shell commands.
+
+**ChatGPT/Codex Desktop** (the install verb is `add`):
+
+```sh
+codex plugin marketplace add withnative/surf
+codex plugin add surf@withnative
+```
+
+**Claude Code** (the install verb is `install`; the default scope is `user`):
+
+```sh
+claude plugin marketplace add withnative/surf
+claude plugin install surf@withnative
+```
+
+These commands write to your local Codex and Claude configuration (`~/.codex` and
+`~/.claude`), and they cover the desktop applications too. Restart the app afterwards. In
+ChatGPT/Codex Desktop, a CLI-installed plugin appears in a less prominent part of the
+interface than an in-app install, so check the Plugins Directory listing if you do not
+spot it straight away.
+
+You can also install entirely in-product:
 
 - **ChatGPT/Codex Desktop:** run `codex plugin marketplace add withnative/surf`, restart
-  the ChatGPT desktop app, then open **Plugins Directory → Native → Surf → Install**.
-- **Claude Code:** run `/plugin marketplace add withnative/surf`, then
-  `/plugin install surf@withnative`. Run `/reload-plugins` if the install summary asks.
+  the app, then open **Plugins Directory → Native → Surf → Install**.
+- **Claude Code:** in an interactive terminal session, run
+  `/plugin marketplace add withnative/surf`, then `/plugin install surf@withnative`, and
+  `/reload-plugins` if the install summary asks. The `/plugin` slash command exists only in
+  the terminal build.
+
+Pick one route per surface. Installing from both the CLI and the Plugins Directory puts
+two copies of Surf on the same host and can produce duplicate tools.
 
 Start a new conversation and say `Help me get started with Surf.` You can invoke the
 plugin explicitly as `@surf` in ChatGPT/Codex Desktop or `/surf:surf` in Claude Code;

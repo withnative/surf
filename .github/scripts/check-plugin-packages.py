@@ -14,10 +14,13 @@ ROOT = Path(__file__).resolve().parents[2]
 PLUGIN = ROOT / "plugins" / "surf"
 ENDPOINT = "https://surf.withnative.ai/mcp"
 REPOSITORY = "https://github.com/withnative/surf"
-PRIMARY_PROMPT = f"Help me install Surf from {REPOSITORY} and get started."
+PRIMARY_PROMPT = f"Install the plugin {REPOSITORY} and use the quickstart tool"
 OPENAI_MARKETPLACE_COMMAND = "codex plugin marketplace add withnative/surf"
-CLAUDE_MARKETPLACE_COMMAND = "/plugin marketplace add withnative/surf"
-CLAUDE_INSTALL_COMMAND = "/plugin install surf@withnative"
+OPENAI_INSTALL_COMMAND = "codex plugin add surf@withnative"
+CLAUDE_MARKETPLACE_COMMAND = "claude plugin marketplace add withnative/surf"
+CLAUDE_INSTALL_COMMAND = "claude plugin install surf@withnative"
+CLAUDE_SLASH_MARKETPLACE_COMMAND = "/plugin marketplace add withnative/surf"
+CLAUDE_SLASH_INSTALL_COMMAND = "/plugin install surf@withnative"
 SUPPORTED_SURFACES = ("ChatGPT/Codex Desktop", "Claude Code")
 FALLBACK_SEMANTICS = "Direct MCP connection remains a supported fallback"
 HERO = "Learn to surf the waves of AI"
@@ -25,6 +28,66 @@ PLUGIN_NAME = "surf"
 MARKETPLACE_NAME = "withnative"
 PLUGIN_PATH = "./plugins/surf"
 PLUGIN_VERSION = "0.1.1"
+
+# Public installation copy is deliberately duplicated across surfaces rather than
+# generated from one source, so these per-surface expectations are the authoritative
+# list of what each surface must carry. Any public string that appears on more than
+# one surface belongs here as a named constant.
+
+# Every public surface leads with the same repository and the same pasteable prompt.
+SHARED_INSTALLATION_COPY = (REPOSITORY, PRIMARY_PROMPT)
+
+# The written surfaces (README and the canonical guide) carry the deterministic
+# commands, the named supported surfaces, and the direct-MCP fallback.
+DOCUMENTED_INSTALLATION_COPY = (
+    ENDPOINT,
+    FALLBACK_SEMANTICS,
+    OPENAI_MARKETPLACE_COMMAND,
+    OPENAI_INSTALL_COMMAND,
+    CLAUDE_MARKETPLACE_COMMAND,
+    CLAUDE_INSTALL_COMMAND,
+    CLAUDE_SLASH_MARKETPLACE_COMMAND,
+    CLAUDE_SLASH_INSTALL_COMMAND,
+    *SUPPORTED_SURFACES,
+)
+
+# The landing card carries one promise, one prompt and one link. Commands, surface
+# lists, fallback prose and deep documentation links belong in the docs, not on it.
+LANDING_INSTALLATION_COPY = (
+    f"<h1>{HERO}</h1>",
+    f'data-copy="{PRIMARY_PROMPT}"',
+    f'<a class="repo" href="{REPOSITORY}">',
+)
+# Copy that must not appear as readable text on the landing card. Checked against the
+# raw source, the whitespace-collapsed source and the tag-stripped source, so neither a
+# source-line wrap nor inline markup can smuggle a command block back onto the card.
+LANDING_FORBIDDEN_TEXT = (
+    OPENAI_MARKETPLACE_COMMAND,
+    OPENAI_INSTALL_COMMAND,
+    CLAUDE_MARKETPLACE_COMMAND,
+    CLAUDE_INSTALL_COMMAND,
+    CLAUDE_SLASH_MARKETPLACE_COMMAND,
+    CLAUDE_SLASH_INSTALL_COMMAND,
+    "codex plugin",
+    "claude plugin",
+    FALLBACK_SEMANTICS,
+)
+
+# Markup the landing page must not contain anywhere, including its header and footer.
+# These are attribute fragments, so they are checked against the raw and collapsed
+# source only: tag stripping would remove the very text being matched.
+LANDING_FORBIDDEN_MARKUP = (
+    'href="/docs/',
+    f'href="{REPOSITORY}/blob/',
+)
+
+# The visible prompt in the fence and the clipboard payload on the button must be the
+# same bytes. The fence marks up part of the prompt, so its text is compared after
+# stripping inner tags.
+LANDING_FENCE_PATTERN = re.compile(
+    r'<div class="fence" id="setup-prompt">(.*?)</div>', re.DOTALL
+)
+HTML_TAG_PATTERN = re.compile(r"<[^>]*>")
 
 
 class ValidationError(Exception):
@@ -160,36 +223,56 @@ def validate_public_installation_copy() -> None:
         "web/landing/index.html": (ROOT / "web" / "landing" / "index.html").read_text(
             encoding="utf-8"
         ),
+        "docs/faq.md": (ROOT / "docs" / "faq.md").read_text(encoding="utf-8"),
     }
-    stable_fragments = (
-        REPOSITORY,
-        ENDPOINT,
-        PRIMARY_PROMPT,
-        OPENAI_MARKETPLACE_COMMAND,
-        CLAUDE_MARKETPLACE_COMMAND,
-        CLAUDE_INSTALL_COMMAND,
-        *SUPPORTED_SURFACES,
-    )
-    for path, text in public_copy.items():
-        for fragment in stable_fragments:
-            require(fragment in text, f"{path} public installation copy drifted: {fragment!r}")
-        require(
-            FALLBACK_SEMANTICS in " ".join(text.split()),
-            f"{path} direct-MCP fallback semantics drifted",
-        )
+    required_by_surface = {
+        "README.md": (*SHARED_INSTALLATION_COPY, *DOCUMENTED_INSTALLATION_COPY),
+        "docs/plugin-installation.md": (
+            *SHARED_INSTALLATION_COPY,
+            *DOCUMENTED_INSTALLATION_COPY,
+        ),
+        "web/landing/index.html": (*SHARED_INSTALLATION_COPY, *LANDING_INSTALLATION_COPY),
+        # The FAQ leads with the same repository and pasteable prompt but deliberately
+        # sends the reader to the canonical guide instead of repeating the commands.
+        "docs/faq.md": SHARED_INSTALLATION_COPY,
+    }
+    for path, fragments in required_by_surface.items():
+        text = public_copy[path]
+        # Prose wraps across lines; compare against the collapsed text too so a
+        # line break is not treated as drift.
+        collapsed = " ".join(text.split())
+        for fragment in fragments:
+            require(
+                fragment in text or fragment in collapsed,
+                f"{path} public installation copy drifted: {fragment!r}",
+            )
 
     landing = public_copy["web/landing/index.html"]
-    require(f"<h1>{HERO}</h1>" in landing, "landing hero copy drifted")
+    landing_collapsed = " ".join(landing.split())
+    landing_stripped = " ".join(HTML_TAG_PATTERN.sub(" ", landing).split())
+    for fragment in LANDING_FORBIDDEN_TEXT:
+        require(
+            fragment not in landing
+            and fragment not in landing_collapsed
+            and fragment not in landing_stripped,
+            f"landing card must stay one promise, one prompt and one link: {fragment!r}",
+        )
+    for fragment in LANDING_FORBIDDEN_MARKUP:
+        require(
+            fragment not in landing and fragment not in landing_collapsed,
+            f"landing page must not link into the documentation tree: {fragment!r}",
+        )
+
+    # The visible prompt and the clipboard payload must be byte-identical, so editing
+    # one without the other fails here rather than shipping a mismatched card.
+    fence = LANDING_FENCE_PATTERN.search(landing)
+    require(fence is not None, "landing card is missing the setup-prompt fence")
+    fence_text = " ".join(HTML_TAG_PATTERN.sub("", fence.group(1)).split())
     require(
-        f'data-copy="{PRIMARY_PROMPT}"' in landing,
-        "landing copy action drifted from the canonical installation prompt",
+        fence_text == PRIMARY_PROMPT,
+        "landing fence text must equal the copy-button payload exactly: "
+        f"{fence_text!r} != {PRIMARY_PROMPT!r}",
     )
-    for target in (
-        "https://github.com/withnative/surf/blob/main/docs/plugin-installation.md",
-        "/docs/privacy-and-data",
-        "/docs/compatibility",
-    ):
-        require(f'href="{target}"' in landing, f"landing installation link drifted: {target}")
 
     guide = public_copy["docs/plugin-installation.md"]
     for heading in (
