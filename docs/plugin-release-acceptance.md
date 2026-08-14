@@ -210,8 +210,16 @@ fields above plus every filesystem read, write and directory listing performed b
 client or agent.
 
 1. Start session one in an empty directory unrelated to the proposed practice.
-2. Activate Surf in natural language, confirm a setup proposal that names the exact
-   practice home and canonical locator, and complete setup.
+2. Activate Surf in natural language. Without naming a preferred practice location, ask
+   the agent to offer concrete choices before setup. Confirm that it recommends locations
+   visible in the ordinary file browser by default, beginning with a suitable existing
+   notes/documents location, the platform's Documents folder or a clearly named visible
+   home folder as circumstances warrant. Confirm that it retains discretion, explains
+   material backup, synchronisation, sharing, source-control, sandbox or
+   workplace-administration implications, and identifies any dot-prefixed option as
+   hidden before confirmation. Confirm that it explains the hidden canonical locator
+   separately as a small pointer rather than a practice home. Then confirm a setup proposal
+   that names the exact practice home and canonical locator, and complete setup.
 3. Verify the locator contains only `schema_version: 1` and the fully expanded absolute
    `surf_home`, and that the practice validates through its marker, `README.md` map and
    working-framework record.

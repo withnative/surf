@@ -68,6 +68,11 @@ account identifier. A valid practice in the launch directory takes precedence, s
 agent does not read this user-level pointer in that case. Otherwise the agent reads only
 this exact path before asking permission for any bounded recovery search.
 
+The dot-prefixed `.surf` directory is hidden by default in ordinary macOS and Linux file
+browsing. That location is reserved for the small continuity pointer; it is not the
+default home for the person's learning record. Surf setup normally recommends a visible,
+user-findable practice folder and discloses hidden alternatives before confirmation.
+
 The locator is inspectable and independently removable. Deleting it leaves the practice
 untouched and returns Surf to the no-global-discovery state. Moving or restoring a
 practice requires validating the destination and confirming the pointer update; backing

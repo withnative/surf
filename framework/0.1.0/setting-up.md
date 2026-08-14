@@ -100,6 +100,24 @@ Read the short agreement back in plain language and invite correction. Activate 
 
 Help the person choose a durable, user-controlled, dedicated location whose backup, synchronisation, sharing, and source-control implications they understand. Offer a small number of concrete options only when useful; the person may instead name their own.
 
+Normally recommend a practice home that the person can find in their ordinary file
+browser without enabling hidden-file visibility. Prefer, in order, a suitable existing
+notes or documents location they already use, the platform's visible Documents folder
+(for example `~/Documents/Surf` or `%USERPROFILE%\Documents\Surf`), or a clearly named
+visible folder directly under their home such as `~/Surf`. These are defaults, not a
+mandate: use judgement when sandbox access, durability, backup, synchronisation,
+workplace administration, sharing, source control or the person's existing organisation
+makes another location more suitable. Expand any shorthand to an exact platform-absolute
+path before making the setup proposal.
+
+Do not propose a dot-prefixed, configuration, cache, temporary, generated or
+application-support directory as the default practice home. A hidden location remains
+available when the person chooses it knowingly or an established convention makes it
+appropriate, but
+explain that it is hidden before offering or confirming it. Distinguish the canonical
+locator explicitly: its hidden `.surf` directory contains a small operational pointer,
+not the learning record, and does not make `.surf` the default practice home.
+
 Before any mutation, make one explicit proposal that names both the exact practice home
 and the canonical locator file. Explain that the locator records only the practice path
 so a future Surf conversation can return from another launch directory. The person's
