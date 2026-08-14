@@ -1,5 +1,5 @@
 // Copyright © 2026 AI Native Work, Inc.
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: AGPL-3.0-only
 
 //! The public read-only tool surface over Surf's working framework and docs.
 

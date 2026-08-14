@@ -1,5 +1,5 @@
 // Copyright © 2026 AI Native Work, Inc.
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: AGPL-3.0-only
 
 //! Minimal source-level front door. Framework content stays in the MCP artefacts.
 //!

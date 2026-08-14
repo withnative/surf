@@ -37,7 +37,7 @@ Some crates offer a choice among licences; `matchit` declares both MIT and
 BSD-3-Clause. These expressions are evaluated by `cargo-deny`, rather than
 flattened into a hand-maintained list.
 
-Surf itself declares `AGPL-3.0-or-later`. Passing this audit means the declared
+Surf itself declares `AGPL-3.0-only`. Passing this audit means the declared
 expressions satisfy the repository's configured policy; it is not a legal
 opinion about every possible use, combination or distribution.
 

@@ -15,7 +15,7 @@ unsolicited pull request will therefore be closed, even when the idea is useful.
   desired behaviour before investing in a patch.
 - **Discuss a substantial proposal first.** A maintainer may invite a pull
   request after the scope and approach are agreed.
-- **Fork Surf.** Surf is AGPL-3.0-or-later. Running, changing and publishing a
+- **Fork Surf.** Surf is AGPL-3.0-only. Running, changing and publishing a
   fork under the licence is a first-class option, not a consolation prize. The
   official hosted service remains the supported product.
 

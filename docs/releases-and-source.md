@@ -94,5 +94,5 @@ The repository can be built, run, and forked, but the official managed endpoint 
 supported product. A fork does not automatically receive Native's deployments or
 framework updates. Its operator owns build cadence, source disclosure, infrastructure,
 compatibility testing, and support. Modified network services must follow the repository's
-AGPL-3.0-or-later licence; consult qualified advice for legal questions about a specific
+AGPL-3.0-only licence; consult qualified advice for legal questions about a specific
 deployment.

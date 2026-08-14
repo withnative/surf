@@ -5,7 +5,7 @@ edition = "2021"
 rust-version = "1.85"
 description = "Public, stateless MCP server briefing agents on the human–agent learning loop."
 repository = "https://github.com/withnative/surf"
-license = "AGPL-3.0-or-later"
+license = "AGPL-3.0-only"
 publish = false
 
 [[bin]]

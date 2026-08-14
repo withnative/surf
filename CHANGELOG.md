@@ -7,6 +7,10 @@ lockstep policy. Working-framework changes are recorded in
 
 ## Unreleased
 
+- Fix future Surf revisions at `AGPL-3.0-only`, so Native can review any future
+  licence version before adopting it, and publish the change as plugin package
+  `0.1.3`. Revisions published before this change retain their existing
+  `AGPL-3.0-or-later` grants.
 - Rename the single shared Surf skill to `next-step`, broaden its stable activation
   boundary for plausible AI-agent learning and reflection, and keep precise routing in
   remotely served guidance for plugin package `0.1.2`.
