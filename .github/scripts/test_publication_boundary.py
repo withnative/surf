@@ -144,6 +144,43 @@ class ReadinessTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         scan_publication_readiness(candidate)
 
+    def test_accepts_exact_railway_ids_only_in_reviewed_operational_paths(self) -> None:
+        project_id = "f4d995a4" + "-2c51-4860-8817-60f141b75b0c"
+        service_id = "f73c4cbb" + "-99a7-4716-a4a3-19bc91ca261a"
+        content = f"{project_id}\n{service_id}\n"
+        candidate, temporary = self.candidate_with(
+            {
+                ".github/scripts/test_deployment_verification.py": content,
+                ".github/workflows/verify-production-deployment.yml": content,
+                "docs/production-deployment.md": content,
+            }
+        )
+        self.addCleanup(temporary.cleanup)
+        scan_publication_readiness(candidate)
+
+        historical, historical_temporary = self.candidate_with(
+            {
+                ".github/scripts/test_deployment_verification.py": "pre-verifier\n",
+                ".github/workflows/verify-production-deployment.yml": "pre-verifier\n",
+                "docs/production-deployment.md": "pre-verifier\n",
+            }
+        )
+        self.addCleanup(historical_temporary.cleanup)
+        scan_publication_readiness(historical)
+
+    def test_rejects_duplicated_railway_id_in_approved_path(self) -> None:
+        project_id = "f4d995a4" + "-2c51-4860-8817-60f141b75b0c"
+        candidate, temporary = self.candidate_with(
+            {
+                ".github/workflows/verify-production-deployment.yml": (
+                    f"{project_id}\n{project_id}\n"
+                )
+            }
+        )
+        self.addCleanup(temporary.cleanup)
+        with self.assertRaisesRegex(BoundaryError, "expected at most 1"):
+            scan_publication_readiness(candidate)
+
     def test_rejects_duplicate_value_in_approved_push_guard_fixture(self) -> None:
         path = ".github/scripts/test_" + "public_push_guard.py"
         blocked_path = "docs/" + "evals"

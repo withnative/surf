@@ -7,17 +7,20 @@ import argparse
 import json
 import re
 import ssl
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 FULL_SHA = re.compile(r"[0-9a-f]{40}")
 MAX_RESPONSE_BYTES = 2 * 1024 * 1024
 PROTOCOL_VERSION = "2025-06-18"
-EXPECTED_TOOLS = ["quickstart", "get_guide", "get_reference", "get_doc"]
-EXPECTED_FRAMEWORK_RESOURCES = {
+KNOWN_PRE_VERIFIER_SHA = "f1f914857d99594ce8590a25fb495481b778aa4e"
+LEGACY_TOOLS = ("quickstart", "get_guide", "get_reference", "get_doc")
+LEGACY_FRAMEWORK_RESOURCES = frozenset({
     "surf://framework/quickstart",
     "surf://framework/manifest",
     "surf://guide/setting-up",
@@ -32,11 +35,89 @@ EXPECTED_FRAMEWORK_RESOURCES = {
     "surf://reference/builds",
     "surf://changelog",
     "surf://source",
-}
+})
+DEFAULT_RETRY_DELAYS = (2.0, 4.0, 8.0, 16.0, 30.0)
 
 
 class VerificationError(RuntimeError):
     pass
+
+
+@dataclass(frozen=True)
+class Contract:
+    protocol_version: str
+    server_name: str
+    tools: tuple[str, ...]
+    required_resources: frozenset[str]
+    html_path: str
+    css_path: str
+    source_link: bytes
+
+
+def _strings(value: Any, field: str) -> tuple[str, ...]:
+    if (
+        not isinstance(value, list)
+        or not value
+        or not all(isinstance(item, str) and item for item in value)
+        or len(value) != len(set(value))
+    ):
+        raise VerificationError(f"deployment contract {field} must be unique strings")
+    return tuple(value)
+
+
+def load_contract(repo_root: Path, sha: str) -> Contract:
+    manifest = repo_root / ".github/deployment-contract.json"
+    if not manifest.exists():
+        if sha == KNOWN_PRE_VERIFIER_SHA:
+            return Contract(
+                protocol_version=PROTOCOL_VERSION,
+                server_name="surf",
+                tools=LEGACY_TOOLS,
+                required_resources=LEGACY_FRAMEWORK_RESOURCES,
+                html_path="web/landing/index.html",
+                css_path="web/landing/_landing.css",
+                source_link=b'href="/source"',
+            )
+        raise VerificationError(
+            "deployed commit has no deployment contract; use its reviewed verifier "
+            "or add an explicit known-good compatibility contract"
+        )
+    try:
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise VerificationError("deployment contract is not valid JSON") from error
+    if not isinstance(data, dict) or data.get("schemaVersion") != 1:
+        raise VerificationError("deployment contract schemaVersion must be 1")
+    protocol_version = data.get("protocolVersion")
+    server_name = data.get("serverName")
+    if not isinstance(protocol_version, str) or not re.fullmatch(
+        r"[0-9]{4}-[0-9]{2}-[0-9]{2}", protocol_version
+    ):
+        raise VerificationError("deployment contract protocolVersion is invalid")
+    if not isinstance(server_name, str) or not server_name:
+        raise VerificationError("deployment contract serverName is invalid")
+    tools = _strings(data.get("tools"), "tools")
+    resources = frozenset(_strings(data.get("requiredResources"), "requiredResources"))
+    if not {"surf://framework/quickstart", "surf://source"}.issubset(resources):
+        raise VerificationError("deployment contract omits core framework/source resources")
+    landing = data.get("landing")
+    if not isinstance(landing, dict):
+        raise VerificationError("deployment contract landing must be an object")
+    if landing.get("html") != "web/landing/index.html":
+        raise VerificationError("deployment contract landing HTML path is invalid")
+    if landing.get("css") != "web/landing/_landing.css":
+        raise VerificationError("deployment contract landing CSS path is invalid")
+    if landing.get("sourceLink") != 'href="/source"':
+        raise VerificationError("deployment contract landing source link is invalid")
+    return Contract(
+        protocol_version=protocol_version,
+        server_name=server_name,
+        tools=tools,
+        required_resources=resources,
+        html_path=landing["html"],
+        css_path=landing["css"],
+        source_link=landing["sourceLink"].encode(),
+    )
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -70,15 +151,22 @@ class Verifier:
         legacy_urls: list[str],
         timeout: float = 15,
         allow_http: bool = False,
+        retry_delays: tuple[float, ...] = DEFAULT_RETRY_DELAYS,
+        sleep: Callable[[float], None] = time.sleep,
     ) -> None:
         self.base_url = validate_base_url(base_url, allow_http=allow_http)
         self.sha = validate_sha(expected_sha)
         self.source_url = f"https://github.com/withnative/surf/commit/{self.sha}"
         self.repo_root = repo_root.resolve(strict=True)
+        self.contract = load_contract(self.repo_root, self.sha)
         self.legacy_urls = [
             validate_base_url(url, allow_http=allow_http) for url in legacy_urls
         ]
         self.timeout = timeout
+        if any(delay < 0 for delay in retry_delays):
+            raise VerificationError("retry delays cannot be negative")
+        self.retry_delays = retry_delays
+        self.sleep = sleep
         context = ssl.create_default_context()
         self.opener = urllib.request.build_opener(
             NoRedirect(), urllib.request.HTTPSHandler(context=context)
@@ -141,7 +229,7 @@ class Verifier:
             body=body,
             headers={
                 "Content-Type": "application/json",
-                "MCP-Protocol-Version": PROTOCOL_VERSION,
+                "MCP-Protocol-Version": self.contract.protocol_version,
             },
         )
         try:
@@ -176,16 +264,19 @@ class Verifier:
         initialized = self._json_rpc(
             "initialize",
             {
-                "protocolVersion": PROTOCOL_VERSION,
+                "protocolVersion": self.contract.protocol_version,
                 "capabilities": {},
                 "clientInfo": {"name": "surf-production-verifier", "version": "1"},
             },
             1,
         )
-        if initialized.get("protocolVersion") != PROTOCOL_VERSION:
+        if initialized.get("protocolVersion") != self.contract.protocol_version:
             raise VerificationError("MCP initialize negotiated an unexpected protocol")
         server_info = initialized.get("serverInfo")
-        if not isinstance(server_info, dict) or server_info.get("name") != "surf":
+        if (
+            not isinstance(server_info, dict)
+            or server_info.get("name") != self.contract.server_name
+        ):
             raise VerificationError("MCP initialize returned unexpected server metadata")
         instructions = initialized.get("instructions")
         if not isinstance(instructions, str):
@@ -198,7 +289,7 @@ class Verifier:
         if not isinstance(tools, list):
             raise VerificationError("tools/list omitted its tool array")
         names = [tool.get("name") for tool in tools if isinstance(tool, dict)]
-        if names != EXPECTED_TOOLS:
+        if names != list(self.contract.tools):
             raise VerificationError(f"tools/list returned unexpected tools: {names!r}")
 
         resources = self._json_rpc("resources/list", {}, 3).get("resources")
@@ -209,7 +300,7 @@ class Verifier:
         ]
         if not all(isinstance(uri, str) for uri in uris):
             raise VerificationError("resources/list returned a non-string URI")
-        missing = EXPECTED_FRAMEWORK_RESOURCES.difference(uris)
+        missing = self.contract.required_resources.difference(uris)
         if missing:
             raise VerificationError(
                 f"resources/list omitted expected resources: {sorted(missing)!r}"
@@ -230,21 +321,22 @@ class Verifier:
         self.completed.extend(["MCP initialize", "MCP tools", "MCP resources"])
 
     def check_landing(self) -> None:
-        expected_html = (self.repo_root / "web/landing/index.html").read_bytes()
-        if b'href="/source"' not in expected_html:
+        expected_html = (self.repo_root / self.contract.html_path).read_bytes()
+        if self.contract.source_link not in expected_html:
             raise VerificationError("deployed commit's landing footer omits /source")
         actual_html, _ = self._request(self._url(self.base_url, "/"))
         if actual_html != expected_html:
             raise VerificationError("landing HTML differs from the deployed commit")
 
-        expected_css = (self.repo_root / "web/landing/_landing.css").read_bytes()
+        expected_css = (self.repo_root / self.contract.css_path).read_bytes()
         css_path = f"/assets/landing.css?commit={self.sha}"
         actual_css, _ = self._request(self._url(self.base_url, css_path))
         if actual_css != expected_css:
             raise VerificationError("landing stylesheet differs from the deployed commit")
         self.completed.append("compiled landing assets")
 
-    def run(self) -> list[str]:
+    def run_once(self) -> list[str]:
+        self.completed = []
         self.check_health(self.base_url, "production")
         self.check_source()
         self.check_mcp()
@@ -252,6 +344,24 @@ class Verifier:
         for legacy_url in self.legacy_urls:
             self.check_health(legacy_url, urllib.parse.urlsplit(legacy_url).netloc)
         return self.completed
+
+    def run(self) -> list[str]:
+        attempts = len(self.retry_delays) + 1
+        for attempt in range(1, attempts + 1):
+            try:
+                return self.run_once()
+            except VerificationError as error:
+                if attempt == attempts:
+                    raise VerificationError(
+                        f"verification failed after {attempts} attempts: {error}"
+                    ) from error
+                delay = self.retry_delays[attempt - 1]
+                print(
+                    f"Attempt {attempt}/{attempts} not ready: {error}; "
+                    f"retrying in {delay:g}s"
+                )
+                self.sleep(delay)
+        raise AssertionError("retry loop must return or raise")
 
 
 def write_summary(path: Path, completed: list[str], sha: str) -> None:
