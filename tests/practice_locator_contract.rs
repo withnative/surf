@@ -178,6 +178,60 @@ fn setup_move_and_delete_have_explicit_safe_write_semantics() {
 }
 
 #[test]
+fn first_time_setup_recommends_visible_practice_homes_with_discretion() {
+    let setup = compact(SETUP);
+    let context = compact(CONTEXT);
+    let acceptance = compact(RELEASE_ACCEPTANCE);
+    let privacy = compact(PRIVACY);
+
+    for required in [
+        "ordinary file browser without enabling hidden-file visibility",
+        "a suitable existing notes or documents location they already use",
+        "the platform's visible Documents folder",
+        "`~/Documents/Surf`",
+        r"`%USERPROFILE%\Documents\Surf`",
+        "a clearly named visible folder directly under their home",
+        "`~/Surf`",
+        "These are defaults, not a mandate",
+        "Do not propose a dot-prefixed, configuration, cache, temporary, generated or application-support directory as the default practice home",
+        "explain that it is hidden before offering or confirming it",
+        "its hidden `.surf` directory contains a small operational pointer, not the learning record",
+    ] {
+        assert!(
+            setup.contains(required),
+            "setting-up guide omits visible-home rule: {required}"
+        );
+    }
+
+    for required in [
+        "normally visible in their ordinary file browser without enabling hidden-file visibility",
+        "These are defaults rather than a fixed path",
+        "The hidden canonical locator is a small operational pointer, not the learning record or a default home for it",
+    ] {
+        assert!(
+            context.contains(required),
+            "local-practice reference omits visible-home reinforcement: {required}"
+        );
+    }
+
+    for required in [
+        "Without naming a preferred practice location, ask the agent to offer concrete choices before setup",
+        "identifies any dot-prefixed option as hidden before confirmation",
+        "explains the hidden canonical locator separately as a small pointer rather than a practice home",
+    ] {
+        assert!(
+            acceptance.contains(required),
+            "release acceptance omits visible-home case: {required}"
+        );
+    }
+
+    assert!(privacy.contains(
+        "The dot-prefixed `.surf` directory is hidden by default in ordinary macOS and Linux file browsing"
+    ));
+    assert!(privacy.contains("it is not the default home for the person's learning record"));
+}
+
+#[test]
 fn contract_prohibits_broad_search_and_surf_mcp_content_transfer() {
     let guidance = compact(&format!("{QUICKSTART}\n{SETUP}\n{CONTEXT}"));
     assert!(guidance.contains("Do not search for another locator or scan the home directory"));

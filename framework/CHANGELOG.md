@@ -6,6 +6,15 @@ Role: Useful landmarks while Surf's pre-production framework remains freely revi
 
 Surf currently has one working framework, `0.1.0`. Until a real production practice depends on it, the framework may be revised in place. Git history and review records preserve the development record; entries here are landmarks, not compatibility promises.
 
+## Visible practice-home defaults — 14 August 2026
+
+- Recommends practice homes that people can find in an ordinary file browser without
+  enabling hidden-file visibility.
+- Prefers a suitable existing notes/documents location, the platform's Documents folder
+  or a clearly named visible home folder while retaining agent judgement and person choice.
+- Requires hidden practice-home options to be disclosed before confirmation and keeps the
+  hidden canonical locator distinct from the visible learning record.
+
 ## Deterministic practice locator — 13 August 2026
 
 - Adds one user-level locator for returning to a confirmed movable practice from another

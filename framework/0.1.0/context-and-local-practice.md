@@ -110,13 +110,23 @@ A suitable practice home is normally:
 - likely to remain reachable in later sessions;
 - dedicated to the learning practice rather than generated or temporary work;
 - compatible with the person's intended privacy, backup, synchronisation and sharing;
-  and
+- normally visible in their ordinary file browser without enabling hidden-file
+  visibility; and
 - understandable enough that the person can find and inspect its records themselves.
 
 When proposing a home, offer a small number of exact choices with material uncertainties
-visible. Name the exact proposed `surf_home` and canonical locator path together, and
-explain that confirming the proposal authorises both writes. Prefer an existing coherent
-practice to creating another one.
+visible. Prefer a suitable existing notes or documents location, then the platform's
+visible Documents folder, then a clearly named visible folder directly under the person's
+home. These are defaults rather than a fixed path: account for sandbox access, durability,
+backup, synchronisation, workplace administration, sharing, source control and the
+person's existing organisation. Do not default to a dot-prefixed, configuration, cache,
+temporary, generated or application-support directory. If a hidden home is appropriate,
+say that it is hidden before the person confirms it.
+
+Name the exact proposed `surf_home` and canonical locator path together, and explain that
+confirming the proposal authorises both writes. The hidden canonical locator is a small
+operational pointer, not the learning record or a default home for it. Prefer an existing
+coherent practice to creating another one.
 
 If persistence is uncertain, a useful check is to create a uniquely named harmless file
 at the confirmed location, read back its exact contents, remove it and verify that it is
