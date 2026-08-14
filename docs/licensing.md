@@ -1,8 +1,13 @@
 # Licensing Surf
 
-Surf is free software licensed under the **GNU Affero General Public License,
-version 3 or (at your option) any later version** (`AGPL-3.0-or-later`). The
-complete terms are in [`LICENSE`](../LICENSE).
+The current Surf source tree is free software licensed under the **GNU Affero
+General Public License, version 3 only** (`AGPL-3.0-only`). The complete terms
+are in [`LICENSE`](../LICENSE).
+
+Revisions published before this change, including tags `v0.0.1` and `v0.1.0`,
+retain the `AGPL-3.0-or-later` terms under which they were released. Those
+licence grants remain in force; the `AGPL-3.0-only` choice applies
+prospectively.
 
 In plain language, the licence permits people to inspect, run, copy, modify and
 redistribute Surf, subject to its terms. Among other obligations, operators of a

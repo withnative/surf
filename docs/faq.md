@@ -64,7 +64,7 @@ independently of Native. Read [why open source](https://github.com/withnative/su
 ## Is Surf really free?
 
 The official Surf service is available without an account, authentication, or billing
-surface. Its source is licensed under AGPL-3.0-or-later. Running a fork can still involve
+surface. Its source is licensed under AGPL-3.0-only. Running a fork can still involve
 infrastructure and AI-provider costs for its operator or users.
 
 ## Which Claude and ChatGPT clients work?

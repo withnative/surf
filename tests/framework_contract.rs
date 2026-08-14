@@ -1,5 +1,5 @@
 // Copyright © 2026 AI Native Work, Inc.
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: AGPL-3.0-only
 
 const QUICKSTART: &str = include_str!("../framework/0.1.0/quickstart.md");
 const SETUP: &str = include_str!("../framework/0.1.0/setting-up.md");

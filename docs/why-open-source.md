@@ -22,5 +22,5 @@ because the way it works should belong in the open.
 
 ---
 
-Surf is licensed under the GNU Affero General Public License, version 3 or later. The
+Surf is licensed under the GNU Affero General Public License, version 3 only. The
 [licence](../LICENSE) contains the exact terms.

@@ -29,7 +29,7 @@ HERO = "Learn to surf the waves of AI"
 PLUGIN_NAME = "surf"
 MARKETPLACE_NAME = "withnative"
 PLUGIN_PATH = "./plugins/surf"
-PLUGIN_VERSION = "0.1.2"
+PLUGIN_VERSION = "0.1.3"
 SKILL_NAME = "next-step"
 SKILL_PATH = "skills/next-step/SKILL.md"
 SKILL_DESCRIPTION = (
@@ -174,7 +174,7 @@ def validate() -> None:
             f"{label} repository is incorrect",
         )
         require(
-            manifest.get("license") == "AGPL-3.0-or-later",
+            manifest.get("license") == "AGPL-3.0-only",
             f"{label} license is incorrect",
         )
         require("[TODO:" not in json.dumps(manifest), f"{label} contains a TODO placeholder")

@@ -8,7 +8,7 @@ agent can establish a lightweight local practice, notice useful evidence over ti
 help you review what is actually changing.
 
 Surf is managed by [Native](https://www.withnative.ai/) and licensed under
-[AGPL-3.0-or-later](LICENSE). See [licensing and notices](docs/licensing.md) for
+[AGPL-3.0-only](LICENSE). See [licensing and notices](docs/licensing.md) for
 the copyright holder and a plain-language licence summary.
 
 ## Install Surf
@@ -75,7 +75,7 @@ Surf launched with three intentionally matching but independently versioned iden
 the **Surf application version**, **working framework version**, and **plugin package
 version** were each `0.1.0`. Their future releases do not need to remain in lockstep.
 The locator guidance and `next-step` activation are independent package updates: the
-current plugin package is `0.1.2`, while the application and working framework remain
+current plugin package is `0.1.3`, while the application and working framework remain
 `0.1.0`.
 
 ## What Surf does
