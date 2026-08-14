@@ -50,6 +50,7 @@ docs/dependency-licenses.md
 docs/evidence/2026-08-13-cli-acceptance.md
 docs/evidence/2026-08-13-practice-locator-acceptance.md
 docs/evidence/2026-08-14-cli-install-acceptance.md
+docs/evidence/2026-08-14-plugin-013-update-acceptance.md
 docs/faq.md
 docs/how-surf-works.md
 docs/index.md
