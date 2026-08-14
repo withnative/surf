@@ -5,16 +5,32 @@ its supported plugin surfaces.
 
 ## Start with the repository link
 
-Paste this into **ChatGPT/Codex Desktop** or **Claude Code**:
+Paste this into Claude or ChatGPT/Codex, on desktop or CLI:
 
 ```text
-Install the plugin https://github.com/withnative/surf and use the quickstart tool
+Open https://github.com/withnative/surf and follow the setup guide.
 ```
 
-The agent should inspect the public repository, use the product-native plugin flow below,
-and ask before changing an existing standalone Surf MCP connection. If you are on mobile,
-in a browser-only chat, or on another unlisted surface, use a supported desktop client
-instead; the plugin flow and durable local-file practice are not verified there.
+### For agents following this guide
+
+Inspect the local marketplace, plugin and MCP state before deciding installation is
+unavailable. If shell access is available, perform the setup yourself with the client's
+non-interactive plugin CLI below. Do not substitute a curated plugin-catalogue search for
+the repository the user supplied, and do not send the user to interactive slash commands
+when you can run the non-interactive CLI.
+
+Ask before changing an existing standalone Surf MCP connection. Verify the installed
+plugin afterwards and follow any reload or restart instruction reported by the client. If
+the current conversation cannot load the newly installed plugin, give the user this
+copyable continuation prompt before ending:
+
+```text
+Use Surf's quickstart tool to help me finish setting up Surf.
+```
+
+If you are on mobile, in a browser-only chat, or on another unlisted surface, use a
+supported desktop client instead; the plugin flow and durable local-file practice are not
+verified there.
 
 ## ChatGPT/Codex Desktop
 
@@ -50,7 +66,8 @@ Choose one route or the other: the CLI and the desktop app share the same `~/.co
 so if you already ran `codex plugin add`, run `codex plugin remove surf@withnative` before
 installing from the Plugins Directory.
 
-Either way, start a new conversation and say `Help me get started with Surf.`
+Either way, start a new conversation and say
+`Use Surf's quickstart tool to help me finish setting up Surf.`
 
 To invoke Surf explicitly, choose `@surf` and add your request. Where the client exposes
 individual skill selectors, choose **Find your next step with AI** (`$next-step`). Ordinary
@@ -105,7 +122,8 @@ If the install summary says `Run /reload-plugins to activate.`, run:
 /reload-plugins
 ```
 
-Start a new conversation and say `Help me get started with Surf.` To invoke the skill
+Start a new conversation and say
+`Use Surf's quickstart tool to help me finish setting up Surf.` To invoke the skill
 explicitly, use `/surf:next-step`; ordinary Surf requests can activate it naturally too.
 Use `/mcp` to confirm the plugin-provided `surf` server is connected.
 

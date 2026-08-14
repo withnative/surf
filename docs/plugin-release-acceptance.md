@@ -12,6 +12,10 @@ to the release candidate:
 
 - [ ] `withnative/surf` is public and readable without authentication.
 - [ ] The production endpoint and exact public source metadata are healthy.
+- [ ] The one-line repository-first setup prompt routes a clean Claude agent through the
+      local `claude plugin` CLI without a user correction.
+- [ ] The same prompt routes a clean ChatGPT/Codex agent through the local `codex plugin`
+      CLI without a user correction.
 - [ ] A clean Claude Code GitHub install passes through the `claude plugin` CLI route.
 - [ ] A clean Claude Code GitHub install passes through the `/plugin` slash-command route.
 - [ ] A clean ChatGPT/Codex Desktop GitHub install and MCP resolution pass through the
@@ -70,6 +74,44 @@ Result: pass / fail / blocked
    `withnative/surf` and that the commit matches the deployed source.
 5. Run the repository CI and retain the successful run URL.
 
+## Gate 1a: one-line agent-led setup routing
+
+Run this separately in a clean Claude environment and a clean ChatGPT/Codex environment.
+The agent must have ordinary shell access, but no Surf marketplace, plugin or standalone
+MCP connection. Record every tool call and command, not only the final installation state.
+
+1. Give the agent only this prompt:
+
+   ```text
+   Open https://github.com/withnative/surf and follow the setup guide.
+   ```
+
+2. Confirm the agent opens or reads the supplied repository and setup guide before
+   deciding which installation route is available.
+3. Confirm it inspects the local client and existing marketplace, plugin and MCP state.
+4. Confirm it does not substitute a curated plugin-catalogue search for the supplied
+   repository and does not ask the user to run interactive slash commands while the
+   non-interactive CLI is available through its shell.
+5. Confirm it independently selects and runs the correct marketplace and install commands:
+   `claude plugin ...` in Claude or `codex plugin ...` in ChatGPT/Codex.
+6. Confirm it verifies the installed plugin name, marketplace, version and component
+   inventory, then reports the actual reload or restart boundary.
+7. If a fresh conversation is required, confirm the agent gives the user this copyable
+   continuation prompt before ending:
+
+   ```text
+   Use Surf's quickstart tool to help me finish setting up Surf.
+   ```
+
+8. Start the required fresh conversation with that continuation prompt. Confirm Surf
+   activates and calls live `quickstart` before substantive setup guidance.
+
+Pass requires a complete repository prompt → host-native CLI → verification → restart
+handoff → live `quickstart` flow without a user correction. Searching only a curated
+catalogue, claiming the shell cannot install a repository plugin, proposing an incorrect
+`plugin@marketplace` identifier or omitting the continuation prompt is a failure even if a
+later user intervention recovers the installation.
+
 ## Gate 2: clean Claude Code install
 
 Use a profile with no Surf marketplace, plugin, or standalone MCP connection.
@@ -80,7 +122,8 @@ Use a profile with no Surf marketplace, plugin, or standalone MCP connection.
 4. Confirm `claude plugin list` shows Surf, then start a Claude Code session.
 5. Run `/reload-plugins` if prompted.
 6. Confirm `/mcp` shows the plugin-provided `surf` server at the exact production URL.
-7. Start a new conversation with `Help me get started with Surf.`
+7. Start a new conversation with
+   `Use Surf's quickstart tool to help me finish setting up Surf.`
 8. Confirm the agent calls `quickstart` before substantive Surf guidance and follows the
    returned current framework.
 9. Confirm a user-chosen local practice can be created without sending practice content
@@ -117,7 +160,8 @@ plugin files copied from another profile.
 2. Run `codex plugin marketplace add withnative/surf`.
 3. Run `codex plugin add surf@withnative` and confirm `codex plugin list` shows Surf.
 4. Do not manually add the Surf MCP server.
-5. Start a fresh Work or Codex conversation with `Help me get started with Surf.`
+5. Start a fresh Work or Codex conversation with
+   `Use Surf's quickstart tool to help me finish setting up Surf.`
 6. Confirm the client resolves the package's remote MCP connection, discovers the four
    Surf tools, and calls `quickstart` before substantive guidance.
 7. Start a second fresh conversation with an ordinary request such as
