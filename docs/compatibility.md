@@ -1,20 +1,23 @@
 # Compatibility
 
-Surf's public plugin-installation claim is deliberately narrow. The verified routes are
-**ChatGPT/Codex Desktop** and **Claude Code**. Each needs the Surf remote MCP connection
-and durable access to local files so the practice does not depend on chat memory.
+Surf's public plugin-installation claim is deliberately narrow. The target surfaces are
+**ChatGPT/Codex Desktop** and **Claude Code**; the new central-catalogue route needs a clean
+retest on each before it is described as verified. Each needs the Surf remote MCP
+connection and durable access to local files so the practice does not depend on chat
+memory.
 
 ## Current surface status
 
 | Status | Surface | Installation route | Evidence and boundary |
 |---|---|---|---|
-| Verified | ChatGPT/Codex Desktop on macOS | `codex plugin marketplace add withnative/surf`, then `codex plugin add surf@withnative`; or, in the app, **Plugins Directory → Native → Surf → Install** after a restart | Human installation plus agent-led repository-link installation and activation on 13 August 2026 through the GUI route. The maintainer has run the CLI install himself; a CLI-installed plugin appears in the desktop app in a less prominent area than an in-app install. |
-| Verified | Claude Code CLI on macOS | `claude plugin marketplace add withnative/surf`, then `claude plugin install surf@withnative`; the `/plugin` slash commands are equivalent inside a terminal session | Plugin installation and natural-language activation observed on Claude Code 2.1.222; direct-MCP baseline observed on 2.1.231. A full uninstall, install, marketplace-update and update cycle was executed on macOS on 14 August 2026 and recorded in [CLI install acceptance evidence](evidence/2026-08-14-cli-install-acceptance.md). |
-| Expected, not claimed | Claude Code desktop app | Run `claude plugin marketplace add withnative/surf` and `claude plugin install surf@withnative` in a terminal, then restart the app. The `/plugin` slash command is terminal-only | A user-scope `claude plugin` install was observed active in the desktop application, with its skill and MCP server loaded, on 14 August 2026. Clean-install evidence for a public support claim has not been recorded. |
-| Untested / unsupported | ChatGPT mobile, browser-only chats, Claude.ai, Claude mobile, other MCP clients | None promised | The repository marketplace flow and durable local-file practice have not passed Surf acceptance on these surfaces. |
+| Central-catalogue retest required | ChatGPT/Codex Desktop on macOS | `codex plugin marketplace add withnative/plugins`, then `codex plugin add surf@withnative`; or, in the app, **Plugins Directory → Native → Surf → Install** after a restart | Surf installation and activation were previously observed through a Surf-owned catalogue. The client and package evidence remains useful, but the new canonical-catalogue path must pass the clean-install gates before it is described as verified. |
+| Central-catalogue retest required | Claude Code CLI on macOS | `claude plugin marketplace add withnative/plugins`, then `claude plugin install surf@withnative`; the `/plugin` slash commands are equivalent inside a terminal session | Plugin installation and natural-language activation were previously observed through a Surf-owned catalogue. The recorded update cycle remains useful for client behaviour, but the new canonical-catalogue path needs clean-install evidence. |
+| Expected, not claimed | Claude Code desktop app | Run `claude plugin marketplace add withnative/plugins` and `claude plugin install surf@withnative` in a terminal, then restart the app. The `/plugin` slash command is terminal-only | A user-scope `claude plugin` install was observed active in the desktop application, with its skill and MCP server loaded, on 14 August 2026. Clean-install evidence through the canonical catalogue has not been recorded. |
+| Untested / unsupported | ChatGPT mobile, browser-only chats, Claude.ai, Claude mobile, other MCP clients | None promised | The plugin-catalogue flow and durable local-file practice have not passed Surf acceptance on these surfaces. |
 
-“Verified” here means the route has positive installation and activation evidence strong
-enough to be the public journey. It does not replace the dated human release checklist.
+“Verified” means a route has positive installation and activation evidence strong enough
+to be the public journey. The central-catalogue routes are not verified until the dated
+human release checklist passes against `withnative/plugins`.
 Do not expand support by implication: protocol compatibility alone is not a Surf support
 claim.
 
@@ -31,8 +34,9 @@ uninstall, recovery and the direct MCP fallback.
 
 For each claimed surface, clean human acceptance must record evidence that it can:
 
-1. install Surf from `https://github.com/withnative/surf` through the documented plugin
-   route without a pre-existing standalone Surf MCP connection;
+1. follow the setup guide at `https://github.com/withnative/surf`, register the catalogue
+   from `https://github.com/withnative/plugins`, and install Surf through the documented
+   plugin route without a pre-existing standalone Surf MCP connection;
 2. initialize the plugin-provided `https://surf.withnative.ai/mcp` connection;
 3. discover `quickstart`, `get_guide`, `get_reference`, and `get_doc`;
 4. activate through both the documented explicit invocation and an ordinary Surf request;

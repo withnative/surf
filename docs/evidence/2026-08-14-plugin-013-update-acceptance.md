@@ -1,5 +1,10 @@
 # Plugin package 0.1.3 update acceptance — 14 August 2026
 
+> Historical route: these tests used the former Surf-owned `withnative` marketplace. Surf
+> no longer publishes that marketplace; current clean installs register the canonical
+> `withnative/plugins` catalogue. The package and client observations remain useful, but
+> this evidence does not verify the new catalogue route.
+
 This evidence covers the CLI routes that could be exercised truthfully from the
 maintainer's existing local client states after plugin package `0.1.3` was published on
 `withnative/surf` `main`. It does not stand in for the Claude slash-command or Codex

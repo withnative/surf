@@ -10,7 +10,8 @@ requires clean, human-observed tests with exact versions and reviewable evidence
 Record a dated pass, with the evidence fields below, for every required gate that applies
 to the release candidate:
 
-- [ ] `withnative/surf` is public and readable without authentication.
+- [ ] `withnative/surf` and the canonical catalogue at `withnative/plugins` are public and
+      readable without authentication.
 - [ ] The production endpoint and exact public source metadata are healthy.
 - [ ] The one-line repository-first setup prompt routes a clean Claude agent through the
       local `claude plugin` CLI without a user correction.
@@ -73,12 +74,17 @@ Result: pass / fail / blocked
 
 1. From a signed-out browser, open `https://github.com/withnative/surf` and confirm the
    repository is public.
-2. Confirm both catalogue files are available at their expected paths.
-3. Confirm `https://surf.withnative.ai/mcp` initializes and exposes `quickstart`,
+2. Open `https://github.com/withnative/plugins` and confirm its Claude and OpenAI
+   catalogue manifests both expose `surf@withnative` from `withnative/surf/plugins/surf`
+   at ref `main`. Confirm this repository does not publish either marketplace manifest.
+3. Confirm both Surf provider manifests have the same semantic package version. Surf's
+   package version is the cache and update signal and must change for every package
+   release; the central catalogue continues to track ref `main`.
+4. Confirm `https://surf.withnative.ai/mcp` initializes and exposes `quickstart`,
    `get_guide`, `get_reference`, and `get_doc`.
-4. Confirm `https://surf.withnative.ai/source` names a public commit in
+5. Confirm `https://surf.withnative.ai/source` names a public commit in
    `withnative/surf` and that the commit matches the deployed source.
-5. Run the repository CI and retain the successful run URL.
+6. Run both repositories' CI and retain the successful run URLs.
 
 ## Gate 1a: one-line agent-led setup routing
 
@@ -92,12 +98,13 @@ MCP connection. Record every tool call and command, not only the final installat
    Use the setup guide at https://github.com/withnative/surf to install Surf.
    ```
 
-2. Confirm the agent opens or reads the supplied repository and setup guide before
-   deciding which installation route is available.
+2. Confirm the agent opens or reads the supplied Surf repository and setup guide before
+   deciding which installation route is available, then registers `withnative/plugins`
+   as the catalogue rather than treating the Surf source repository as a marketplace.
 3. Confirm it inspects the local client and existing marketplace, plugin and MCP state.
-4. Confirm it does not substitute a curated plugin-catalogue search for the supplied
-   repository and does not ask the user to run interactive slash commands while the
-   non-interactive CLI is available through its shell.
+4. Confirm it does not substitute a curated plugin-catalogue search for the exact Native
+   catalogue named by the guide and does not ask the user to run interactive slash
+   commands while the non-interactive CLI is available through its shell.
 5. Confirm it independently selects and runs the correct marketplace and install commands:
    `claude plugin ...` in Claude or `codex plugin ...` in ChatGPT/Codex.
 6. Confirm it verifies the installed plugin name, marketplace, version and component
@@ -147,10 +154,10 @@ claiming the browser-only surface can complete durable setup is a failure.
 
 ## Gate 2: clean Claude Code install
 
-Use a profile with no Surf marketplace, plugin, or standalone MCP connection.
+Use a profile with no `withnative` catalogue, Surf plugin, or standalone MCP connection.
 
 1. Record `claude --version` and the operating system.
-2. Run `claude plugin marketplace add withnative/surf`.
+2. Run `claude plugin marketplace add withnative/plugins`.
 3. Run `claude plugin install surf@withnative` at the default `user` scope.
 4. Confirm `claude plugin list` shows Surf, then start a Claude Code session.
 5. Run `/reload-plugins` if prompted.
@@ -171,7 +178,7 @@ Pass requires the documented two-command install with no manual MCP configuratio
 
 Repeat gate 2 on a fresh profile from inside a terminal session, using the slash commands
 instead of the CLI. Start the session first, then run
-`/plugin marketplace add withnative/surf` and `/plugin install surf@withnative`, then
+`/plugin marketplace add withnative/plugins` and `/plugin install surf@withnative`, then
 `/reload-plugins` if prompted. Confirm the install from the `/plugin` browser rather than
 from `claude plugin list`, and continue with steps 6 to 9 of gate 2. Remove with
 `/plugin uninstall surf@withnative`. This
@@ -185,12 +192,12 @@ specifically after a CLI reinstall, so this gate must still record its own resul
 
 ## Gate 3: clean ChatGPT/Codex Desktop install
 
-Use a clean profile with no Surf marketplace, plugin, standalone Surf MCP connection or
-plugin files copied from another profile.
+Use a clean profile with no `withnative` catalogue, Surf plugin, standalone Surf MCP
+connection or plugin files copied from another profile.
 
 1. Record the account starting state, exact ChatGPT desktop app version, and
    `codex --version`.
-2. Run `codex plugin marketplace add withnative/surf`.
+2. Run `codex plugin marketplace add withnative/plugins`.
 3. Run `codex plugin add surf@withnative` and confirm `codex plugin list` shows Surf.
 4. Do not manually add the Surf MCP server.
 5. Start a fresh Work or Codex conversation with
@@ -210,7 +217,7 @@ without treating a different surface as equivalent evidence.
 ### Gate 3a: ChatGPT/Codex Desktop in-app route
 
 Repeat gate 3 on a clean profile using the in-product route instead: run
-`codex plugin marketplace add withnative/surf`, restart the ChatGPT desktop app, open the
+`codex plugin marketplace add withnative/plugins`, restart the ChatGPT desktop app, open the
 Plugins Directory, choose **Native**, and install **Surf**. Then run steps 4 to 8 above and
 uninstall or disable Surf from that card. This route remains supported and is the only one
 available to someone who never opens a terminal beyond the marketplace step.
@@ -237,9 +244,12 @@ than copied into the plugin.
 ## Gate 5: plugin package update
 
 1. Begin with installed plugin package version `P1`.
-2. Make a harmless, reviewable change to packaged copy or wiring and bump both provider
-   manifests to `P2` in the same commit.
-3. Publish the marketplace source change.
+2. Make a harmless, reviewable change to packaged copy or wiring and bump both Surf
+   provider manifests to `P2` in the same commit. The semantic version is the client cache
+   and update signal; never publish changed package contents under the old version.
+3. Merge the Surf package commit to `withnative/surf` `main`. Confirm both central
+   catalogue entries still track ref `main`; no catalogue version edit is required unless
+   its entry metadata or source arrangement changes.
 4. Claude, CLI route: run `claude plugin marketplace update withnative`, then either
    `claude plugin uninstall surf@withnative` and `claude plugin install surf@withnative`,
    or `claude plugin update surf@withnative`. Record each command's exact output, the

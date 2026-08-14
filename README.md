@@ -80,14 +80,14 @@ run them personally.
 **Claude Code and its desktop application:**
 
 ```sh
-claude plugin marketplace add withnative/surf
+claude plugin marketplace add withnative/plugins
 claude plugin install surf@withnative
 ```
 
 **ChatGPT/Codex Desktop and Codex CLI:**
 
 ```sh
-codex plugin marketplace add withnative/surf
+codex plugin marketplace add withnative/plugins
 codex plugin add surf@withnative
 ```
 
@@ -95,7 +95,13 @@ Check existing marketplace, plugin and MCP state before adding anything. Verify 
 installed plugin afterwards and follow any restart or reload instruction reported by the
 client.
 
-Do not substitute a curated plugin-catalogue search for the repository the user supplied.
+The Surf repository is the setup guide and source repository. The separate
+[withnative/plugins](https://github.com/withnative/plugins) repository is the canonical
+Native plugin catalogue; adding it makes Surf and the other catalogue entries available
+but installs none of them. The separate install command selects only Surf.
+
+Do not substitute a curated plugin-catalogue search for the exact Native catalogue named
+by this guide.
 Do not send the user to interactive slash commands when you have shell access to the
 non-interactive CLI.
 

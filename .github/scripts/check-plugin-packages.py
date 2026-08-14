@@ -14,14 +14,15 @@ ROOT = Path(__file__).resolve().parents[2]
 PLUGIN = ROOT / "plugins" / "surf"
 ENDPOINT = "https://surf.withnative.ai/mcp"
 REPOSITORY = "https://github.com/withnative/surf"
+CATALOGUE_REPOSITORY = "https://github.com/withnative/plugins"
 PRIMARY_PROMPT = f"Use the setup guide at {REPOSITORY} to install Surf."
 CONTINUATION_PROMPT = "Use Surf's quickstart tool to help me finish setting up Surf."
 SETUP_GUIDE = "docs/plugin-installation.md"
-OPENAI_MARKETPLACE_COMMAND = "codex plugin marketplace add withnative/surf"
+OPENAI_MARKETPLACE_COMMAND = "codex plugin marketplace add withnative/plugins"
 OPENAI_INSTALL_COMMAND = "codex plugin add surf@withnative"
-CLAUDE_MARKETPLACE_COMMAND = "claude plugin marketplace add withnative/surf"
+CLAUDE_MARKETPLACE_COMMAND = "claude plugin marketplace add withnative/plugins"
 CLAUDE_INSTALL_COMMAND = "claude plugin install surf@withnative"
-CLAUDE_SLASH_MARKETPLACE_COMMAND = "/plugin marketplace add withnative/surf"
+CLAUDE_SLASH_MARKETPLACE_COMMAND = "/plugin marketplace add withnative/plugins"
 CLAUDE_SLASH_INSTALL_COMMAND = "/plugin install surf@withnative"
 OPENAI_SKILL_INVOCATION = "$next-step"
 CLAUDE_SKILL_INVOCATION = "/surf:next-step"
@@ -29,8 +30,6 @@ SUPPORTED_SURFACES = ("ChatGPT/Codex Desktop", "Claude Code")
 FALLBACK_SEMANTICS = "Direct MCP connection remains a supported fallback"
 HERO = "Learn to surf the waves of AI"
 PLUGIN_NAME = "surf"
-MARKETPLACE_NAME = "withnative"
-PLUGIN_PATH = "./plugins/surf"
 PLUGIN_VERSION = "0.1.3"
 SKILL_NAME = "next-step"
 SKILL_PATH = "skills/next-step/SKILL.md"
@@ -70,6 +69,7 @@ README_INSTALLATION_COPY = (
     "## Quickstart for agents",
     "## How Surf is delivered",
     "Do not substitute a curated plugin-catalogue search",
+    CATALOGUE_REPOSITORY,
     OPENAI_MARKETPLACE_COMMAND,
     OPENAI_INSTALL_COMMAND,
     CLAUDE_MARKETPLACE_COMMAND,
@@ -82,6 +82,7 @@ GUIDE_INSTALLATION_COPY = (
     CONTINUATION_PROMPT,
     "### For agents following this guide",
     "Do not substitute a curated plugin-catalogue search",
+    CATALOGUE_REPOSITORY,
     ENDPOINT,
     FALLBACK_SEMANTICS,
     OPENAI_MARKETPLACE_COMMAND,
@@ -169,9 +170,17 @@ def main() -> int:
 def validate() -> None:
     claude_manifest = load_json(PLUGIN / ".claude-plugin" / "plugin.json")
     codex_manifest = load_json(PLUGIN / ".codex-plugin" / "plugin.json")
-    claude_marketplace = load_json(ROOT / ".claude-plugin" / "marketplace.json")
-    codex_marketplace = load_json(ROOT / ".agents" / "plugins" / "marketplace.json")
     mcp = load_json(PLUGIN / ".mcp.json")
+
+    for retired_marketplace in (
+        ROOT / ".claude-plugin" / "marketplace.json",
+        ROOT / ".agents" / "plugins" / "marketplace.json",
+    ):
+        require(
+            not retired_marketplace.exists(),
+            f"Surf must not publish the shared marketplace identity: "
+            f"{retired_marketplace.relative_to(ROOT)}",
+        )
 
     for label, manifest in (
         ("Claude manifest", claude_manifest),
@@ -211,8 +220,6 @@ def validate() -> None:
         "provider manifest descriptions must match",
     )
 
-    validate_claude_marketplace(claude_marketplace)
-    validate_codex_marketplace(codex_marketplace)
     validate_public_installation_copy()
 
     require(
@@ -366,36 +373,6 @@ def validate_public_installation_copy() -> None:
         "## Provider-documentation verification",
     ):
         require(heading in guide, f"canonical installation guide omits {heading}")
-
-
-def validate_claude_marketplace(marketplace: dict[str, Any]) -> None:
-    require(marketplace.get("name") == MARKETPLACE_NAME, "Claude marketplace name drifted")
-    plugins = marketplace.get("plugins")
-    require(isinstance(plugins, list) and len(plugins) == 1, "Claude marketplace must contain only Surf")
-    entry = plugins[0]
-    require(isinstance(entry, dict), "Claude marketplace Surf entry must be an object")
-    require(entry.get("name") == PLUGIN_NAME, "Claude marketplace plugin name drifted")
-    require(entry.get("source") == PLUGIN_PATH, "Claude marketplace source path drifted")
-
-
-def validate_codex_marketplace(marketplace: dict[str, Any]) -> None:
-    require(marketplace.get("name") == MARKETPLACE_NAME, "OpenAI marketplace name drifted")
-    plugins = marketplace.get("plugins")
-    require(isinstance(plugins, list) and len(plugins) == 1, "OpenAI marketplace must contain only Surf")
-    entry = plugins[0]
-    require(isinstance(entry, dict), "OpenAI marketplace Surf entry must be an object")
-    require(entry.get("name") == PLUGIN_NAME, "OpenAI marketplace plugin name drifted")
-    require(
-        entry.get("source") == {"source": "local", "path": PLUGIN_PATH},
-        "OpenAI marketplace source path drifted",
-    )
-    require(
-        entry.get("policy")
-        == {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
-        "OpenAI marketplace policy drifted",
-    )
-    require(entry.get("category") == "Productivity", "OpenAI marketplace category drifted")
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

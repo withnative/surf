@@ -3,8 +3,6 @@
 # Every non-ignored file in the candidate worktree must appear here exactly once.
 # The history-free export copies only these paths. Adding a file therefore fails
 # closed until a maintainer classifies it as public by updating this manifest.
-.agents/plugins/marketplace.json
-.claude-plugin/marketplace.json
 .dockerignore
 .gitattributes
 .githooks/pre-push
