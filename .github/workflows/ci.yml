@@ -39,6 +39,9 @@ jobs:
           python3 .github/scripts/test_public_push_guard.py
           python3 .github/scripts/check_publication_boundary.py check
 
+      - name: Test deployment event and deep-verification controls
+        run: python3 .github/scripts/test_deployment_verification.py
+
   dependency-licenses:
     name: dependency licences
     runs-on: ubuntu-latest
@@ -76,9 +79,49 @@ jobs:
           --build-arg SURF_SOURCE_URL="https://github.com/withnative/surf/commit/$SURF_GIT_SHA"
           -t surf:verified .
 
+      - name: Build an image from Railway's GitHub provenance
+        env:
+          RAILWAY_GIT_COMMIT_SHA: 0123456789abcdef0123456789abcdef01234567
+        run: >-
+          docker build
+          --build-arg RAILWAY_GIT_COMMIT_SHA="$RAILWAY_GIT_COMMIT_SHA"
+          --build-arg RAILWAY_GIT_BRANCH=main
+          --build-arg RAILWAY_GIT_REPO_NAME=surf
+          --build-arg RAILWAY_GIT_REPO_OWNER=withnative
+          --build-arg RAILWAY_ENVIRONMENT_NAME=production
+          -t surf:railway-verified .
+
       - name: Reject a Docker build with mismatched source metadata
         run: >-
           ! docker build
           --build-arg SURF_GIT_SHA=0123456789abcdef0123456789abcdef01234567
           --build-arg SURF_SOURCE_URL=https://github.com/withnative/surf/commit/ffffffffffffffffffffffffffffffffffffffff
           -t surf:invalid .
+
+      - name: Reject Railway production without Git or explicit provenance
+        run: >-
+          ! docker build
+          --build-arg RAILWAY_ENVIRONMENT_NAME=production
+          -t surf:invalid-production .
+
+      - name: Reject malformed Railway Git provenance
+        run: >-
+          ! docker build
+          --build-arg RAILWAY_GIT_COMMIT_SHA=not-a-full-lowercase-sha
+          --build-arg RAILWAY_GIT_BRANCH=main
+          --build-arg RAILWAY_GIT_REPO_NAME=surf
+          --build-arg RAILWAY_GIT_REPO_OWNER=withnative
+          --build-arg RAILWAY_ENVIRONMENT_NAME=production
+          -t surf:invalid-railway-sha .
+
+      - name: Reject an operator override of Railway Git provenance
+        run: >-
+          ! docker build
+          --build-arg RAILWAY_GIT_COMMIT_SHA=0123456789abcdef0123456789abcdef01234567
+          --build-arg RAILWAY_GIT_BRANCH=main
+          --build-arg RAILWAY_GIT_REPO_NAME=surf
+          --build-arg RAILWAY_GIT_REPO_OWNER=withnative
+          --build-arg RAILWAY_ENVIRONMENT_NAME=production
+          --build-arg SURF_GIT_SHA=ffffffffffffffffffffffffffffffffffffffff
+          --build-arg SURF_SOURCE_URL=https://github.com/withnative/surf/commit/ffffffffffffffffffffffffffffffffffffffff
+          -t surf:invalid-railway-override .
