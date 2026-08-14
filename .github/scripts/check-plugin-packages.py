@@ -58,7 +58,10 @@ LANDING_INSTALLATION_COPY = (
     f'data-copy="{PRIMARY_PROMPT}"',
     f'<a class="repo" href="{REPOSITORY}">',
 )
-LANDING_FORBIDDEN_COPY = (
+# Copy that must not appear as readable text on the landing card. Checked against the
+# raw source, the whitespace-collapsed source and the tag-stripped source, so neither a
+# source-line wrap nor inline markup can smuggle a command block back onto the card.
+LANDING_FORBIDDEN_TEXT = (
     OPENAI_MARKETPLACE_COMMAND,
     OPENAI_INSTALL_COMMAND,
     CLAUDE_MARKETPLACE_COMMAND,
@@ -68,9 +71,23 @@ LANDING_FORBIDDEN_COPY = (
     "codex plugin",
     "claude plugin",
     FALLBACK_SEMANTICS,
+)
+
+# Markup the landing page must not contain anywhere, including its header and footer.
+# These are attribute fragments, so they are checked against the raw and collapsed
+# source only: tag stripping would remove the very text being matched.
+LANDING_FORBIDDEN_MARKUP = (
     'href="/docs/',
     f'href="{REPOSITORY}/blob/',
 )
+
+# The visible prompt in the fence and the clipboard payload on the button must be the
+# same bytes. The fence marks up part of the prompt, so its text is compared after
+# stripping inner tags.
+LANDING_FENCE_PATTERN = re.compile(
+    r'<div class="fence" id="setup-prompt">(.*?)</div>', re.DOTALL
+)
+HTML_TAG_PATTERN = re.compile(r"<[^>]*>")
 
 
 class ValidationError(Exception):
@@ -206,6 +223,7 @@ def validate_public_installation_copy() -> None:
         "web/landing/index.html": (ROOT / "web" / "landing" / "index.html").read_text(
             encoding="utf-8"
         ),
+        "docs/faq.md": (ROOT / "docs" / "faq.md").read_text(encoding="utf-8"),
     }
     required_by_surface = {
         "README.md": (*SHARED_INSTALLATION_COPY, *DOCUMENTED_INSTALLATION_COPY),
@@ -214,6 +232,9 @@ def validate_public_installation_copy() -> None:
             *DOCUMENTED_INSTALLATION_COPY,
         ),
         "web/landing/index.html": (*SHARED_INSTALLATION_COPY, *LANDING_INSTALLATION_COPY),
+        # The FAQ leads with the same repository and pasteable prompt but deliberately
+        # sends the reader to the canonical guide instead of repeating the commands.
+        "docs/faq.md": SHARED_INSTALLATION_COPY,
     }
     for path, fragments in required_by_surface.items():
         text = public_copy[path]
@@ -227,11 +248,31 @@ def validate_public_installation_copy() -> None:
             )
 
     landing = public_copy["web/landing/index.html"]
-    for fragment in LANDING_FORBIDDEN_COPY:
+    landing_collapsed = " ".join(landing.split())
+    landing_stripped = " ".join(HTML_TAG_PATTERN.sub(" ", landing).split())
+    for fragment in LANDING_FORBIDDEN_TEXT:
         require(
-            fragment not in landing,
+            fragment not in landing
+            and fragment not in landing_collapsed
+            and fragment not in landing_stripped,
             f"landing card must stay one promise, one prompt and one link: {fragment!r}",
         )
+    for fragment in LANDING_FORBIDDEN_MARKUP:
+        require(
+            fragment not in landing and fragment not in landing_collapsed,
+            f"landing page must not link into the documentation tree: {fragment!r}",
+        )
+
+    # The visible prompt and the clipboard payload must be byte-identical, so editing
+    # one without the other fails here rather than shipping a mismatched card.
+    fence = LANDING_FENCE_PATTERN.search(landing)
+    require(fence is not None, "landing card is missing the setup-prompt fence")
+    fence_text = " ".join(HTML_TAG_PATTERN.sub("", fence.group(1)).split())
+    require(
+        fence_text == PRIMARY_PROMPT,
+        "landing fence text must equal the copy-button payload exactly: "
+        f"{fence_text!r} != {PRIMARY_PROMPT!r}",
+    )
 
     guide = public_copy["docs/plugin-installation.md"]
     for heading in (

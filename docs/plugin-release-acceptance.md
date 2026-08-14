@@ -19,7 +19,10 @@ to the release candidate:
 - [ ] A clean ChatGPT/Codex Desktop GitHub install and MCP resolution pass through the
       in-app Plugins Directory route.
 - [ ] A remote framework update works with an unchanged plugin.
-- [ ] A plugin package update and client refresh work as documented.
+- [ ] A plugin package update and client refresh work as documented through the Claude
+      CLI and slash-command routes.
+- [ ] A plugin package update and client refresh work as documented through the OpenAI CLI
+      and in-app Plugins Directory routes.
 - [ ] Active-session cache behaviour is observed and documented for each provider.
 - [ ] Cross-directory practice resumption passes in Claude Code and ChatGPT/Codex Desktop.
 - [ ] Disable/uninstall preserves the person's local Surf practice on both surfaces.
@@ -90,15 +93,19 @@ Pass requires the documented two-command install with no manual MCP configuratio
 
 ### Gate 2a: Claude Code slash-command route
 
-Repeat gate 2 on a fresh profile using the terminal-session slash commands instead:
-`/plugin marketplace add withnative/surf`, `/plugin install surf@withnative`, then
-`/reload-plugins` if prompted, and `/plugin uninstall surf@withnative` to remove. This
+Repeat gate 2 on a fresh profile from inside a terminal session, using the slash commands
+instead of the CLI. Start the session first, then run
+`/plugin marketplace add withnative/surf` and `/plugin install surf@withnative`, then
+`/reload-plugins` if prompted. Confirm the install from the `/plugin` browser rather than
+from `claude plugin list`, and continue with steps 6 to 9 of gate 2. Remove with
+`/plugin uninstall surf@withnative`. This
 route remains supported and is the documented path for anyone who does not run the CLI
 directly. Record it separately from the CLI route; neither is evidence for the other.
 
 Separately record whether a user-scope `claude plugin install` becomes visible in the
-Claude Code desktop application after a restart. Surf makes no such claim today, so a
-negative or unobserved result is a valid recorded outcome, not a failure of this gate.
+Claude Code desktop application after a restart. A user-scope install was observed active
+there on 14 August 2026, but not on a clean profile and not with the restart taken
+specifically after a CLI reinstall, so this gate must still record its own result.
 
 ## Gate 3: clean ChatGPT/Codex Desktop install
 
@@ -131,9 +138,10 @@ Plugins Directory, choose **Native**, and install **Surf**. Then run steps 4 to 
 uninstall or disable Surf from that card. This route remains supported and is the only one
 available to someone who never opens a terminal beyond the marketplace step.
 
-Separately record whether a `codex plugin add` install becomes visible in the ChatGPT
-desktop application after a restart. Surf makes no such claim today, so a negative or
-unobserved result is a valid recorded outcome, not a failure of this gate.
+Separately record where a `codex plugin add` install appears in the ChatGPT desktop
+application after a restart. The maintainer reports that it appears in a less prominent
+area of the interface than an in-app install; capture the exact location and app version
+so the installation guide can name it.
 
 ## Gate 4: remote framework update with an unchanged plugin
 
@@ -155,13 +163,28 @@ than copied into the plugin.
 2. Make a harmless, reviewable change to packaged copy or wiring and bump both provider
    manifests to `P2` in the same commit.
 3. Publish the marketplace source change.
-4. Claude: record the outcome of marketplace update, uninstall/reinstall, and
-   `/reload-plugins` or relaunch.
-5. OpenAI: record the outcome of marketplace upgrade, desktop restart, and any required
-   refresh or reinstall in the Plugins Directory.
-6. Start a fresh conversation and confirm the `P2` package change is active.
+4. Claude, CLI route: run `claude plugin marketplace update withnative`, then either
+   `claude plugin uninstall surf@withnative` and `claude plugin install surf@withnative`,
+   or `claude plugin update surf@withnative`. Record each command's exact output, the
+   version reported by `claude plugin list` after the marketplace update but before the
+   plugin update, and the restart actually taken. Confirm the bare-name `claude plugin
+   update surf` failure is still present or has been fixed.
+5. Claude, slash-command route: repeat step 4 inside a terminal session using
+   `/plugin marketplace update withnative`, `/plugin uninstall surf@withnative` and
+   `/plugin install surf@withnative`, then `/reload-plugins` or relaunch. Record it
+   separately; neither route is evidence for the other.
+6. OpenAI, CLI route: run `codex plugin marketplace upgrade withnative`,
+   `codex plugin remove surf@withnative` and `codex plugin add surf@withnative`, and
+   record each command's exact output.
+7. OpenAI, in-app route: run `codex plugin marketplace upgrade withnative`, restart the
+   ChatGPT desktop app, open **Plugins Directory → Native → Surf**, and record whether an
+   update is offered, whether it applies, and whether an uninstall and reinstall from that
+   card was required instead.
+8. Start a fresh conversation after each route and confirm the `P2` package change is
+   active.
 
-Pass requires exact, repeatable client steps. Do not assume third-party auto-update.
+Pass requires exact, repeatable client steps. Do not assume third-party auto-update, and
+do not treat a marketplace refresh as having moved an installed plugin.
 
 ## Gate 6: active-session behaviour
 

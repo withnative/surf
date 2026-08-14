@@ -30,9 +30,11 @@ codex plugin add surf@withnative
 configuration and the marketplace snapshot live under `~/.codex/`. Confirm the result with
 `codex plugin list`.
 
-Surf has not verified whether a Codex CLI install becomes visible in the ChatGPT desktop
-application, which is a separate product surface. If Surf does not appear there, use the
-in-app route instead:
+This also covers the ChatGPT desktop app: restart it after installing. A CLI-installed
+plugin appears there in a less prominent area of the interface than an in-app install, so
+check the Plugins Directory listing if you do not spot it straight away.
+
+To install in-product instead:
 
 1. In a terminal, add the public repository marketplace:
 
@@ -43,6 +45,10 @@ in-app route instead:
 2. Restart the ChatGPT desktop app.
 3. In Work or Codex mode, open the **Plugins Directory**.
 4. Select the **Native** source, open **Surf**, and choose **Install**.
+
+Choose one route or the other: the CLI and the desktop app share the same `~/.codex` host,
+so if you already ran `codex plugin add`, run `codex plugin remove surf@withnative` before
+installing from the Plugins Directory.
 
 Either way, start a new conversation and say `Help me get started with Surf.`
 
@@ -74,9 +80,12 @@ Useful flags:
   marketplaces that install by running a declared command, and Surf's entry is a plain
   directory source; Surf's manifest declares no `userConfig` options.
 
-Confirm the result with `claude plugin list`. Surf has not verified whether a `claude`
-CLI install at user scope becomes visible in the Claude Code desktop application, which is
-a separate product surface.
+The install runs without a confirmation prompt and reports
+`✔ Successfully installed plugin: surf@withnative (scope: user)`. Confirm the result with
+`claude plugin list`.
+
+These two commands are also the route for the **Claude Code desktop application**: run
+them in a terminal, then restart the app. A user-scope install is active there.
 
 Inside an interactive Claude Code terminal session, the equivalent slash commands are:
 
@@ -162,8 +171,24 @@ claude plugin uninstall surf@withnative
 claude plugin install surf@withnative
 ```
 
-`claude plugin update surf@withnative` also exists and applies on the next restart. The
-equivalent slash commands inside a terminal session are:
+`claude plugin marketplace update` refreshes the catalogue only. It does not move an
+already-installed plugin, so `claude plugin list` still reports the old version after it
+runs. Run it first regardless: an install resolves from the locally cached marketplace
+snapshot, so without a refresh it can serve an older package than the one published.
+
+`claude plugin update` is the alternative to uninstall-and-reinstall, and it needs the
+`plugin@marketplace` form:
+
+```sh
+claude plugin update surf@withnative
+```
+
+The bare name works for `uninstall` but not for `update`: `claude plugin update surf`
+fails with `Plugin "surf" not found` even when the plugin is installed. A successful
+update reports `Plugin "surf" updated from 0.1.0 to 0.1.1 for scope user. Restart to apply
+changes.`, so restart Claude Code afterwards.
+
+The equivalent slash commands inside a terminal session are:
 
 ```text
 /plugin marketplace update withnative
@@ -174,7 +199,9 @@ equivalent slash commands inside a terminal session are:
 
 You can instead enable auto-update for **withnative** under `/plugin` → **Marketplaces**.
 Skip `/reload-plugins` only when the install summary says the plugin is already active.
-A CLI install or update applies to a Claude Code session started afterwards.
+A CLI update applies to a Claude Code session started afterwards, which is what its
+`Restart to apply changes.` notice means. Start a new session if an installed or updated
+plugin does not appear.
 Removing or reinstalling the plugin does not remove your local Surf practice.
 
 ## Uninstall or disable
@@ -300,6 +327,7 @@ These commands and menu labels were checked on 13 August 2026 against the offici
 change; record exact client versions and any variance during release acceptance.
 
 The `claude plugin` and `codex plugin` command surfaces above, including their verbs and
-flags, were read from `--help` on the installed binaries on 14 August 2026. Whether a CLI
-install at user scope becomes visible in the corresponding desktop application has not been
-observed on a clean profile and is not claimed here.
+flags, were read from `--help` on the installed binaries on 14 August 2026. The
+`claude plugin` uninstall, install, marketplace-update and update commands were executed
+and observed on macOS the same day; the exact commands, output and remaining gaps are in
+[CLI install acceptance evidence](evidence/2026-08-14-cli-install-acceptance.md).
