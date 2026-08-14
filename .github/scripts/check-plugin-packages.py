@@ -14,7 +14,9 @@ ROOT = Path(__file__).resolve().parents[2]
 PLUGIN = ROOT / "plugins" / "surf"
 ENDPOINT = "https://surf.withnative.ai/mcp"
 REPOSITORY = "https://github.com/withnative/surf"
-PRIMARY_PROMPT = f"Install the plugin {REPOSITORY} and use the quickstart tool"
+PRIMARY_PROMPT = f"Open {REPOSITORY} and follow the setup guide."
+CONTINUATION_PROMPT = "Use Surf's quickstart tool to help me finish setting up Surf."
+SETUP_GUIDE = "docs/plugin-installation.md"
 OPENAI_MARKETPLACE_COMMAND = "codex plugin marketplace add withnative/surf"
 OPENAI_INSTALL_COMMAND = "codex plugin add surf@withnative"
 CLAUDE_MARKETPLACE_COMMAND = "claude plugin marketplace add withnative/surf"
@@ -57,9 +59,29 @@ SKILL_DEFAULT_PROMPT = (
 # Every public surface leads with the same repository and the same pasteable prompt.
 SHARED_INSTALLATION_COPY = (REPOSITORY, PRIMARY_PROMPT)
 
-# The written surfaces (README and the canonical guide) carry the deterministic
-# commands, the named supported surfaces, and the direct-MCP fallback.
-DOCUMENTED_INSTALLATION_COPY = (
+# The README carries only the deterministic happy path needed by a human or agent
+# arriving from the one-line prompt. Detailed alternatives remain in the guide.
+README_INSTALLATION_COPY = (
+    SETUP_GUIDE,
+    CONTINUATION_PROMPT,
+    "## Start here",
+    "## Quickstart for humans",
+    "## What Surf does",
+    "## Quickstart for agents",
+    "## How Surf is delivered",
+    "Do not substitute a curated plugin-catalogue search",
+    OPENAI_MARKETPLACE_COMMAND,
+    OPENAI_INSTALL_COMMAND,
+    CLAUDE_MARKETPLACE_COMMAND,
+    CLAUDE_INSTALL_COMMAND,
+)
+
+# The canonical guide carries the complete command set, named supported surfaces,
+# direct-MCP fallback and restart handoff.
+GUIDE_INSTALLATION_COPY = (
+    CONTINUATION_PROMPT,
+    "### For agents following this guide",
+    "Do not substitute a curated plugin-catalogue search",
     ENDPOINT,
     FALLBACK_SEMANTICS,
     OPENAI_MARKETPLACE_COMMAND,
@@ -78,6 +100,7 @@ DOCUMENTED_INSTALLATION_COPY = (
 LANDING_INSTALLATION_COPY = (
     f"<h1>{HERO}</h1>",
     f'data-copy="{PRIMARY_PROMPT}"',
+    "Copy setup prompt",
     f'<a class="repo" href="{REPOSITORY}">',
 )
 # Copy that must not appear as readable text on the landing card. Checked against the
@@ -270,10 +293,10 @@ def validate_public_installation_copy() -> None:
         "docs/faq.md": (ROOT / "docs" / "faq.md").read_text(encoding="utf-8"),
     }
     required_by_surface = {
-        "README.md": (*SHARED_INSTALLATION_COPY, *DOCUMENTED_INSTALLATION_COPY),
+        "README.md": (*SHARED_INSTALLATION_COPY, *README_INSTALLATION_COPY),
         "docs/plugin-installation.md": (
             *SHARED_INSTALLATION_COPY,
-            *DOCUMENTED_INSTALLATION_COPY,
+            *GUIDE_INSTALLATION_COPY,
         ),
         "web/landing/index.html": (*SHARED_INSTALLATION_COPY, *LANDING_INSTALLATION_COPY),
         # The FAQ leads with the same repository and pasteable prompt but deliberately
@@ -290,6 +313,20 @@ def validate_public_installation_copy() -> None:
                 fragment in text or fragment in collapsed,
                 f"{path} public installation copy drifted: {fragment!r}",
             )
+
+    readme = public_copy["README.md"]
+    readme_headings = (
+        "## Start here",
+        "## Quickstart for humans",
+        "## What Surf does",
+        "## Quickstart for agents",
+        "## How Surf is delivered",
+    )
+    heading_positions = [readme.index(heading) for heading in readme_headings]
+    require(
+        heading_positions == sorted(heading_positions),
+        "README setup and product sections must preserve the agreed human-first order",
+    )
 
     landing = public_copy["web/landing/index.html"]
     landing_collapsed = " ".join(landing.split())

@@ -35,10 +35,10 @@ evidence and control. Read [why MCP](https://github.com/withnative/surf/blob/mai
 
 ## How do I install Surf?
 
-Paste `Install the plugin https://github.com/withnative/surf and use the quickstart tool`
-into ChatGPT/Codex Desktop or Claude Code. The agent can follow the product-native plugin
-flow. If you prefer to do it yourself, each surface installs with two shell commands from
-its own CLI, and both also offer an in-product route. For the exact commands, updates,
+Paste `Open https://github.com/withnative/surf and follow the setup guide.` into Claude or
+ChatGPT/Codex, on desktop or CLI. The repository gives the agent a short setup route for
+its client. If you prefer to do it yourself, each surface installs with two shell commands
+from its own CLI, and both also offer an in-product route. For the exact commands, updates,
 uninstall and recovery, use the
 [canonical installation guide](https://github.com/withnative/surf/blob/main/docs/plugin-installation.md).
 Direct MCP connection remains a supported fallback at `https://surf.withnative.ai/mcp`.

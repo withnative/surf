@@ -3,80 +3,37 @@
 **Learn to surf the waves of AI.**
 
 Surf is a free, open-source plugin and learning framework that helps you get better at
-working with AI agents through your real work. Install it in a supported agent and the
-agent can establish a lightweight local practice, notice useful evidence over time, and
-help you review what is actually changing.
+working with AI agents through your real work. It helps your agent establish a lightweight
+local practice, retain useful evidence and choose grounded ways to improve how you work
+together.
 
-Surf is managed by [Native](https://www.withnative.ai/) and licensed under
-[AGPL-3.0-only](LICENSE). See [licensing and notices](docs/licensing.md) for
-the copyright holder and a plain-language licence summary.
+## Start here
 
-## Install Surf
+- **Setting up Surf?** [Follow the setup guide](docs/plugin-installation.md).
+- **Understanding the project?** Read [how Surf works](docs/how-surf-works.md) and
+  [why Surf exists](docs/why-surf.md).
+- **Inspecting or contributing to the source?** See [build and test](#build-and-test) and
+  [the hosted-service source contract](#source-for-the-hosted-service).
 
-The simplest route is to paste this into **ChatGPT/Codex Desktop** or **Claude Code**:
+## Quickstart for humans
+
+Give this instruction to Claude or ChatGPT/Codex, on desktop or CLI:
 
 ```text
-Install the plugin https://github.com/withnative/surf and use the quickstart tool
+Open https://github.com/withnative/surf and follow the setup guide.
 ```
 
-If you prefer deterministic steps, each surface installs with two shell commands.
+The agent should identify the client it is running in, install Surf using that client's
+plugin tools and explain any required restart or reload.
 
-**ChatGPT/Codex Desktop** (the install verb is `add`):
+If installation requires a reload or restart, continue in a fresh conversation with:
 
-```sh
-codex plugin marketplace add withnative/surf
-codex plugin add surf@withnative
+```text
+Use Surf's quickstart tool to help me finish setting up Surf.
 ```
 
-**Claude Code** (the install verb is `install`; the default scope is `user`):
-
-```sh
-claude plugin marketplace add withnative/surf
-claude plugin install surf@withnative
-```
-
-These commands write to your local Codex and Claude configuration (`~/.codex` and
-`~/.claude`), and they cover the desktop applications too. Restart the app afterwards. In
-ChatGPT/Codex Desktop, a CLI-installed plugin appears in a less prominent part of the
-interface than an in-app install, so check the Plugins Directory listing if you do not
-spot it straight away.
-
-You can also install entirely in-product:
-
-- **ChatGPT/Codex Desktop:** run `codex plugin marketplace add withnative/surf`, restart
-  the app, then open **Plugins Directory → Native → Surf → Install**.
-- **Claude Code:** in an interactive terminal session, run
-  `/plugin marketplace add withnative/surf`, then `/plugin install surf@withnative`, and
-  `/reload-plugins` if the install summary asks. The `/plugin` slash command exists only in
-  the terminal build.
-
-Pick one route per surface. Installing from both the CLI and the Plugins Directory puts
-two copies of Surf on the same host and can produce duplicate tools.
-
-Start a new conversation and say `Help me get started with Surf.` You can invoke the
-plugin explicitly as `@surf` in ChatGPT/Codex Desktop, select the skill as `$next-step`
-where an OpenAI client exposes skill selectors, or use `/surf:next-step` in Claude Code.
-Ordinary requests such as `What's my current Surf goal?` can activate it too.
-
-[Read the canonical installation guide](docs/plugin-installation.md) for exact updates,
-uninstall, recovery, compatibility and privacy details. Direct MCP connection remains a
-supported fallback at `https://surf.withnative.ai/mcp`.
-
-These plugin routes are supported only on the named, tested desktop and Claude Code
-surfaces. Browser-only and mobile chat surfaces are not part of this installation claim.
-
-## What the plugin installs
-
-This repository contains thin Claude and OpenAI plugin packages. The installed plugin
-supplies Surf's trigger skill and MCP connection. The managed MCP service supplies current
-Surf guidance. Your practice remains in ordinary local files you control.
-
-Surf launched with three intentionally matching but independently versioned identities:
-the **Surf application version**, **working framework version**, and **plugin package
-version** were each `0.1.0`. Their future releases do not need to remain in lockstep.
-The locator guidance and `next-step` activation are independent package updates: the
-current plugin package is `0.1.3`, while the application and working framework remain
-`0.1.0`.
+For manual installation, supported surfaces, updates, troubleshooting and removal, use
+the [setup guide](docs/plugin-installation.md).
 
 ## What Surf does
 
@@ -84,13 +41,60 @@ Surf supplies an agent with a current working learning framework. The agent uses
 framework to help you:
 
 - establish an explicit learning aim and working agreement;
-- keep lightweight evidence from real successes, failures, and surprises;
-- maintain a correctable understanding of what is useful for you;
+- keep lightweight evidence from real successes, failures and surprises;
+- maintain a correctable understanding of what is useful for you; and
 - review the evidence and choose one grounded next experiment.
 
 Your agent performs the local work. The Surf server returns the rulebook; it does not read
-your practice folder, keep a participant profile, or take over the immediate task you are
-trying to complete. See [how Surf works](docs/how-surf-works.md).
+your practice folder, keep a participant profile or take over the immediate task you are
+trying to complete.
+
+## Quickstart for agents
+
+If a user asks you to set up Surf from this repository, inspect the local client before
+deciding installation is unavailable. If shell access is available, perform the setup
+yourself using the client's non-interactive plugin CLI.
+
+**Claude Code and its desktop application:**
+
+```sh
+claude plugin marketplace add withnative/surf
+claude plugin install surf@withnative
+```
+
+**ChatGPT/Codex Desktop and Codex CLI:**
+
+```sh
+codex plugin marketplace add withnative/surf
+codex plugin add surf@withnative
+```
+
+Check existing marketplace, plugin and MCP state before adding anything. Verify the
+installed plugin afterwards and follow any restart or reload instruction reported by the
+client.
+
+Do not substitute a curated plugin-catalogue search for the repository the user supplied.
+Do not send the user to interactive slash commands when you have shell access to the
+non-interactive CLI.
+
+If installation requires a restart or reload, give the user this copyable continuation
+prompt before ending the conversation:
+
+```text
+Use Surf's quickstart tool to help me finish setting up Surf.
+```
+
+For existing installations, duplicate MCP connections, GUI alternatives, updates,
+troubleshooting and removal, follow the
+[complete setup guide](docs/plugin-installation.md).
+
+## How Surf is delivered
+
+This repository contains thin Claude and OpenAI plugin packages. The installed plugin
+supplies Surf's trigger skill and MCP connection. The managed MCP service supplies current
+Surf guidance. Your practice remains in ordinary local files you control.
+
+[Read more about how Surf works →](docs/how-surf-works.md)
 
 ## Why Surf?
 
