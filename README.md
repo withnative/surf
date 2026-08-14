@@ -20,11 +20,16 @@ together.
 Give this instruction to Claude or ChatGPT/Codex, on desktop or CLI:
 
 ```text
-Open https://github.com/withnative/surf and follow the setup guide.
+Use the setup guide at https://github.com/withnative/surf to install Surf.
 ```
 
 The agent should identify the client it is running in, install Surf using that client's
 plugin tools and explain any required restart or reload.
+
+If you begin in a browser-only or mobile chat, that agent cannot complete Surf's local
+installation or durable file setup. It should send you to a file-capable client—ChatGPT
+desktop in Work or Codex mode (or Codex CLI) for ChatGPT, and Claude Code for Claude—and
+ask you to paste the same instruction there.
 
 If installation requires a reload or restart, continue in a fresh conversation with:
 
@@ -54,6 +59,23 @@ trying to complete.
 If a user asks you to set up Surf from this repository, inspect the local client before
 deciding installation is unavailable. If shell access is available, perform the setup
 yourself using the client's non-interactive plugin CLI.
+
+If the current chat cannot act on the user's machine because it has no durable filesystem
+or local client shell, do not install into an isolated sandbox and do not stop at a list
+of commands. Explain the boundary, then give the user a provider-matched handoff:
+
+- from ChatGPT browser or mobile, open ChatGPT desktop in Work or Codex mode, or Codex CLI;
+- from Claude.ai or Claude mobile, open Claude Code.
+
+Ask them to paste this human-readable setup prompt into that client:
+
+```text
+Use the setup guide at https://github.com/withnative/surf to install Surf.
+```
+
+The receiving desktop or CLI agent should inspect its own client state and complete the
+installation. Offer the manual commands below only as a fallback if the user prefers to
+run them personally.
 
 **Claude Code and its desktop application:**
 

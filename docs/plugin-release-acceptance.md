@@ -16,6 +16,10 @@ to the release candidate:
       local `claude plugin` CLI without a user correction.
 - [ ] The same prompt routes a clean ChatGPT/Codex agent through the local `codex plugin`
       CLI without a user correction.
+- [ ] In a browser-only ChatGPT chat, the prompt produces a copyable handoff to ChatGPT
+      desktop in Work or Codex mode, or Codex CLI, rather than an isolated install.
+- [ ] In Claude.ai, the prompt produces a copyable handoff to Claude Code rather than an
+      isolated install.
 - [ ] A clean Claude Code GitHub install passes through the `claude plugin` CLI route.
 - [ ] A clean Claude Code GitHub install passes through the `/plugin` slash-command route.
 - [ ] A clean ChatGPT/Codex Desktop GitHub install and MCP resolution pass through the
@@ -83,7 +87,7 @@ MCP connection. Record every tool call and command, not only the final installat
 1. Give the agent only this prompt:
 
    ```text
-   Open https://github.com/withnative/surf and follow the setup guide.
+   Use the setup guide at https://github.com/withnative/surf to install Surf.
    ```
 
 2. Confirm the agent opens or reads the supplied repository and setup guide before
@@ -111,6 +115,33 @@ handoff → live `quickstart` flow without a user correction. Searching only a c
 catalogue, claiming the shell cannot install a repository plugin, proposing an incorrect
 `plugin@marketplace` identifier or omitting the continuation prompt is a failure even if a
 later user intervention recovers the installation.
+
+## Gate 1b: browser-only handoff routing
+
+Run the repository-first prompt separately in a clean browser-only ChatGPT chat and a
+clean Claude.ai chat. Neither agent should have access to the user's local filesystem or
+client shell.
+
+1. Give the agent only this prompt:
+
+   ```text
+   Use the setup guide at https://github.com/withnative/surf to install Surf.
+   ```
+
+2. Confirm it explains that installing in its isolated environment would not install Surf
+   on the user's machine and that the durable local-file practice needs a supported,
+   file-capable client.
+3. Confirm ChatGPT routes the user to ChatGPT desktop in Work or Codex mode, or Codex CLI,
+   and Claude routes the user to Claude Code.
+4. Confirm it gives the user the unchanged repository-first prompt above to paste into the
+   receiving client. Manual shell commands may be offered as a fallback, but must not
+   replace the agent-to-agent handoff.
+5. Paste the handoff prompt into the named receiving client and continue with Gate 1a.
+
+Pass requires an honest capability boundary, the correct provider-specific destination,
+the copyable human-readable prompt, and a successful continuation on a supported client.
+Installing into an isolated sandbox, presenting manual commands as the only next step, or
+claiming the browser-only surface can complete durable setup is a failure.
 
 ## Gate 2: clean Claude Code install
 

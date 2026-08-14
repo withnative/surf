@@ -8,7 +8,7 @@ its supported plugin surfaces.
 Paste this into Claude or ChatGPT/Codex, on desktop or CLI:
 
 ```text
-Open https://github.com/withnative/surf and follow the setup guide.
+Use the setup guide at https://github.com/withnative/surf to install Surf.
 ```
 
 ### For agents following this guide
@@ -28,9 +28,24 @@ copyable continuation prompt before ending:
 Use Surf's quickstart tool to help me finish setting up Surf.
 ```
 
-If you are on mobile, in a browser-only chat, or on another unlisted surface, use a
-supported desktop client instead; the plugin flow and durable local-file practice are not
-verified there.
+If the current chat cannot act on the user's machine because it has no durable filesystem
+or local client shell, do not install into an isolated sandbox and do not end with the
+commands alone. Explain that the current surface cannot complete Surf's local installation
+or durable file setup, then give the user a provider-matched handoff:
+
+- from ChatGPT browser or mobile, open ChatGPT desktop in Work or Codex mode, or Codex CLI;
+- from Claude.ai or Claude mobile, open Claude Code.
+
+Ask the user to paste this into the receiving client:
+
+```text
+Use the setup guide at https://github.com/withnative/surf to install Surf.
+```
+
+The receiving desktop or CLI agent should inspect its own client state and complete the
+installation. Offer the manual commands below only as a fallback if the user prefers to
+run them personally. Other mobile, browser-only and unlisted surfaces remain unverified
+for the plugin flow and durable local-file practice.
 
 ## ChatGPT/Codex Desktop
 
