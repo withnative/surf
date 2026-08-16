@@ -12,8 +12,9 @@ together.
 - **Setting up Surf?** [Follow the setup guide](docs/plugin-installation.md).
 - **Understanding the project?** Read [how Surf works](docs/how-surf-works.md) and
   [why Surf exists](docs/why-surf.md).
-- **Inspecting or contributing to the source?** See [build and test](#build-and-test) and
-  [the hosted-service source contract](#source-for-the-hosted-service).
+- **Inspecting or contributing to the source?** See
+  [build and test](docs/development.md) and
+  [the hosted-service source contract](docs/releases-and-source.md).
 
 ## Quickstart for humans
 
@@ -91,9 +92,19 @@ codex plugin marketplace add withnative/plugins
 codex plugin add surf@withnative
 ```
 
+The installed plugin connects to Surf's official public MCP endpoint. Surf requires no
+account, login or OAuth authentication, although the client may separately ask the user
+to approve enabling a remote connection. The Surf application is stateless: its tools
+accept only a document choice—or no arguments—and do not accept local practice files,
+histories, transcripts or other participant content. Surf retains no participant state.
+See the [privacy and data statement](https://github.com/withnative/surf/blob/main/docs/privacy-and-data.md)
+for the separate AI-provider and infrastructure-metadata boundaries.
+
 Check existing marketplace, plugin and MCP state before adding anything. Verify the
-installed plugin afterwards and follow any restart or reload instruction reported by the
-client.
+installed plugin afterwards and read the exact restart or reload instruction reported by
+the client. `/reload-plugins` is a Claude Code host command, not a Surf skill. Recommend it
+only when the current host advertises it and it applies; otherwise tell the user to start
+a new conversation or restart the app.
 
 The Surf repository is the setup guide and source repository. The separate
 [withnative/plugins](https://github.com/withnative/plugins) repository is the canonical
@@ -161,6 +172,10 @@ infrastructure have their own data boundaries. Read the precise
 - [Plugin release acceptance runbook](docs/plugin-release-acceptance.md)
 - [Working framework and source](docs/releases-and-source.md)
 - [Production deployment and rollback](docs/production-deployment.md)
+- [Development, building and self-hosting](docs/development.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security reporting](SECURITY.md)
+- [About Richard](docs/about-richard.md)
 
 Product documentation and framework guidance are separate. Product documentation
 explains Surf and is returned by `get_doc`, `/docs/{slug}`, and `surf://docs/{slug}` from
@@ -168,72 +183,3 @@ the same compiled Markdown. The working framework is returned by `quickstart`,
 `get_guide`, and `get_reference`: moment guides help with a particular Surf interaction,
 while references provide cross-cutting knowledge when it is useful. MCP resources are a
 protocol-level delivery mirror, not another authored content kind.
-
-## Source for the hosted service
-
-The hosted service identifies its Surf application version, working framework, Git commit,
-and exact source URL at [surf.withnative.ai/source](https://surf.withnative.ai/source).
-That exact revision—not merely the repository homepage—is the source corresponding to the
-running build. See [working framework and source](docs/releases-and-source.md).
-
-## Build and test
-
-Surf requires Rust 1.85 or later.
-
-```sh
-cargo build --locked
-cargo test --locked
-cargo run --locked
-```
-
-The server listens on port `8080` by default. Set `PORT` to use another port. A generic
-container build is also available:
-
-```sh
-docker build -t surf .
-docker run --rm -p 8080:8080 surf
-```
-
-Ordinary local and archive builds deliberately report source metadata as unavailable;
-they never combine the current checkout's commit with Surf's public repository URL. A
-production build must explicitly provide a matching full public commit and URL:
-
-```sh
-SURF_GIT_SHA=$(git rev-parse HEAD)
-docker build \
-  --build-arg SURF_GIT_SHA="$SURF_GIT_SHA" \
-  --build-arg SURF_SOURCE_URL="https://github.com/withnative/surf/commit/$SURF_GIT_SHA" \
-  -t surf .
-```
-
-The build stops if either value is missing, the SHA is not full lowercase hexadecimal,
-or the URL does not identify that exact commit in `withnative/surf`. Deployment must
-still verify that the commit is public and is the source actually being built.
-
-The hosted service follows the repository's documented
-[merge-to-`main` production and rollback flow](docs/production-deployment.md). Railway's
-GitHub build supplies the exact triggering SHA and derives the matching URL during the
-same container build; operators do not maintain those two values separately.
-
-The official hosted endpoint is the supported product. The source is intentionally
-inspectable, runnable, and forkable, but Native does not promise operational support or
-automatic framework updates for self-hosted deployments. Fork operators own their
-deployment and update policy.
-
-## Contributing and security
-
-Issues, questions, design discussion, and forks are genuinely welcome. Pull requests are
-closed by default unless invited: open an issue first and describe the problem or idea
-before writing a patch. Read [CONTRIBUTING.md](CONTRIBUTING.md) for the complete policy.
-
-Please do not disclose suspected vulnerabilities in a public issue. Follow the private
-reporting route in [SECURITY.md](SECURITY.md).
-
-## Created by Richard Ng
-
-Surf was created by Richard Ng, a founder and educator who has worked with over 1,000
-learners across AI and software engineering. Across a decade in education and edtech,
-Richard has built global training programmes delivered across four continents, including
-programmes used by Starling Bank, Beamery and Ocado, as well as startups backed by
-Sequoia, Index Ventures and Y Combinator. Richard graduated from the University of Oxford
-and is CEO of [Native](https://withnative.ai).

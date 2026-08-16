@@ -24,6 +24,20 @@ CLAUDE_MARKETPLACE_COMMAND = "claude plugin marketplace add withnative/plugins"
 CLAUDE_INSTALL_COMMAND = "claude plugin install surf@withnative"
 CLAUDE_SLASH_MARKETPLACE_COMMAND = "/plugin marketplace add withnative/plugins"
 CLAUDE_SLASH_INSTALL_COMMAND = "/plugin install surf@withnative"
+CONNECTION_BOUNDARY = (
+    "The installed plugin connects to Surf's official public MCP endpoint. Surf requires "
+    "no account, login or OAuth authentication, although the client may separately ask "
+    "the user to approve enabling a remote connection. The Surf application is stateless: "
+    "its tools accept only a document choice—or no arguments—and do not accept local "
+    "practice files, histories, transcripts or other participant content. Surf retains "
+    "no participant state. See the [privacy and data statement]"
+    "(https://github.com/withnative/surf/blob/main/docs/privacy-and-data.md) for the "
+    "separate AI-provider and infrastructure-metadata boundaries."
+)
+RELOAD_CAPABILITY_BOUNDARY = (
+    "`/reload-plugins` is a Claude Code host command, not a Surf skill"
+)
+RELOAD_CAPABILITY_CHECK = "only when the current host advertises it and it applies"
 OPENAI_SKILL_INVOCATION = "$next-step"
 CLAUDE_SKILL_INVOCATION = "/surf:next-step"
 SUPPORTED_SURFACES = ("ChatGPT/Codex Desktop", "Claude Code")
@@ -74,6 +88,9 @@ README_INSTALLATION_COPY = (
     OPENAI_INSTALL_COMMAND,
     CLAUDE_MARKETPLACE_COMMAND,
     CLAUDE_INSTALL_COMMAND,
+    CONNECTION_BOUNDARY,
+    RELOAD_CAPABILITY_BOUNDARY,
+    RELOAD_CAPABILITY_CHECK,
 )
 
 # The canonical guide carries the complete command set, named supported surfaces,
@@ -91,6 +108,9 @@ GUIDE_INSTALLATION_COPY = (
     CLAUDE_INSTALL_COMMAND,
     CLAUDE_SLASH_MARKETPLACE_COMMAND,
     CLAUDE_SLASH_INSTALL_COMMAND,
+    CONNECTION_BOUNDARY,
+    RELOAD_CAPABILITY_BOUNDARY,
+    RELOAD_CAPABILITY_CHECK,
     OPENAI_SKILL_INVOCATION,
     CLAUDE_SKILL_INVOCATION,
     *SUPPORTED_SURFACES,
@@ -298,6 +318,9 @@ def validate_public_installation_copy() -> None:
             encoding="utf-8"
         ),
         "docs/faq.md": (ROOT / "docs" / "faq.md").read_text(encoding="utf-8"),
+        "docs/plugin-release-acceptance.md": (
+            ROOT / "docs" / "plugin-release-acceptance.md"
+        ).read_text(encoding="utf-8"),
     }
     required_by_surface = {
         "README.md": (*SHARED_INSTALLATION_COPY, *README_INSTALLATION_COPY),
@@ -309,6 +332,15 @@ def validate_public_installation_copy() -> None:
         # The FAQ leads with the same repository and pasteable prompt but deliberately
         # sends the reader to the canonical guide instead of repeating the commands.
         "docs/faq.md": SHARED_INSTALLATION_COPY,
+        "docs/plugin-release-acceptance.md": (
+            "### Gate 1c: installer explanation and Claude reload capability",
+            "no Surf account, login or OAuth authentication",
+            "client safety approval rather than Surf authentication",
+            "In terminal Claude Code",
+            "In Claude Code desktop",
+            "does not advertise the command",
+            "new conversation or restart the app",
+        ),
     }
     for path, fragments in required_by_surface.items():
         text = public_copy[path]
@@ -334,6 +366,59 @@ def validate_public_installation_copy() -> None:
         heading_positions == sorted(heading_positions),
         "README setup and product sections must preserve the agreed human-first order",
     )
+    readme_collapsed = " ".join(readme.split())
+    guide = public_copy["docs/plugin-installation.md"]
+    guide_collapsed = " ".join(guide.split())
+    for path, text in (
+        ("README.md", readme_collapsed),
+        ("docs/plugin-installation.md", guide_collapsed),
+    ):
+        require(
+            text.count(CONNECTION_BOUNDARY) == 1,
+            f"{path} must contain the agreed connection boundary exactly once",
+        )
+        require(
+            text.index(CONNECTION_BOUNDARY) < text.index(RELOAD_CAPABILITY_BOUNDARY),
+            f"{path} must explain the connection boundary before reload guidance",
+        )
+        for invented_auth in (
+            "prompt you to authenticate",
+            "Surf authentication prompt",
+            "authenticate with Surf",
+        ):
+            require(
+                invented_auth not in text,
+                f"{path} invents Surf authentication: {invented_auth!r}",
+            )
+
+    require(
+        readme_collapsed.endswith(
+            "MCP resources are a protocol-level delivery mirror, not another authored "
+            "content kind."
+        ),
+        "README must end with the retained Documentation section",
+    )
+    for removed_heading in (
+        "## Source for the hosted service",
+        "## Build and test",
+        "## Contributing and security",
+        "## Created by Richard Ng",
+    ):
+        require(
+            removed_heading not in readme,
+            f"README tail section must remain removed: {removed_heading}",
+        )
+    required_routes = {
+        "docs/development.md": ROOT / "docs" / "development.md",
+        "docs/releases-and-source.md": ROOT / "docs" / "releases-and-source.md",
+        "docs/production-deployment.md": ROOT / "docs" / "production-deployment.md",
+        "CONTRIBUTING.md": ROOT / "CONTRIBUTING.md",
+        "SECURITY.md": ROOT / "SECURITY.md",
+        "docs/about-richard.md": ROOT / "docs" / "about-richard.md",
+    }
+    for route, path in required_routes.items():
+        require(route in readme, f"README Documentation section omits {route}")
+        require(path.is_file(), f"README documentation route is missing: {route}")
 
     landing = public_copy["web/landing/index.html"]
     landing_collapsed = " ".join(landing.split())
@@ -362,7 +447,6 @@ def validate_public_installation_copy() -> None:
         f"{fence_text!r} != {PRIMARY_PROMPT!r}",
     )
 
-    guide = public_copy["docs/plugin-installation.md"]
     for heading in (
         "## ChatGPT/Codex Desktop",
         "## Claude Code",

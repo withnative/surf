@@ -45,6 +45,7 @@ docs/about-richard.md
 docs/compatibility.md
 docs/corresponding-source.md
 docs/dependency-licenses.md
+docs/development.md
 docs/evidence/2026-08-13-cli-acceptance.md
 docs/evidence/2026-08-13-practice-locator-acceptance.md
 docs/evidence/2026-08-14-cli-install-acceptance.md

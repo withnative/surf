@@ -24,12 +24,16 @@ practice.
 | [About Richard](https://github.com/withnative/surf/blob/main/docs/about-richard.md) | `about-richard` | Richard Ng's creator story, biography, and relationship to Native |
 | [Working framework and source](https://github.com/withnative/surf/blob/main/docs/releases-and-source.md) | `releases-and-source` | Pre-production framework policy and exact running source |
 
-Installation and release documents that are not served as product-document topics:
+Other repository documents that are not served as product-document topics:
 
 - [Plugin installation and management](plugin-installation.md) — public user guide
 - [Plugin release acceptance runbook](plugin-release-acceptance.md) — maintainer checklist
+- [Development, building and self-hosting](development.md) — local builds, containers and
+  source-provenance requirements
 - [Production deployment and rollback](production-deployment.md) — canonical Railway
   continuous-deployment and recovery runbook
+- [Contributing](../CONTRIBUTING.md) — issues, design discussion and pull-request policy
+- [Security reporting](../SECURITY.md) — private vulnerability-reporting route
 
 Use `get_doc(topic)` with one of the slugs above. Where a client supports MCP resources,
 the equivalent URI is `surf://docs/{slug}`. Plain Markdown is available at
