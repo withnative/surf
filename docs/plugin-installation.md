@@ -13,6 +13,14 @@ Use the setup guide at https://github.com/withnative/surf to install Surf.
 
 ### For agents following this guide
 
+The installed plugin connects to Surf's official public MCP endpoint. Surf requires no
+account, login or OAuth authentication, although the client may separately ask the user
+to approve enabling a remote connection. The Surf application is stateless: its tools
+accept only a document choice—or no arguments—and do not accept local practice files,
+histories, transcripts or other participant content. Surf retains no participant state.
+See the [privacy and data statement](https://github.com/withnative/surf/blob/main/docs/privacy-and-data.md)
+for the separate AI-provider and infrastructure-metadata boundaries.
+
 Inspect the local marketplace, plugin and MCP state before deciding installation is
 unavailable. If shell access is available, perform the setup yourself with the client's
 non-interactive plugin CLI below. Do not substitute a curated plugin-catalogue search for
@@ -27,9 +35,12 @@ repository. Adding the catalogue makes Surf and other Native plugins available b
 none of them. The subsequent install command selects only Surf.
 
 Ask before changing an existing standalone Surf MCP connection. Verify the installed
-plugin afterwards and follow any reload or restart instruction reported by the client. If
-the current conversation cannot load the newly installed plugin, give the user this
-copyable continuation prompt before ending:
+plugin afterwards and read the exact reload or restart instruction reported by the
+client. Check the current host's advertised slash commands where that surface exposes
+them. `/reload-plugins` is a Claude Code host command, not a Surf skill: recommend it only
+when the current host advertises it and it applies. Otherwise, immediately give the user
+the new-conversation or app-restart fallback. If the current conversation cannot load the
+newly installed plugin, give the user this copyable continuation prompt before ending:
 
 ```text
 Use Surf's quickstart tool to help me finish setting up Surf.
@@ -138,11 +149,16 @@ Inside an interactive Claude Code terminal session, the equivalent slash command
 The `/plugin` slash command exists only in the terminal build of Claude Code. It is not
 available in the Claude Code desktop application, which has its own plugin browser.
 
-If the install summary says `Run /reload-plugins to activate.`, run:
+If the install summary says `Run /reload-plugins to activate.`, first confirm the current
+Claude Code host advertises that slash command. If it does, run:
 
 ```text
 /reload-plugins
 ```
+
+If it does not, start a new conversation or restart the application instead. Do not infer
+that the Claude Code desktop application has a terminal host command merely because the
+`claude` CLI is installed.
 
 Start a new conversation and say
 `Use Surf's quickstart tool to help me finish setting up Surf.` To invoke the skill
@@ -239,14 +255,14 @@ The equivalent slash commands inside a terminal session are:
 /plugin marketplace update withnative
 /plugin uninstall surf@withnative
 /plugin install surf@withnative
-/reload-plugins
 ```
 
 You can instead enable auto-update for **withnative** under `/plugin` → **Marketplaces**.
-Skip `/reload-plugins` only when the install summary says the plugin is already active.
-A CLI update applies to a Claude Code session started afterwards, which is what its
-`Restart to apply changes.` notice means. Start a new session if an installed or updated
-plugin does not appear.
+Use `/reload-plugins` only when the current Claude Code host advertises it and the install
+summary says it applies. Otherwise start a new session or restart the application. A CLI
+update applies to a Claude Code session started afterwards, which is what its `Restart to
+apply changes.` notice means. Start a new session if an installed or updated plugin does
+not appear.
 Removing or reinstalling the plugin does not remove your local Surf practice.
 
 ## Uninstall or disable
@@ -311,8 +327,10 @@ remain under your control.
 - Start a new conversation after installation or update.
 - ChatGPT/Codex Desktop: restart the app, open **Settings → MCP servers**, confirm the
   plugin-provided `surf` server is enabled, and type `/mcp` in the composer.
-- Claude Code: run `/reload-plugins` if the install summary requested it, then inspect
-  `/mcp` and the `/plugin` **Errors** tab.
+- Claude Code terminal: if the install summary requested `/reload-plugins`, confirm the
+  current host advertises it before running it; otherwise start a new conversation.
+  Claude Code desktop: restart the application. Then inspect `/mcp` and, where available,
+  the `/plugin` **Errors** tab.
 - Confirm `https://surf.withnative.ai/mcp` is reachable from the client environment.
 - Do not continue from remembered or packaged guidance if `quickstart` cannot run.
 

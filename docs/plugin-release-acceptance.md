@@ -21,6 +21,12 @@ to the release candidate:
       desktop in Work or Codex mode, or Codex CLI, rather than an isolated install.
 - [ ] In Claude.ai, the prompt produces a copyable handoff to Claude Code rather than an
       isolated install.
+- [ ] Installation guidance describes Surf as authless and stateless, distinguishes a
+      client remote-connection approval from Surf authentication, and sends no participant
+      content through Surf's tools.
+- [ ] Claude reload guidance is verified separately in terminal Claude Code and Claude
+      Code desktop, with a new-conversation or app-restart fallback wherever
+      `/reload-plugins` is not advertised.
 - [ ] A clean Claude Code GitHub install passes through the `claude plugin` CLI route.
 - [ ] A clean Claude Code GitHub install passes through the `/plugin` slash-command route.
 - [ ] A clean ChatGPT/Codex Desktop GitHub install and MCP resolution pass through the
@@ -108,15 +114,20 @@ MCP connection. Record every tool call and command, not only the final installat
 5. Confirm it independently selects and runs the correct marketplace and install commands:
    `claude plugin ...` in Claude or `codex plugin ...` in ChatGPT/Codex.
 6. Confirm it verifies the installed plugin name, marketplace, version and component
-   inventory, then reports the actual reload or restart boundary.
-7. If a fresh conversation is required, confirm the agent gives the user this copyable
+   inventory, reads the exact installation output, checks host capabilities where slash
+   commands are exposed, and reports the actual reload or restart boundary.
+7. Confirm it states that Surf requires no account, login or OAuth authentication; that a
+   client may separately ask for remote-connection approval; and that Surf is stateless
+   and accepts no participant content through its tools. Predicting a Surf login,
+   authentication or OAuth flow is a failure.
+8. If a fresh conversation is required, confirm the agent gives the user this copyable
    continuation prompt before ending:
 
    ```text
    Use Surf's quickstart tool to help me finish setting up Surf.
    ```
 
-8. Start the required fresh conversation with that continuation prompt. Confirm Surf
+9. Start the required fresh conversation with that continuation prompt. Confirm Surf
    activates and calls live `quickstart` before substantive setup guidance.
 
 Pass requires a complete repository prompt → host-native CLI → verification → restart
@@ -152,6 +163,32 @@ the copyable human-readable prompt, and a successful continuation on a supported
 Installing into an isolated sandbox, presenting manual commands as the only next step, or
 claiming the browser-only surface can complete durable setup is a failure.
 
+### Gate 1c: installer explanation and Claude reload capability
+
+Run this separately in a clean terminal Claude Code session and the Claude Code desktop
+application. Record the exact installation output and the slash commands or capabilities
+advertised by that host.
+
+1. Give the agent only the repository-first setup prompt and let it complete installation.
+2. Confirm it describes Surf's official endpoint as requiring no Surf account, login or
+   OAuth authentication. If the client asks the user to approve a remote connection,
+   confirm the agent calls that a client safety approval rather than Surf authentication.
+3. Confirm it states that Surf's application is stateless, retains no participant state,
+   and accepts only a document choice—or no arguments—not local practice files, histories,
+   transcripts or other participant content.
+4. In terminal Claude Code, confirm the agent recommends `/reload-plugins` only if that
+   exact command is advertised by the current host and is applicable to the installation
+   output. Otherwise it must offer a new conversation immediately.
+5. In Claude Code desktop, confirm the agent does not infer `/reload-plugins` from the
+   installed `claude` CLI. If the desktop host does not advertise the command, it must
+   direct the user to start a new conversation or restart the app.
+6. Start the recommended fresh conversation or restarted app and confirm live
+   `quickstart` succeeds.
+
+Pass requires evidence from both Claude surfaces. A generic remote-MCP warning that
+predicts Surf authentication, an unverified `/reload-plugins` instruction, or omission of
+the new-conversation/app-restart fallback is a failure.
+
 ## Gate 2: clean Claude Code install
 
 Use a profile with no `withnative` catalogue, Surf plugin, or standalone MCP connection.
@@ -160,7 +197,9 @@ Use a profile with no `withnative` catalogue, Surf plugin, or standalone MCP con
 2. Run `claude plugin marketplace add withnative/plugins`.
 3. Run `claude plugin install surf@withnative` at the default `user` scope.
 4. Confirm `claude plugin list` shows Surf, then start a Claude Code session.
-5. Run `/reload-plugins` if prompted.
+5. Read the exact install output and inspect the current host's advertised slash commands.
+   Run `/reload-plugins` only if the host advertises it and it applies; otherwise start a
+   new conversation.
 6. Confirm `/mcp` shows the plugin-provided `surf` server at the exact production URL.
 7. Start a new conversation with
    `Use Surf's quickstart tool to help me finish setting up Surf.`
@@ -179,9 +218,10 @@ Pass requires the documented two-command install with no manual MCP configuratio
 Repeat gate 2 on a fresh profile from inside a terminal session, using the slash commands
 instead of the CLI. Start the session first, then run
 `/plugin marketplace add withnative/plugins` and `/plugin install surf@withnative`, then
-`/reload-plugins` if prompted. Confirm the install from the `/plugin` browser rather than
-from `claude plugin list`, and continue with steps 6 to 9 of gate 2. Remove with
-`/plugin uninstall surf@withnative`. This
+check the host's advertised commands and use `/reload-plugins` only if it is both exposed
+and applicable. Otherwise start a new conversation. Confirm the install from the
+`/plugin` browser rather than from `claude plugin list`, and continue with steps 6 to 9 of
+gate 2. Remove with `/plugin uninstall surf@withnative`. This
 route remains supported and is the documented path for anyone who does not run the CLI
 directly. Record it separately from the CLI route; neither is evidence for the other.
 
@@ -258,8 +298,9 @@ than copied into the plugin.
    update surf` failure is still present or has been fixed.
 5. Claude, slash-command route: repeat step 4 inside a terminal session using
    `/plugin marketplace update withnative`, `/plugin uninstall surf@withnative` and
-   `/plugin install surf@withnative`, then `/reload-plugins` or relaunch. Record it
-   separately; neither route is evidence for the other.
+   `/plugin install surf@withnative`, then use `/reload-plugins` only if the current host
+   advertises it and it applies; otherwise start a new conversation. Record it separately;
+   neither route is evidence for the other.
 6. OpenAI, CLI route: run `codex plugin marketplace upgrade withnative`,
    `codex plugin remove surf@withnative` and `codex plugin add surf@withnative`, and
    record each command's exact output.
