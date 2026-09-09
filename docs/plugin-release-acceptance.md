@@ -256,11 +256,12 @@ without treating a different surface as equivalent evidence.
 
 ### Gate 3a: ChatGPT/Codex Desktop in-app route
 
-Repeat gate 3 on a clean profile using the in-product route instead: run
-`codex plugin marketplace add withnative/plugins`, restart the ChatGPT desktop app, open the
-Plugins Directory, choose **Native**, and install **Surf**. Then run steps 4 to 8 above and
-uninstall or disable Surf from that card. This route remains supported and is the only one
-available to someone who never opens a terminal beyond the marketplace step.
+Repeat gate 3 on a clean profile using the in-product route instead: if the configured
+source is visible and lists Surf, restart the ChatGPT desktop app, open the Plugins
+Directory, choose that source, and install **Surf**. If the source is absent, record the
+CLI or administrator-managed route instead of claiming an in-app install. Then run steps 4
+to 8 above and uninstall or disable Surf from that card. This route remains supported when
+the source is visible; the CLI route is the shortest route when it is not.
 
 Separately record where a `codex plugin add` install appears in the ChatGPT desktop
 application after a restart. The maintainer reports that it appears in a less prominent
@@ -305,9 +306,11 @@ than copied into the plugin.
    `codex plugin remove surf@withnative` and `codex plugin add surf@withnative`, and
    record each command's exact output.
 7. OpenAI, in-app route: run `codex plugin marketplace upgrade withnative`, restart the
-   ChatGPT desktop app, open **Plugins Directory → Native → Surf**, and record whether an
-   update is offered, whether it applies, and whether an uninstall and reinstall from that
-   card was required instead.
+   ChatGPT desktop app, and, only if Surf is visible under a configured source, open
+   **Plugins Directory → Surf** and record whether an update is offered, whether it applies,
+   and whether an uninstall and reinstall from that card was required instead. If the
+   source is absent, record the CLI or administrator-managed route instead of claiming an
+   in-app update.
 8. Start a fresh conversation after each route and confirm the `P2` package change is
    active.
 
@@ -432,7 +435,7 @@ The local Surf practice must remain untouched in every case.
 
 ## Provider-documentation preflight
 
-The implementation copy was checked on 13 August 2026 against the official OpenAI plugin
+The implementation copy was checked on 9 September 2026 against the official OpenAI plugin
 packaging and MCP guides and the official Claude Code plugin and MCP guides linked from
 [the canonical installation guide](plugin-installation.md#provider-documentation-verification).
 At release acceptance, reopen those sources and record any command, menu-label or surface
