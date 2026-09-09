@@ -27,6 +27,12 @@ Use the setup guide at https://github.com/withnative/surf to install Surf.
 The agent should identify the client it is running in, install Surf using that client's
 plugin tools and explain any required restart or reload.
 
+Known file-capable clients described by this guide are the ChatGPT desktop app in Work or
+Codex mode, Codex CLI, Claude Code CLI, and the Claude Code desktop app. This list is not
+exhaustive. Other clients may connect to Surf over MCP, but their packaged-plugin and
+durable-local-file behaviour is not implied by this list; use the direct fallback in the
+[setup guide](docs/plugin-installation.md) when appropriate.
+
 If you begin in a browser-only or mobile chat, that agent cannot complete Surf's local
 installation or durable file setup. It should send you to a file-capable client—ChatGPT
 desktop in Work or Codex mode (or Codex CLI) for ChatGPT, and Claude Code for Claude—and
@@ -57,9 +63,20 @@ trying to complete.
 
 ## Quickstart for agents
 
-If a user asks you to set up Surf from this repository, inspect the local client before
-deciding installation is unavailable. If shell access is available, perform the setup
-yourself using the client's non-interactive plugin CLI.
+If a user asks you to set up Surf from this repository, identify the local client and
+inspect its existing marketplace, plugin and MCP/connection state before changing
+anything. If shell access and a direct installation capability are available, perform
+the setup yourself with the client's non-interactive plugin CLI, then verify the
+marketplace, plugin, version and connection. If the host offers a plugin suggestion,
+approval or enable action instead, use that host flow and ask for approval where the
+host requires it.
+
+Use an in-product Plugins Directory only when the current host exposes it and Surf is
+already visible under one of its configured sources. If Surf or its source is absent,
+do not imply that the directory can add an arbitrary Git marketplace. Give the person
+the shortest CLI route below, or ask a workspace administrator to import and enable the
+public marketplace for the workspace. The product repository owns these detailed setup
+instructions; the shared marketplace is only the discovery/catalogue signpost.
 
 If the current chat cannot act on the user's machine because it has no durable filesystem
 or local client shell, do not install into an isolated sandbox and do not stop at a list
@@ -126,6 +143,36 @@ Use Surf's quickstart tool to help me finish setting up Surf.
 For existing installations, duplicate MCP connections, GUI alternatives, updates,
 troubleshooting and removal, follow the
 [complete setup guide](docs/plugin-installation.md).
+
+### If plugin installation is unavailable: direct MCP
+
+Surf also accepts a direct connection with these exact values:
+
+| Field | Value |
+| --- | --- |
+| URL | `https://surf.withnative.ai/mcp` |
+| Transport | Streamable HTTP (`http`) |
+| Authorization | None; Surf has no account, login or OAuth requirement |
+
+In ChatGPT desktop, add a server named `surf` under **Settings → MCP servers**, choose
+**Streamable HTTP**, enter the URL, save, and restart. In Claude Code, run:
+
+```sh
+claude mcp add --transport http surf --scope user https://surf.withnative.ai/mcp
+```
+
+For local Codex clients, the same host configuration can contain:
+
+```toml
+[mcp_servers.surf]
+url = "https://surf.withnative.ai/mcp"
+```
+
+Then use the host's MCP list/status view to verify the connection and start a fresh
+conversation by explicitly asking the agent to call `quickstart`. Direct MCP exposes
+Surf's live tools, but it does not install Surf's packaged `next-step` skill: ordinary
+Surf requests therefore do not get the skill's trigger or proactive fresh-conversation
+`quickstart` behaviour. This is a capability difference, not an authentication step.
 
 ## How Surf is delivered
 

@@ -46,8 +46,9 @@ reference.
 
 ## The agent
 
-The agent runs on a supported, file-capable surface: currently ChatGPT/Codex Desktop or
-Claude Code. It calls Surf for guidance and performs filesystem work through the
+The agent runs on a supported, file-capable surface: currently the ChatGPT desktop app in
+Work or Codex mode, Codex CLI, Claude Code CLI, or the Claude Code desktop app. This list
+is not exhaustive. It calls Surf for guidance and performs filesystem work through the
 capabilities of that client. Other surfaces are expected, untested or unsupported as
 labelled in the compatibility matrix; protocol compatibility alone is not a Surf support
 claim. Its learning role is deliberately distinct from a doing-agent that completes the

@@ -6,11 +6,16 @@ retest on each before it is described as verified. Each needs the Surf remote MC
 connection and durable access to local files so the practice does not depend on chat
 memory.
 
+Known clients named by the setup guidance are the ChatGPT desktop app in Work or Codex
+mode, Codex CLI, Claude Code CLI, and the Claude Code desktop app. This list is explicitly
+not exhaustive. A client can be MCP-capable without being verified for Surf's packaged
+skill and durable-local-file journey.
+
 ## Current surface status
 
 | Status | Surface | Installation route | Evidence and boundary |
 |---|---|---|---|
-| Central-catalogue retest required | ChatGPT/Codex Desktop on macOS | `codex plugin marketplace add withnative/plugins`, then `codex plugin add surf@withnative`; or, in the app, **Plugins Directory → Native → Surf → Install** after a restart | Surf installation and activation were previously observed through a Surf-owned catalogue. The client and package evidence remains useful, but the new canonical-catalogue path must pass the clean-install gates before it is described as verified. |
+| Central-catalogue retest required | ChatGPT desktop app / Codex CLI on macOS | `codex plugin marketplace add withnative/plugins`, then `codex plugin add surf@withnative`; or, only when Surf is already visible under a configured source, **Plugins or Plugins Directory → Surf → Install plugin** | Surf installation and activation were previously observed through a Surf-owned catalogue. The client and package evidence remains useful, but the new canonical-catalogue path must pass the clean-install gates before it is described as verified. |
 | Central-catalogue retest required | Claude Code CLI on macOS | `claude plugin marketplace add withnative/plugins`, then `claude plugin install surf@withnative`; the `/plugin` slash commands are equivalent inside a terminal session | Plugin installation and natural-language activation were previously observed through a Surf-owned catalogue. The recorded update cycle remains useful for client behaviour, but the new canonical-catalogue path needs clean-install evidence. |
 | Expected, not claimed | Claude Code desktop app | Run `claude plugin marketplace add withnative/plugins` and `claude plugin install surf@withnative` in a terminal, then restart the app. The `/plugin` slash command is terminal-only | A user-scope `claude plugin` install was observed active in the desktop application, with its skill and MCP server loaded, on 14 August 2026. Clean-install evidence through the canonical catalogue has not been recorded. |
 | Untested / unsupported | ChatGPT mobile, browser-only chats, Claude.ai, Claude mobile, other MCP clients | None promised | The plugin-catalogue flow and durable local-file practice have not passed Surf acceptance on these surfaces. |
