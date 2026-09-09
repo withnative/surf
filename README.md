@@ -71,11 +71,15 @@ marketplace, plugin, version and connection. If the host offers a plugin suggest
 approval or enable action instead, use that host flow and ask for approval where the
 host requires it.
 
-Use an in-product Plugins Directory only when the current host exposes it and Surf is
-already visible under one of its configured sources. If Surf or its source is absent,
-do not imply that the directory can add an arbitrary Git marketplace. Give the person
-the shortest CLI route below, or ask a workspace administrator to import and enable the
-public marketplace for the workspace. The product repository owns these detailed setup
+For an ordinary desktop user, use the host's marketplace flow when the account and policy
+expose it. On ChatGPT Desktop, open **Settings → Plugins → Add → Add a marketplace**, enter
+`withnative/plugins`, leave the Git ref at `main` and sparse paths empty, then select and
+install **Surf**. On Claude, open **Customize → Plugins → Personal plugins → + → Add
+marketplace → Add from a repository**, enter `withnative/plugins`, then select and install
+**Surf**. Enable the Surf connection if the host prompts for it and start a fresh
+conversation. These controls and labels vary by account and policy; if a control is not
+shown, do not invent a different in-product path. The setup guide below gives the agent's
+CLI route and managed-host alternatives. The product repository owns these detailed
 instructions; the shared marketplace is only the discovery/catalogue signpost.
 
 If the current chat cannot act on the user's machine because it has no durable filesystem

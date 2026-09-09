@@ -31,8 +31,13 @@ to the release candidate:
 - [ ] A clean Claude Code GitHub install passes through the `/plugin` slash-command route.
 - [ ] A clean ChatGPT/Codex Desktop GitHub install and MCP resolution pass through the
       `codex plugin` CLI route.
-- [ ] A clean ChatGPT/Codex Desktop GitHub install and MCP resolution pass through the
-      in-app Plugins Directory route.
+- [ ] A clean ChatGPT Desktop UI install and MCP resolution pass through **Settings →
+      Plugins → Add → Add a marketplace**, using `withnative/plugins`, ref `main`, and no
+      sparse paths, then installing Surf from the visible source; account/policy variance
+      is recorded rather than inferred.
+- [ ] A clean Claude desktop UI install passes through **Customize → Plugins → Personal
+      plugins → + → Add marketplace → Add from a repository**, using `withnative/plugins`,
+      then installing Surf from the visible source; account/policy variance is recorded.
 - [ ] A remote framework update works with an unchanged plugin.
 - [ ] A plugin package update and client refresh work as documented through the Claude
       CLI and slash-command routes.
@@ -256,12 +261,34 @@ without treating a different surface as equivalent evidence.
 
 ### Gate 3a: ChatGPT/Codex Desktop in-app route
 
-Repeat gate 3 on a clean profile using the in-product route instead: if the configured
-source is visible and lists Surf, restart the ChatGPT desktop app, open the Plugins
-Directory, choose that source, and install **Surf**. If the source is absent, record the
-CLI or administrator-managed route instead of claiming an in-app install. Then run steps 4
-to 8 above and uninstall or disable Surf from that card. This route remains supported when
-the source is visible; the CLI route is the shortest route when it is not.
+Repeat gate 3 on a clean profile using the ordinary-user UI route instead:
+
+1. Open **Settings → Plugins → Add → Add a marketplace**.
+2. Enter `withnative/plugins`, use the default ref `main`, and leave sparse paths empty.
+3. Select **Surf** from the added source, install it, and enable the connection if
+   prompted.
+4. Start a fresh conversation and continue with steps 4 to 8 above, then uninstall or
+   disable Surf from the plugin UI.
+
+If the account or policy does not expose one of these controls, record that variance and
+use the CLI or managed route appropriate to that host; do not claim the UI route was
+available or unavailable from the missing source alone.
+
+### Gate 3b: Claude desktop marketplace route
+
+Run on a clean Claude desktop profile with no `withnative` marketplace, Surf plugin or
+standalone Surf MCP connection:
+
+1. Open **Customize → Plugins → Personal plugins → + → Add marketplace → Add from a
+   repository**.
+2. Enter `withnative/plugins`, select Surf from the added marketplace, and install it.
+3. Enable the connection if the host prompts, then start a fresh conversation with
+   `Use Surf's quickstart tool to help me finish setting up Surf.`
+4. Confirm the packaged skill and four Surf tools are active, then uninstall or disable
+   Surf without changing the local practice.
+
+If account or organization policy hides these controls, record the variance and do not
+claim a desktop UI result from the CLI route.
 
 Separately record where a `codex plugin add` install appears in the ChatGPT desktop
 application after a restart. The maintainer reports that it appears in a less prominent
@@ -306,11 +333,11 @@ than copied into the plugin.
    `codex plugin remove surf@withnative` and `codex plugin add surf@withnative`, and
    record each command's exact output.
 7. OpenAI, in-app route: run `codex plugin marketplace upgrade withnative`, restart the
-   ChatGPT desktop app, and, only if Surf is visible under a configured source, open
-   **Plugins Directory → Surf** and record whether an update is offered, whether it applies,
-   and whether an uninstall and reinstall from that card was required instead. If the
-   source is absent, record the CLI or administrator-managed route instead of claiming an
-   in-app update.
+   ChatGPT desktop app, and, only if the account exposes the configured source, open
+   **Settings → Plugins**, select **Surf**, and record whether an update is offered, whether
+   it applies, and whether an uninstall and reinstall from that card was required instead.
+   If the account does not expose the control, record the variance rather than inferring
+   that the marketplace cannot be added in-product.
 8. Start a fresh conversation after each route and confirm the `P2` package change is
    active.
 
