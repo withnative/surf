@@ -37,13 +37,14 @@ Use this order when you are helping someone install Surf:
 3. If direct installation is unavailable, use a host-provided plugin suggestion,
    approval, enable action or equivalent flow when the host offers one. Ask for approval
    when the host requires it.
-4. If the host exposes a Plugins Directory/browser and Surf is already visible under a
-   configured source, guide the person through reviewing Surf, installing it, approving
-   any host connection prompt, and starting a fresh conversation.
-5. If Surf or its marketplace is absent, say so plainly. Do not claim that the current
-   directory can add an arbitrary Git marketplace. Give the shortest copyable CLI route,
-   or ask a workspace administrator to import and enable
-   `https://github.com/withnative/plugins` through the host's managed marketplace flow.
+4. If the host exposes a Plugins Directory/browser, use the ordinary-user desktop route
+   below when its marketplace controls are visible. Review Surf, install it, approve any
+   host connection prompt, and start a fresh conversation.
+5. If the host does not expose those marketplace controls, say so plainly rather than
+   inventing a UI path. Use the shortest copyable CLI route below when shell access is
+   available, or ask the host/workspace administrator about its managed distribution
+   route. An absent source alone is not proof that the ChatGPT or Claude desktop UI lacks
+   its Add marketplace flow; check the account and policy-visible controls first.
 6. Offer the direct MCP fallback below only after the packaged route is unavailable, and
    explain exactly what is lost without the packaged skill.
 
@@ -90,7 +91,48 @@ installation. Offer the manual commands below only as a fallback if the user pre
 run them personally. Other mobile, browser-only and unlisted surfaces remain unverified
 for the plugin flow and durable local-file practice.
 
-## ChatGPT/Codex Desktop and Codex CLI
+## Ordinary-user desktop installation
+
+The following routes are for a person using the desktop UI without a shell-capable agent.
+They are conditional on the account, workspace policy and current host exposing the named
+controls. If a control is missing, do not claim that the route is available or that its
+absence proves the marketplace cannot be added; use the host's available alternative or
+the CLI route when an agent has shell access.
+
+### ChatGPT Desktop
+
+1. Open **Settings → Plugins**.
+2. Choose **Add → Add a marketplace**.
+3. Enter `withnative/plugins` as the marketplace source. Use the default Git ref
+   `main` and leave **Sparse paths** empty; Surf's package is in the catalogue's normal
+   layout.
+4. Return to the Plugins Directory, select **Surf**, and choose **Install plugin**.
+5. If ChatGPT asks to enable the Surf remote connection, approve that host action. Surf
+   itself has no account, login or OAuth flow.
+6. Start a fresh conversation and say
+   `Use Surf's quickstart tool to help me finish setting up Surf.`
+
+OpenAI's current documentation says plugin labels and availability vary by rollout,
+surface, account and workspace policy. Use this path only when those controls are visible;
+do not substitute a guessed menu path for a control the account does not provide.
+
+### Claude desktop
+
+1. Open **Customize → Plugins**.
+2. Under **Personal plugins**, choose **+ → Add marketplace → Add from a repository**.
+3. Enter `withnative/plugins` as the repository.
+4. Select **Surf** from the added marketplace and install it. If the host asks to enable
+   the remote Surf connection, approve that host action; Surf itself has no account,
+   login or OAuth flow.
+5. Start a fresh conversation and say
+   `Use Surf's quickstart tool to help me finish setting up Surf.`
+
+Anthropic's current Claude plugin guidance describes the Plugins page and repository-backed
+marketplaces; account, plan and organization policy can still change what is shown.
+
+## CLI installation for agents with shell access
+
+### ChatGPT/Codex Desktop and Codex CLI
 
 The Codex CLI installs Surf in two commands. The install verb is `add`, not `install`:
 
@@ -109,25 +151,6 @@ This also covers the ChatGPT desktop app: restart it after installing. Verify wi
 different area of the desktop interface than an in-app install; do not infer that it is
 missing until the host has refreshed and you have checked its installed-plugin view.
 
-To install in-product when Surf is already visible in the current directory:
-
-1. In Work or Codex mode, open **Plugins** or **Plugins Directory** when that entry is
-   available for the account and surface.
-2. Select the configured source that shows **Surf**, review its details, and choose
-   **Install plugin** when shown.
-3. If the host asks to enable a remote connection, approve that host action; Surf itself
-   has no account, login or OAuth flow.
-4. Restart when the host requests it, then start a fresh conversation.
-
-OpenAI's current documentation says directory labels and features vary by rollout,
-surface and account. It describes GitHub marketplace import as a workspace-admin action
-under **Workspace settings → Plugins → Add → Import marketplace**, not as a promise that a
-member can add an arbitrary Git source from the directory. If no configured source shows
-Surf, use the two CLI commands above. In a managed workspace, ask an eligible
-administrator to import `https://github.com/withnative/plugins` (repository URL only),
-enable Surf, and tell you when it is visible. Do not present the directory route as
-available until Surf actually appears there.
-
 Either way, start a new conversation and say
 `Use Surf's quickstart tool to help me finish setting up Surf.`
 
@@ -142,7 +165,7 @@ covers [Git-backed repository marketplaces](https://developers.openai.com/plugin
 and the [ChatGPT/Codex MCP controls](https://learn.chatgpt.com/docs/extend/mcp?surface=cli),
 including the shared `config.toml` and desktop Settings → MCP servers routes.
 
-## Claude Code
+### Claude Code
 
 The `claude` CLI installs Surf in two commands. The default install scope is `user`, so
 Surf is available across projects:
@@ -246,14 +269,20 @@ codex plugin remove surf@withnative
 codex plugin add surf@withnative
 ```
 
-For the in-app route, if Surf is already visible under a configured source, restart the
-ChatGPT desktop app when required, open **Plugins** or **Plugins Directory**, select the
-source that shows **Surf**, and apply an offered update. If Surf is not visible, do not
-pretend the directory can add an arbitrary Git source: use the CLI refresh/reinstall route
-above or ask a workspace administrator to import and enable the marketplace. If the old
-version remains after an in-product update, use the CLI uninstall/reinstall route, then
-start a new conversation. OpenAI clients install a cached copy rather than reading the
+For an ordinary ChatGPT Desktop user, open **Settings → Plugins** and select **Surf** from
+the configured source when it is visible; apply an offered update, then start a fresh
+conversation. If the source is not present, first check whether **Add → Add a marketplace**
+is available and use the source, ref and sparse-path values in the desktop steps above.
+Account and policy controls vary, so if that control is not shown use the host's available
+route rather than inventing a menu. Agents with shell access should use the CLI
+refresh/reinstall route above. OpenAI clients install a cached copy rather than reading the
 repository in place.
+
+For an ordinary Claude desktop user, open **Customize → Plugins**, select Surf from the
+visible personal marketplace, and apply the host's update control when offered. If the
+marketplace is not present, check whether **Personal plugins → + → Add marketplace → Add
+from a repository** is available before choosing another route. Start a fresh conversation
+after the update.
 
 For Claude Code, third-party marketplaces do not auto-update by default. The Claude
 marketplace verb is `update` and the plugin verbs are `uninstall` and `install`. Refresh
@@ -345,11 +374,14 @@ remain under your control.
 
 - Confirm both the catalogue at `https://github.com/withnative/plugins` and Surf source at
   `https://github.com/withnative/surf` are reachable without authentication.
-- ChatGPT/Codex Desktop: run `codex plugin marketplace list` and confirm `withnative`
-  points to `withnative/plugins`, then run `codex plugin marketplace upgrade withnative`.
-  Retry `codex plugin add surf@withnative`; for the in-app route, restart the app and
-  inspect the configured source only if it is visible. If it is not, use the CLI route or
-  ask a workspace administrator to import and enable the marketplace.
+- ChatGPT/Codex Desktop: an agent with shell access can run `codex plugin marketplace list`
+  and confirm `withnative` points to `withnative/plugins`, then run
+  `codex plugin marketplace upgrade withnative` and retry `codex plugin add
+  surf@withnative`. An ordinary desktop user can instead check **Settings → Plugins → Add
+  → Add a marketplace** when that control is visible, using `withnative/plugins`, ref
+  `main`, and no sparse paths, then select Surf. If the control is not exposed, record the
+  account/policy variance and use the host's available route; do not infer a route from the
+  missing source alone.
 - Claude Code: run `claude plugin marketplace list` and confirm `withnative` points to
   `withnative/plugins`, then run `claude plugin marketplace update withnative` and retry
   `claude plugin install surf@withnative`. Inside a terminal session, `/plugin marketplace
@@ -440,6 +472,7 @@ These commands and menu labels were checked on 9 September 2026 against the offi
 [OpenAI plugin directory and workspace administration guide](https://help.openai.com/en/articles/20001256),
 [OpenAI GitHub marketplace import guide](https://help.openai.com/en/articles/20001504),
 [OpenAI MCP guide](https://learn.chatgpt.com/docs/extend/mcp?surface=cli),
+[Claude plugin guide](https://claude.com/docs/cowork/guide/plugins),
 [Claude Code plugin guide](https://code.claude.com/docs/en/discover-plugins), and
 [Claude Code MCP guide](https://code.claude.com/docs/en/mcp). Client UI and commands can
 change; record exact client versions and any variance during release acceptance.

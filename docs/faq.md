@@ -69,10 +69,14 @@ infrastructure and AI-provider costs for its operator or users.
 
 ## Which Claude and ChatGPT clients work?
 
-Surf's verified plugin routes are ChatGPT/Codex Desktop and Claude Code. Other desktop,
-browser and mobile surfaces are expected, untested or unsupported as labelled in the
-[compatibility matrix](https://github.com/withnative/surf/blob/main/docs/compatibility.md).
-Do not infer support for an unlisted client.
+The setup guide names ChatGPT Desktop, Codex CLI, Claude Code CLI, and Claude desktop as
+known clients, but that list is not exhaustive. Surf's verified plugin claim remains
+bounded by the [compatibility matrix](https://github.com/withnative/surf/blob/main/docs/compatibility.md);
+other desktop, browser and mobile surfaces may be expected, untested or unsupported.
+Protocol support alone does not establish Surf's packaged-plugin or durable-local-file
+journey. When the plugin route is unavailable, use the direct MCP fallback in the setup
+guide and expect to call `quickstart` explicitly because the packaged trigger skill is not
+included.
 
 ## Does Surf read or store my files?
 
